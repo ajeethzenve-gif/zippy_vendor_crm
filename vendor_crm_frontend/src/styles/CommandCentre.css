@@ -1,0 +1,1263 @@
+/* =========================================================
+   ZENVE FASHION - 12 COMMAND CENTRE
+   Exact ZENVE Design Tokens & Aesthetic Alignment
+========================================================= */
+
+:root {
+  --ZENVE-paper: #fbf9f5;
+  --ZENVE-card: #ffffff;
+  --ZENVE-ink: #17130f;
+  --ZENVE-muted: #736b63;
+  --ZENVE-border: #e8e3da;
+  --ZENVE-border-hover: #c28b51;
+  --ZENVE-gold: #c28b51;
+  --ZENVE-gold-light: #fdfaf6;
+  --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+.command-centre-page,
+.command-centre-page *,
+.command-centre-page *::before,
+.command-centre-page *::after {
+  box-sizing: border-box;
+}
+
+.command-centre-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--ZENVE-paper);
+  color: var(--ZENVE-ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 60px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.ZENVE-header {
+  width: 100%;
+  background-color: var(--ZENVE-card);
+  border-bottom: 1px solid var(--ZENVE-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.ZENVE-header-inner {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.ZENVE-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo {
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.ZENVE-header-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ZENVE-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink);
+}
+
+.ZENVE-portal-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+  font-family: var(--ZENVE-font-serif);
+  color: var(--ZENVE-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ZENVE-layer-num {
+  font-size: 26px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--ZENVE-gold);
+}
+
+.ZENVE-portal-desc {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ZENVE-muted);
+}
+
+.ZENVE-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.cc-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  color: var(--ZENVE-ink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.cc-header-btn:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+.cc-header-btn.primary {
+  background-color: var(--ZENVE-ink);
+  color: #ffffff;
+  border-color: var(--ZENVE-ink);
+}
+
+.cc-header-btn.primary:hover {
+  background-color: #2b2520;
+}
+
+.cc-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.command-centre-container {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 24px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.cc-error-banner {
+  background-color: #fdf2f2;
+  border: 1px solid #f8b4b4;
+  color: #9b1c1c;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.cc-error-banner button {
+  background: #9b1c1c;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   TOP 4 KPIS GRID
+========================================================= */
+
+.cc-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.cc-kpi-card {
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.15s ease;
+}
+
+.cc-kpi-card:hover {
+  border-color: #d1c8be;
+}
+
+.label-caps {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted);
+  margin: 0 0 6px 0;
+}
+
+.cc-kpi-val {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ZENVE-ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cc-kpi-hint {
+  font-size: 11.5px;
+  color: var(--ZENVE-muted);
+  margin-top: 4px;
+}
+
+/* =========================================================
+   PANELS & CARDS
+========================================================= */
+
+.cc-panel {
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cc-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cc-panel-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cc-panel-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ZENVE-ink);
+}
+
+.cc-panel-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ZENVE-muted);
+}
+
+.cc-panel-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--ZENVE-muted);
+  font-size: 13.5px;
+  background-color: var(--ZENVE-paper);
+  border: 1px dashed var(--ZENVE-border);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   PENDING APPROVALS
+========================================================= */
+
+.cc-approvals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.cc-approval-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  color: var(--ZENVE-ink);
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.cc-approval-link:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+.tone-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  min-width: 24px;
+}
+
+.tone-badge.warn {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.tone-badge.good {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.tone-badge.bad {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.tone-badge.neutral {
+  background-color: #f3f0ea;
+  color: #574f46;
+}
+
+.tone-badge.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* =========================================================
+   EXCEPTIONS & AUTOMATION ALERTS
+========================================================= */
+
+.cc-exceptions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cc-exception-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  font-size: 13.5px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ZENVE-ink);
+}
+
+.cc-exception-item:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+.cc-exception-msg {
+  flex: 1;
+}
+
+.cc-exception-arrow {
+  font-size: 12px;
+  color: var(--ZENVE-muted);
+}
+
+/* =========================================================
+   AUDIT LOG
+========================================================= */
+
+.cc-audit-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.cc-audit-search {
+  width: 240px;
+  padding: 7px 12px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ZENVE-ink);
+  outline: none;
+}
+
+.cc-audit-search:focus {
+  border-color: var(--ZENVE-gold);
+}
+
+.cc-audit-select {
+  padding: 7px 12px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ZENVE-ink);
+  outline: none;
+  cursor: pointer;
+}
+
+.cc-audit-select:focus {
+  border-color: var(--ZENVE-gold);
+}
+
+.cc-clear-btn {
+  background: none;
+  border: none;
+  color: var(--ZENVE-muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.cc-clear-btn:hover {
+  color: var(--ZENVE-ink);
+  background-color: #f3f0ea;
+}
+
+.cc-audit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cc-audit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ZENVE-border);
+  font-size: 13.5px;
+}
+
+.cc-audit-row:last-child {
+  border-bottom: none;
+}
+
+.cc-audit-timestamp {
+  white-space: nowrap;
+  color: var(--ZENVE-muted);
+  font-size: 12.5px;
+  min-width: 120px;
+}
+
+.cc-audit-msg {
+  color: var(--ZENVE-ink);
+  flex: 1;
+}
+
+.cc-show-more-btn {
+  margin-top: 10px;
+  align-self: flex-start;
+  padding: 6px 14px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ZENVE-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cc-show-more-btn:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+/* =========================================================
+   OPERATIONAL REPORT EXPORT
+========================================================= */
+
+.cc-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.cc-report-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  color: var(--ZENVE-ink);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cc-report-btn:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+.cc-report-left {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cc-report-title {
+  font-weight: 500;
+}
+
+.cc-report-rows {
+  font-size: 11.5px;
+  color: var(--ZENVE-muted);
+}
+
+.cc-report-icon {
+  color: var(--ZENVE-muted);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.cc-report-btn:hover .cc-report-icon {
+  color: var(--ZENVE-gold);
+}
+
+/* =========================================================
+   JUMP TO A LAYER
+========================================================= */
+
+.cc-jump-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.cc-jump-card {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background-color: var(--ZENVE-card);
+  border: 1px solid var(--ZENVE-border);
+  border-radius: 6px;
+  color: var(--ZENVE-ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.cc-jump-card:hover {
+  border-color: var(--ZENVE-gold);
+  background-color: var(--ZENVE-gold-light);
+}
+
+.cc-jump-num {
+  color: var(--ZENVE-gold);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* Toast alert notification */
+.cc-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #17130f;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   COMPREHENSIVE ALL-SCREEN-SIZE RESPONSIVE MEDIA QUERIES
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  .ZENVE-header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 32px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 20px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    width: 100%;
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .ZENVE-header-right .search-box {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .command-centre-container {
+    padding: 14px 12px 48px;
+    gap: 16px;
+  }
+
+  /* Top 4 KPI Cards: 2x2 grid */
+  .cc-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .cc-kpi-card {
+    padding: 12px 14px;
+  }
+
+  .label-caps {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .cc-kpi-val {
+    font-size: 22px;
+  }
+
+  .cc-kpi-hint {
+    font-size: 11px;
+  }
+
+  .cc-panel {
+    padding: 14px 14px;
+    gap: 14px;
+  }
+
+  .cc-panel-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .cc-panel-header>.cc-header-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cc-panel-title {
+    font-size: 16px;
+  }
+
+  .cc-panel-desc {
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  /* Pending Approvals: 1 column */
+  .cc-approvals-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cc-approval-link {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Exceptions list */
+  .cc-exception-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  /* Audit log toolbar */
+  .cc-audit-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .cc-audit-search {
+    width: 100% !important;
+    box-sizing: border-box;
+    height: 36px;
+  }
+
+  .cc-audit-select {
+    width: 100% !important;
+    box-sizing: border-box;
+    height: 36px;
+  }
+
+  .cc-audit-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 0;
+  }
+
+  .cc-audit-timestamp {
+    font-size: 11.5px;
+    min-width: auto;
+  }
+
+  .cc-audit-msg {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* Reports grid: 1 column */
+  .cc-reports-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cc-report-btn {
+    padding: 10px 12px;
+  }
+
+  /* Jump to a layer: 1 column */
+  .cc-jump-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cc-jump-card {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Extra small mobile (< 380px) */
+@media (max-width: 380px) {
+  .ZENVE-header-inner {
+    padding: 10px 10px;
+  }
+
+  .command-centre-container {
+    padding: 10px 8px 36px;
+    gap: 12px;
+  }
+
+  .cc-kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .cc-kpi-val {
+    font-size: 20px;
+  }
+
+  .cc-panel {
+    padding: 12px 10px;
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
+--------------------------------------------------------- */
+
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-header-inner {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 36px;
+    width: auto;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-border);
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 340px;
+    min-width: 180px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
+  }
+
+  .command-centre-container {
+    max-width: 100%;
+    padding: 20px 24px 60px;
+    gap: 20px;
+  }
+
+  /* Top 4 KPIs: 4 columns on landscape tablet */
+  .cc-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .cc-kpi-card {
+    padding: 14px 16px;
+  }
+
+  .cc-kpi-val {
+    font-size: 24px;
+  }
+
+  .cc-panel {
+    padding: 18px 20px;
+  }
+
+  .cc-approvals-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .cc-reports-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .cc-jump-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-header-inner {
+    padding: 12px 18px;
+    gap: 10px;
+  }
+
+  .ZENVE-header-right {
+    gap: 10px;
+    padding-top: 10px;
+  }
+
+  .command-centre-container {
+    padding: 16px 18px 48px;
+    gap: 16px;
+  }
+
+  /* Top 4 KPIs: 2x2 grid on portrait tablet */
+  .cc-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. LAPTOP & STANDARD DESKTOP (1141px - 1440px)
+   MacBook Pro, ThinkPad, Standard 1080p Desktop
+--------------------------------------------------------- */
+
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .command-centre-container {
+    max-width: 1380px;
+    padding: 24px 28px;
+  }
+
+  .cc-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .cc-reports-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .cc-jump-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   4. LARGE DESKTOP & WIDE MONITORS (1441px - 1920px)
+   iMac 24", 27" QHD, Studio Display
+--------------------------------------------------------- */
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .ZENVE-header-inner {
+    max-width: 1640px;
+    padding: 18px 36px;
+  }
+
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 28px;
+  }
+
+  .command-centre-container {
+    max-width: 1640px;
+    padding: 28px 36px 64px;
+    gap: 26px;
+  }
+
+  .cc-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .cc-kpi-card {
+    padding: 18px 22px;
+    gap: 8px;
+  }
+
+  .label-caps {
+    font-size: 12px;
+  }
+
+  .cc-kpi-val {
+    font-size: 28px;
+  }
+
+  .cc-panel {
+    padding: 22px 26px;
+    gap: 18px;
+  }
+
+  .cc-panel-title {
+    font-size: 18.5px;
+  }
+
+  .cc-approvals-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .cc-reports-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .cc-jump-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD SCREENS (1921px - 3840px+)
+   Ultra-high resolution displays, 4K/5K Monitors
+--------------------------------------------------------- */
+
+@media (min-width: 1921px) {
+  .ZENVE-header-inner {
+    max-width: 2800px;
+    padding: 24px 64px;
+  }
+
+  .ZENVE-portal-logo img {
+    height: 52px;
+  }
+
+  .ZENVE-back-link {
+    font-size: 13.5px;
+    gap: 8px;
+  }
+
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 34px;
+    gap: 12px;
+  }
+
+  .ZENVE-portal-desc {
+    font-size: 16.5px;
+  }
+
+  .command-centre-container {
+    max-width: 2800px;
+    padding: 36px 64px 80px;
+    gap: 32px;
+  }
+
+  /* 4K Top 4 KPI Cards */
+  .cc-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .cc-kpi-card {
+    padding: 22px 26px;
+    border-radius: 10px;
+    gap: 8px;
+  }
+
+  .label-caps {
+    font-size: 13px;
+  }
+
+  .cc-kpi-val {
+    font-size: 36px;
+  }
+
+  .cc-kpi-hint {
+    font-size: 14px;
+  }
+
+  /* 4K Panels */
+  .cc-panel {
+    padding: 28px 32px;
+    border-radius: 10px;
+    gap: 22px;
+  }
+
+  .cc-panel-title {
+    font-size: 22px;
+  }
+
+  .cc-panel-desc {
+    font-size: 15.5px;
+  }
+
+  .cc-header-btn {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .cc-approval-link {
+    padding: 14px 18px;
+    font-size: 15.5px;
+    border-radius: 8px;
+  }
+
+  .cc-exception-item {
+    padding: 14px 18px;
+    font-size: 15.5px;
+    border-radius: 8px;
+  }
+
+  .cc-audit-search,
+  .cc-audit-select {
+    height: 42px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  .cc-audit-row {
+    font-size: 15.5px;
+    padding: 12px 0;
+  }
+
+  .cc-audit-timestamp {
+    font-size: 14px;
+  }
+
+  .cc-report-btn {
+    padding: 14px 18px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
+
+  .cc-jump-card {
+    padding: 14px 18px;
+    font-size: 15.5px;
+    border-radius: 8px;
+  }
+
+  .tone-badge {
+    font-size: 13px;
+    padding: 4px 10px;
+  }
+}
+
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  .ZENVE-header-inner {
+    max-width: 3400px;
+  }
+
+  .command-centre-container {
+    max-width: 3400px;
+  }
+
+  .ZENVE-portal-title,
+  .ZENVE-layer-num {
+    font-size: 40px;
+  }
+
+  .cc-kpi-val {
+    font-size: 42px;
+  }
+}

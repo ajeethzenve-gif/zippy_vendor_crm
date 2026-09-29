@@ -1,0 +1,28 @@
+.employees-page { max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; color: #28251f; }
+.employees-header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 24px; }
+.employees-header h1 { margin: 14px 0 8px; font-size: 32px; }
+.employees-header a { color: #554333; }
+.employees-header > span { padding: 8px 14px; border-radius: 20px; background: #eee8df; }
+.employees-card { background: #fffdfa; border: 1px solid #e4ddd3; border-radius: 12px; padding: 24px; margin: 24px 0; }
+.employees-card h2 { margin-top: 0; font-size: 21px; }
+.employees-card h2 span { color: #726a60; font-weight: normal; }
+.employees-card fieldset { border: 0; padding: 16px 0; margin: 16px 0; border-top: 1px solid #e4ddd3; min-width: 0; }
+.employees-card legend { font-weight: 600; padding-right: 12px; }
+.employee-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.employee-field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.employee-field input, .employee-field select, .employee-field textarea { box-sizing: border-box; width: 100%; border: 1px solid #cfc5b8; border-radius: 6px; padding: 10px 12px; background: white; color: #28251f; font: inherit; min-height: 42px; }
+.employee-field input:focus, .employee-field select:focus, .employee-field textarea:focus { outline: 2px solid #7d684a; outline-offset: 2px; }
+.employee-field [aria-invalid="true"] { border-color: #a32929; }
+.employee-show-password { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-size: 14px; }
+.employee-help { font-size: 13px; color: #726a60; }
+.employee-submit { border: 0; border-radius: 6px; background: #352b22; color: white; padding: 13px 22px; cursor: pointer; font: inherit; }
+.employee-submit:disabled { opacity: .5; cursor: wait; }
+.employee-alert { padding: 14px 18px; border-radius: 8px; overflow-wrap: anywhere; }
+.employee-error { color: #9a2626; }
+.employee-alert.employee-error { background: #fceeee; }
+.employee-success { background: #e8f4e8; color: #235d32; }
+.employee-table-wrap { overflow-x: auto; }
+.employees-card table { border-collapse: collapse; width: 100%; font-size: 14px; text-align: left; }
+.employees-card th, .employees-card td { padding: 12px; border-bottom: 1px solid #e4ddd3; white-space: nowrap; }
+@media (max-width: 800px) { .employee-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .employee-grid { grid-template-columns: 1fr; } .employees-page { padding: 20px 12px; } .employees-card { padding: 18px; } .employees-header { align-items: start; flex-direction: column; } }

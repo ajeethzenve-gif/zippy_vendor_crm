@@ -1,0 +1,1088 @@
+/* =========================================================
+   SEARCH + USER WRAPPER
+========================================================= */
+
+.search-user-wrapper {
+  width: auto;
+  max-width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 24px;
+
+  flex-shrink: 1;
+}
+
+
+/* =========================================================
+   SEARCH BAR WRAPPER
+========================================================= */
+
+.search-bar-wrapper {
+  position: relative;
+  z-index: 1000;
+
+  flex: 0 1 205px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   NORMAL SEARCH BAR
+========================================================= */
+
+.home-search {
+  width: 100%;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  gap: 8px;
+
+  padding: 0 10px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #ded9d1;
+  border-radius: 6px;
+
+  background: #f9f7f3;
+
+  color: #17130f;
+
+  cursor: text;
+}
+
+
+/* =========================================================
+   SEARCH ICON
+========================================================= */
+
+.home-search .search-icon {
+  width: 17px;
+  height: 17px;
+
+  flex: 0 0 17px;
+
+  color: #6e675f;
+}
+
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.home-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  padding: 0;
+
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  background: transparent;
+
+  color: #17130f;
+
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.home-search input:focus,
+.home-search input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.home-search input::placeholder {
+  color: #817a72;
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUT
+========================================================= */
+
+.home-search kbd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  padding: 2px 5px;
+
+  border: 1px solid #ddd7cf;
+  border-radius: 4px;
+
+  background: #f0ece6;
+
+  color: #6d665e;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   USER SECTION
+========================================================= */
+
+.home-user {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  gap: 8px;
+
+  flex: 0 1 auto;
+  min-width: 0;
+
+  white-space: nowrap;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.home-user:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   USER ICON
+========================================================= */
+
+.home-user .user-icon {
+  width: 21px;
+  height: 21px;
+
+  flex: 0 0 21px;
+
+  color: #17130f;
+}
+
+
+/* =========================================================
+   USER NAME
+========================================================= */
+
+.home-user-name {
+  display: block;
+
+  max-width: 150px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #17130f;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.home-admin {
+  display: block;
+
+  color: #817a72;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   SEARCH OVERLAY
+========================================================= */
+
+.search-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9998;
+
+  background: rgba(0, 0, 0, 0.78);
+}
+
+
+/* =========================================================
+   SEARCH MODAL
+========================================================= */
+
+.search-modal {
+  position: fixed;
+
+  top: clamp(60px, 12vh, 140px);
+  left: 50%;
+
+  z-index: 9999;
+
+  width: min(540px, calc(100vw - 32px));
+
+  max-height: min(600px, calc(100vh - 120px));
+
+  transform: translateX(-50%);
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d8d2c9;
+  border-radius: 7px;
+
+  background: #fbfaf7;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.search-modal-header {
+  width: 100%;
+  height: 50px;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  gap: 10px;
+
+  padding: 0 14px;
+
+  box-sizing: border-box;
+
+  border-bottom: 1px solid #ded9d1;
+
+  background: #fbfaf7;
+}
+
+.search-modal-header .search-icon {
+  width: 19px;
+  height: 19px;
+
+  flex: 0 0 19px;
+
+  color: #8b837b;
+}
+
+
+/* =========================================================
+   MODAL INPUT
+========================================================= */
+
+.search-modal-header input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  padding: 0;
+
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  background: transparent;
+
+  color: #17130f;
+
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.search-modal-header input:focus,
+.search-modal-header input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.search-modal-header input::placeholder {
+  color: #8a8279;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.search-close {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 28px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #6c655d;
+
+  cursor: pointer;
+}
+
+.search-close:hover {
+  color: #17130f;
+}
+
+
+/* =========================================================
+   SEARCH RESULTS
+========================================================= */
+
+.search-results {
+  max-height: 450px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 8px;
+
+  box-sizing: border-box;
+}
+
+.search-results::-webkit-scrollbar {
+  width: 7px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: #aaa39b;
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESULTS TITLE
+========================================================= */
+
+.search-results-title {
+  padding: 5px 10px 8px;
+
+  color: #766e66;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   RESULT ITEM
+========================================================= */
+
+.search-result-item {
+  width: 100%;
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-direction: row;
+
+  gap: 15px;
+
+  padding: 0 9px;
+
+  box-sizing: border-box;
+
+  border-radius: 2px;
+
+  color: #302b27;
+
+  text-decoration: none;
+
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+
+/* =========================================================
+   ACTIVE + HOVER
+========================================================= */
+
+.search-result-item.active,
+.search-result-item:hover {
+  background: #d99350;
+
+  color: #17130f;
+}
+
+
+/* =========================================================
+   RESULT LEFT
+========================================================= */
+
+.search-result-left {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.search-layer-number {
+  flex: 0 0 auto;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   SEPARATOR
+========================================================= */
+
+.search-layer-separator {
+  flex: 0 0 auto;
+
+  margin: 0 4px;
+
+  color: #17130f;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   LAYER NAME
+========================================================= */
+
+.search-layer-name {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   GROUP
+========================================================= */
+
+.search-layer-group {
+  flex: 0 0 auto;
+
+  max-width: 150px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #81786f;
+
+  font-size: 11px;
+}
+
+.search-result-item.active .search-layer-group,
+.search-result-item:hover .search-layer-group {
+  color: #6a6259;
+}
+
+
+/* =========================================================
+   NO RESULTS
+========================================================= */
+
+.search-no-results {
+  padding: 25px 10px;
+
+  text-align: center;
+
+  color: #827a72;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   LARGE DESKTOP
+   1440px+
+========================================================= */
+
+@media (min-width: 1440px) {
+
+  .search-user-wrapper {
+    gap: 28px;
+  }
+
+  .search-bar-wrapper {
+    flex-basis: 220px;
+  }
+
+  .home-user-name {
+    max-width: 180px;
+  }
+
+  .search-modal {
+    width: 530px;
+  }
+}
+
+
+/* =========================================================
+   DESKTOP
+   1200px - 1439px
+========================================================= */
+
+@media (max-width: 1439px) {
+
+  .search-user-wrapper {
+    gap: 22px;
+  }
+
+  .search-bar-wrapper {
+    flex-basis: 205px;
+  }
+}
+
+
+/* =========================================================
+   LAPTOP
+   992px - 1199px
+========================================================= */
+
+@media (max-width: 1199px) {
+
+  .search-user-wrapper {
+    gap: 16px;
+  }
+
+  .search-bar-wrapper {
+    flex-basis: 190px;
+  }
+
+  .home-user-name {
+    max-width: 120px;
+
+    font-size: 12px;
+  }
+
+  .home-admin {
+    font-size: 11px;
+  }
+
+  .search-modal {
+    top: 110px;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .search-user-wrapper {
+    gap: 12px;
+  }
+
+  .search-bar-wrapper {
+    flex-basis: 175px;
+  }
+  .home-search {
+    height: 35px;
+  }
+
+  .home-search kbd {
+    display: none;
+  }
+    .home-user {
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .home-user .user-icon {
+    width: 20px;
+    height: 20px;
+
+    flex-basis: 20px;
+  }
+
+  .home-user-name {
+    max-width: 105px;
+
+    font-size: 12px;
+  }
+
+  .home-admin {
+    font-size: 10px;
+   width:auto !important;
+  }
+
+  .search-modal {
+    top: 95px;
+
+    width: min(520px, calc(100vw - 40px));
+
+    max-height: calc(100vh - 120px);
+  }
+
+  .search-results {
+    max-height: calc(100vh - 180px);
+  }
+}
+/* =========================================================
+   TABLET
+   768px - 991px
+========================================================= */
+
+@media (max-width: 991px) {
+
+  .search-user-wrapper {
+    gap: 12px;
+  }
+
+  .search-bar-wrapper {
+    flex-basis: 175px;
+  }
+
+  .home-search {
+    height: 35px;
+  }
+
+  .home-search kbd {
+    display: none;
+  }
+
+  .home-user {
+    gap: 6px;
+  }
+
+  .home-user .user-icon {
+    width: 20px;
+    height: 20px;
+
+    flex-basis: 20px;
+  }
+
+  .home-user-name {
+    max-width: 105px;
+
+    font-size: 12px;
+  }
+
+  .home-admin {
+    font-size: 10px;
+  }
+
+  .search-modal {
+    top: 95px;
+
+    width: min(520px, calc(100vw - 40px));
+
+    max-height: calc(100vh - 120px);
+  }
+
+  .search-results {
+    max-height: calc(100vh - 180px);
+  }
+}
+
+
+/* =========================================================
+   SMALL TABLET
+   600px - 767px
+========================================================= */
+
+@media (max-width: 767px) {
+
+  .search-user-wrapper {
+    width: 100%;
+
+    gap: 10px;
+  }
+
+  .search-bar-wrapper {
+    flex: 1 1 auto;
+
+    min-width: 0;
+  }
+
+  .home-search {
+    width: 100%;
+  }
+
+  .home-user {
+    flex: 0 0 auto;
+  }
+
+  .home-user-name {
+    max-width: 90px;
+  }
+
+  .search-modal {
+    top: 80px;
+
+    width: calc(100vw - 24px);
+
+    max-height: calc(100vh - 100px);
+  }
+
+  .search-modal-header {
+    height: 48px;
+  }
+
+  .search-modal-header input {
+    font-size: 13px;
+  }
+
+  .search-results {
+    max-height: calc(100vh - 155px);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   480px - 599px
+========================================================= */
+
+@media (max-width: 599px) {
+
+  .search-user-wrapper {
+    gap: 8px;
+  }
+
+  .search-bar-wrapper {
+    flex: 1 1 auto;
+  }
+
+  .home-search {
+    height: 34px;
+
+    padding: 0 8px;
+
+    gap: 6px;
+  }
+
+  .home-search .search-icon {
+    width: 16px;
+    height: 16px;
+
+    flex-basis: 16px;
+  }
+
+  .home-search input {
+    font-size: 12px;
+  }
+
+  .home-user {
+    gap: 5px;
+  }
+
+  .home-user-name {
+    display: none;
+  }
+
+  .home-admin {
+    display: none;
+  }
+
+  .home-user .user-icon {
+    width: 20px;
+    height: 20px;
+
+    flex-basis: 20px;
+  }
+
+  .search-modal {
+    top: 65px;
+
+    width: calc(100vw - 16px);
+
+    max-height: calc(100vh - 80px);
+  }
+
+  .search-modal-header {
+    height: 46px;
+
+    padding: 0 10px;
+  }
+
+  .search-modal-header input {
+    font-size: 12px;
+  }
+
+  .search-results {
+    max-height: calc(100vh - 125px);
+
+    padding: 6px;
+  }
+
+  .search-result-item {
+    min-height: 43px;
+
+    gap: 8px;
+
+    padding: 0 8px;
+  }
+
+  .search-layer-number,
+  .search-layer-name {
+    font-size: 13px;
+  }
+
+  .search-layer-separator {
+    font-size: 13px;
+  }
+
+  .search-layer-group {
+    max-width: 90px;
+
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   400px - 479px
+========================================================= */
+
+@media (max-width: 479px) {
+
+  .search-user-wrapper {
+    gap: 7px;
+  }
+
+  .home-search {
+    height: 33px;
+
+    padding: 0 7px;
+  }
+
+  .home-search input {
+    font-size: 11px;
+  }
+
+  .home-user .user-icon {
+    width: 19px;
+    height: 19px;
+
+    flex-basis: 19px;
+  }
+
+  .search-modal {
+    top: 58px;
+
+    width: calc(100vw - 12px);
+  }
+
+  .search-modal-header {
+    height: 44px;
+  }
+
+  .search-results {
+    max-height: calc(100vh - 115px);
+  }
+
+  .search-result-item {
+    min-height: 41px;
+  }
+
+  .search-layer-number,
+  .search-layer-name {
+    font-size: 12px;
+  }
+
+  .search-layer-separator {
+    margin: 0 3px;
+
+    font-size: 12px;
+  }
+
+  .search-layer-group {
+    max-width: 75px;
+
+    font-size: 9px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   BELOW 400px
+========================================================= */
+
+@media (max-width: 399px) {
+
+  .search-user-wrapper {
+    gap: 6px;
+  }
+
+  .home-search {
+    height: 32px;
+
+    padding: 0 6px;
+  }
+
+  .home-search .search-icon {
+    width: 15px;
+    height: 15px;
+
+    flex-basis: 15px;
+  }
+
+  .home-search input {
+    font-size: 10px;
+  }
+
+  .home-user .user-icon {
+    width: 18px;
+    height: 18px;
+
+    flex-basis: 18px;
+  }
+
+  .search-modal {
+    top: 52px;
+
+    width: calc(100vw - 8px);
+  }
+
+  .search-modal-header {
+    height: 42px;
+
+    padding: 0 8px;
+  }
+
+  .search-modal-header input {
+    font-size: 11px;
+  }
+
+  .search-result-item {
+    min-height: 40px;
+
+    padding: 0 6px;
+  }
+
+  .search-layer-number,
+  .search-layer-name {
+    font-size: 11px;
+  }
+
+  .search-layer-separator {
+    font-size: 11px;
+  }
+
+  .search-layer-group {
+    display: none;
+  }
+
+  .search-results-title {
+    font-size: 10px;
+  }
+}
+
+
+/* =========================================================
+   ULTRA SMALL
+   BELOW 330px
+========================================================= */
+
+@media (max-width: 329px) {
+
+  .search-user-wrapper {
+    gap: 5px;
+  }
+
+  .home-search {
+    height: 30px;
+
+    padding: 0 5px;
+  }
+
+  .home-search input {
+    font-size: 9px;
+  }
+
+  .home-user .user-icon {
+    width: 17px;
+    height: 17px;
+
+    flex-basis: 17px;
+  }
+
+  .search-modal {
+    top: 48px;
+
+    width: calc(100vw - 6px);
+  }
+
+  .search-modal-header {
+    height: 40px;
+  }
+
+  .search-modal-header input {
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   4K & ULTRA-WIDE SCREENS
+   1920px AND ABOVE
+========================================================= */
+
+@media (min-width: 1920px) {
+  .home-search {
+    height: 40px;
+  }
+
+  .home-search input {
+    font-size: 14px;
+  }
+
+  .home-user {
+    height: 40px;
+  }
+
+  .home-user-name {
+    font-size: 14px;
+  }
+
+  .search-modal {
+    width: min(600px, calc(100vw - 48px));
+  }
+}

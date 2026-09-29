@@ -1,0 +1,1115 @@
+/* =========================================================
+   CATALOGUE QA STYLESHEET (04)
+   Zenve Fashion Operations
+   Exact match to https://zenvefashioncm.ZENVE.app/catalogue-qa
+   Comprehensive Multi-Screen Responsiveness (Mobile 320-640px, Tablet 641-1024px, Laptop 1025-1440px, Desktop 1441-1920px, 4K UHD 1921-3840px)
+========================================================= */
+
+.ZENVE-qa-layout {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--ZENVE-paper, #fbf9f5);
+  color: var(--ZENVE-ink, #17130f);
+  font-family: var(--ZENVE-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.ZENVE-qa-header {
+  width: 100%;
+  background: var(--ZENVE-panel, #ffffff);
+  border-bottom: 1px solid var(--ZENVE-line, #e8e3da);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.ZENVE-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ZENVE-portal-logo img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.ZENVE-header-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.ZENVE-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ZENVE-muted, #736b63);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  margin-bottom: 3px;
+  transition: color 0.15s ease;
+}
+
+.ZENVE-back-link:hover {
+  color: var(--ZENVE-ink, #17130f);
+}
+
+.ZENVE-portal-title {
+  margin: 0;
+  font-family: var(--ZENVE-font-serif, Georgia, serif);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ZENVE-ink, #17130f);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ZENVE-layer-num {
+  font-weight: 400;
+  color: #92400e;
+}
+
+.ZENVE-portal-subtitle {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--ZENVE-muted, #736b63);
+}
+
+.ZENVE-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* =========================================================
+   FEEDBACK BANNERS
+========================================================= */
+
+.ZENVE-alert {
+  margin: 16px 28px 0;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ZENVE-alert-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.ZENVE-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.ZENVE-alert-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 4px;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.ZENVE-qa-main {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 24px 28px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   TOP 4 KPI CARDS
+========================================================= */
+
+.ZENVE-qa-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.ZENVE-kpi-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.ZENVE-label-caps {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted, #736b63);
+}
+
+.ZENVE-kpi-val {
+  margin: 6px 0 0;
+  font-family: var(--ZENVE-font-serif, Georgia, serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #17130f);
+  line-height: 1.15;
+}
+
+.ZENVE-kpi-sub {
+  margin: 3px 0 0;
+  font-size: 11.5px;
+  color: var(--ZENVE-muted, #736b63);
+}
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.ZENVE-portal-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 8px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.ZENVE-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.ZENVE-card-title {
+  margin: 0;
+  font-family: var(--ZENVE-font-serif, Georgia, serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #17130f);
+}
+
+.ZENVE-card-description {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--ZENVE-muted, #736b63);
+}
+
+.ZENVE-item-empty {
+  padding: 28px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--ZENVE-muted, #736b63);
+  border: 1px dashed var(--ZENVE-line, #e8e3da);
+  border-radius: 6px;
+}
+
+/* =========================================================
+   QA QUEUE STACK
+========================================================= */
+
+.ZENVE-qa-queue-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ZENVE-qa-card {
+  background: var(--ZENVE-panel, #ffffff);
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 8px;
+  padding: 18px 20px;
+  transition: box-shadow 0.15s ease;
+}
+
+.ZENVE-qa-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ZENVE-qa-top-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ZENVE-qa-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ZENVE-ink, #17130f);
+}
+
+.ZENVE-sku-id-mono {
+  font-family: monospace;
+  font-size: 11.5px;
+  color: var(--ZENVE-muted, #736b63);
+  margin-top: 4px;
+}
+
+.ZENVE-qa-meta-line {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: var(--ZENVE-muted, #736b63);
+  line-height: 1.4;
+}
+
+/* BADGES */
+.ZENVE-qa-badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.ZENVE-qa-badge.tone-approved {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.ZENVE-qa-badge.tone-pending_qa {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ZENVE-qa-badge.tone-correction {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.ZENVE-qa-badge.tone-rejected {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.ZENVE-tone-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ZENVE-tone-badge.good {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.ZENVE-tone-badge.warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ZENVE-tone-badge.bad {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* DIMENSIONS GRID (10 Dimensions) */
+.ZENVE-dimensions-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ZENVE-dimension-tile {
+  background: #f8f6f0;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ZENVE-dim-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ZENVE-muted, #736b63);
+  line-height: 1.2;
+}
+
+.ZENVE-dim-input {
+  height: 32px;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 4px;
+  padding: 0 8px;
+  font-size: 13px;
+  background: #ffffff;
+  color: var(--ZENVE-ink, #17130f);
+  outline: none;
+  width: 100%;
+}
+
+.ZENVE-dim-input:focus {
+  border-color: #92400e;
+}
+
+/* ACTIONS ROW */
+.ZENVE-qa-actions-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f3efe8;
+}
+
+.ZENVE-note-input {
+  width: 280px;
+  height: 36px;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 13px;
+  background: var(--ZENVE-panel, #ffffff);
+  color: var(--ZENVE-ink, #17130f);
+  outline: none;
+}
+
+.ZENVE-note-input:focus {
+  border-color: #92400e;
+}
+
+.ZENVE-btn-primary-sm {
+  background: #17130f;
+  color: #ffffff;
+  border: 1px solid #17130f;
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.ZENVE-btn-primary-sm:hover {
+  background: #2d2621;
+}
+
+.ZENVE-btn-outline-sm {
+  background: transparent;
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ZENVE-ink, #17130f);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ZENVE-btn-outline-sm:hover {
+  background: #f8f6f0;
+}
+
+/* =========================================================
+   REVIEWED SKUS
+========================================================= */
+
+.ZENVE-reviewed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ZENVE-reviewed-row {
+  border: 1px solid var(--ZENVE-line, #e8e3da);
+  border-radius: 6px;
+  padding: 12px 14px;
+  background: var(--ZENVE-panel, #ffffff);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ZENVE-reviewed-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.ZENVE-reviewed-name {
+  font-weight: 600;
+  color: var(--ZENVE-ink, #17130f);
+}
+
+.ZENVE-reviewed-score {
+  font-weight: 500;
+  color: #92400e;
+}
+
+.ZENVE-reviewed-breakdown {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ZENVE-muted, #736b63);
+  line-height: 1.4;
+}
+
+.ZENVE-reviewed-note {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--ZENVE-ink, #17130f);
+  font-style: italic;
+}
+
+/* =========================================================
+   AUDIT TRAIL
+========================================================= */
+
+.ZENVE-audit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ZENVE-audit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.ZENVE-audit-time {
+  color: var(--ZENVE-muted, #736b63);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ZENVE-audit-msg {
+  color: var(--ZENVE-ink, #17130f);
+}
+
+/* =========================================================
+   COMPREHENSIVE MULTI-SCREEN RESPONSIVE MEDIA QUERIES
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Smartphones like iPhone, Pixel, Galaxy
+--------------------------------------------------------- */
+@media (max-width: 640px) {
+  .ZENVE-qa-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    gap: 12px;
+  }
+
+  .ZENVE-portal-logo {
+    width: 34px;
+    height: 34px;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 20px;
+    gap: 6px;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-subtitle {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .ZENVE-header-right .home-user {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ZENVE-alert {
+    margin: 12px 14px 0;
+    font-size: 12.5px;
+    padding: 8px 12px;
+  }
+
+  .ZENVE-qa-main {
+    padding: 14px 12px 48px;
+    gap: 16px;
+  }
+
+  /* Top 4 KPIs on Mobile: 2-column grid */
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .ZENVE-kpi-card {
+    padding: 10px 12px;
+  }
+
+  .ZENVE-kpi-val {
+    font-size: 20px;
+  }
+
+  .ZENVE-portal-card {
+    padding: 16px 14px;
+  }
+
+  .ZENVE-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* QA Card on Mobile */
+  .ZENVE-qa-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .ZENVE-qa-top-bar {
+    gap: 6px;
+  }
+
+  .ZENVE-qa-title {
+    font-size: 15px;
+  }
+
+  .ZENVE-qa-badge,
+  .ZENVE-tone-badge {
+    font-size: 10.5px;
+    padding: 2px 6px;
+  }
+
+  .ZENVE-sku-id-mono {
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  .ZENVE-qa-meta-line {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* 10 Dimensions Grid on Mobile: 2 columns */
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .ZENVE-dimension-tile {
+    padding: 6px 8px;
+  }
+
+  .ZENVE-dim-label {
+    font-size: 10px;
+  }
+
+  .ZENVE-dim-input {
+    height: 28px;
+    font-size: 12px;
+  }
+
+  /* Actions Row on Mobile: Vertical Stack */
+  .ZENVE-qa-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .ZENVE-note-input {
+    width: 100%;
+    height: 36px;
+  }
+
+  .ZENVE-btn-primary-sm,
+  .ZENVE-btn-outline-sm {
+    width: 100%;
+    height: 36px;
+    justify-content: center;
+  }
+
+  /* Reviewed Row on Mobile */
+  .ZENVE-reviewed-row {
+    padding: 10px 12px;
+  }
+
+  .ZENVE-reviewed-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .ZENVE-reviewed-breakdown {
+    font-size: 11.5px;
+  }
+
+  /* Audit List on Mobile */
+  .ZENVE-audit-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+/* Extra small mobile (< 380px) */
+@media (max-width: 380px) {
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ZENVE-dimensions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS & MEDIUM SCREENS (641px - 1140px)
+   iPad, iPad Air, iPad Pro, Android Tablets, Surface Pro
+--------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1140px) {
+  .ZENVE-qa-header {
+    padding: 14px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ZENVE-header-left {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .ZENVE-header-title-block {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 22px;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .ZENVE-portal-subtitle {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ZENVE-muted, #736b63);
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .ZENVE-header-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--ZENVE-line, #e8e3da);
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    flex: 1;
+    max-width: 340px;
+    min-width: 180px;
+  }
+
+  .ZENVE-header-right .home-user {
+    flex-shrink: 0;
+  }
+
+  .ZENVE-qa-main {
+    max-width: 100%;
+    padding: 20px 24px 60px;
+    gap: 20px;
+  }
+
+  /* 4 KPIs on Tablet: 4 on landscape, 2 on portrait */
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* 10 Dimensions Grid: 5 columns on landscape (2 rows of 5) */
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .ZENVE-qa-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ZENVE-note-input {
+    flex: 1;
+    min-width: 220px;
+  }
+}
+
+/* Tablet portrait & narrow tablets (641px - 840px) */
+@media (min-width: 641px) and (max-width: 840px) {
+  .ZENVE-qa-header {
+    padding: 12px 18px;
+    gap: 10px;
+  }
+
+  .ZENVE-header-right {
+    gap: 12px;
+    padding-top: 10px;
+  }
+
+  .ZENVE-header-right .search-user-wrapper {
+    gap: 8px;
+  }
+
+  .ZENVE-header-right .search-bar-wrapper {
+    max-width: 240px;
+    min-width: 140px;
+  }
+
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* 10 Dimensions on portrait: 2 columns (5 rows of 2) */
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .ZENVE-qa-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .ZENVE-note-input {
+    width: 100%;
+  }
+
+  .ZENVE-qa-actions-row>button {
+    flex: 1;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. STANDARD LAPTOPS (1141px - 1440px)
+   MacBook Air, MacBook Pro 14", Ultrabooks
+--------------------------------------------------------- */
+@media (min-width: 1141px) and (max-width: 1440px) {
+  .ZENVE-qa-header {
+    padding: 16px 32px;
+  }
+
+  .ZENVE-qa-main {
+    max-width: 1280px;
+    padding: 24px 32px 60px;
+  }
+
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   4. WIDESCREEN DESKTOPS (1441px - 1920px)
+   Full HD 1080p and 1440p Monitors
+--------------------------------------------------------- */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .ZENVE-qa-header {
+    padding: 18px 40px;
+  }
+
+  .ZENVE-qa-main {
+    max-width: 1540px;
+    padding: 28px 40px 60px;
+  }
+
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD DISPLAYS (1921px - 3840px+)
+   Studio Displays, 4K UHD Monitors, Retina 4K/5K
+--------------------------------------------------------- */
+@media (min-width: 1921px) {
+  .ZENVE-qa-header {
+    padding: 24px 64px;
+  }
+
+  .ZENVE-portal-logo {
+    width: 54px;
+    height: 54px;
+  }
+
+  .ZENVE-back-link {
+    font-size: 13px;
+  }
+
+  .ZENVE-portal-title {
+    font-size: 34px;
+    gap: 12px;
+  }
+
+  .ZENVE-layer-num {
+    font-size: 34px;
+  }
+
+  .ZENVE-portal-subtitle {
+    font-size: 16px;
+  }
+
+  .ZENVE-qa-main {
+    max-width: 2800px;
+    padding: 36px 64px 80px;
+    gap: 32px;
+  }
+
+  /* 4K Top 4 KPIs */
+  .ZENVE-qa-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .ZENVE-kpi-card {
+    padding: 20px 24px;
+    border-radius: 10px;
+  }
+
+  .ZENVE-label-caps {
+    font-size: 12.5px;
+  }
+
+  .ZENVE-kpi-val {
+    font-size: 36px;
+  }
+
+  .ZENVE-kpi-sub {
+    font-size: 13.5px;
+  }
+
+  .ZENVE-portal-card {
+    padding: 28px 32px;
+    border-radius: 10px;
+  }
+
+  .ZENVE-card-title {
+    font-size: 24px;
+  }
+
+  .ZENVE-card-description {
+    font-size: 15.5px;
+  }
+
+  /* 4K QA Card */
+  .ZENVE-qa-card {
+    padding: 24px 28px;
+    border-radius: 10px;
+    gap: 18px;
+  }
+
+  .ZENVE-qa-title {
+    font-size: 20px;
+  }
+
+  .ZENVE-qa-badge,
+  .ZENVE-tone-badge {
+    font-size: 12.5px;
+    padding: 4px 10px;
+  }
+
+  .ZENVE-sku-id-mono {
+    font-size: 13px;
+  }
+
+  .ZENVE-qa-meta-line {
+    font-size: 15px;
+  }
+
+  /* 4K Dimensions */
+  .ZENVE-dimensions-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .ZENVE-dimension-tile {
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+  .ZENVE-dim-label {
+    font-size: 12px;
+  }
+
+  .ZENVE-dim-input {
+    height: 38px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  /* 4K Actions Row */
+  .ZENVE-qa-actions-row {
+    gap: 14px;
+    padding-top: 18px;
+  }
+
+  .ZENVE-note-input {
+    width: 360px;
+    height: 42px;
+    font-size: 14.5px;
+    border-radius: 6px;
+  }
+
+  .ZENVE-btn-primary-sm,
+  .ZENVE-btn-outline-sm {
+    height: 42px;
+    padding: 0 18px;
+    font-size: 13.5px;
+    border-radius: 6px;
+  }
+
+  /* 4K Reviewed Rows */
+  .ZENVE-reviewed-row {
+    padding: 16px 20px;
+    border-radius: 8px;
+    gap: 6px;
+  }
+
+  .ZENVE-reviewed-name {
+    font-size: 15.5px;
+  }
+
+  .ZENVE-reviewed-breakdown {
+    font-size: 13px;
+  }
+}
+
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  .ZENVE-qa-main {
+    max-width: 3400px;
+  }
+
+  .ZENVE-kpi-val {
+    font-size: 42px;
+  }
+
+  .ZENVE-qa-title {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,1990 @@
+/* =========================================================
+   ZENVE FASHION
+   HOME PAGE
+   FULL RESPONSIVE CSS
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  background: #faf9f5;
+
+  color: #17130f;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+}
+
+
+/* =========================================================
+   HOME PAGE
+========================================================= */
+
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  background: #faf9f5;
+
+  color: #17130f;
+
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header-content {
+  box-sizing: border-box;
+  width: 100%;
+  border-bottom: 1px solid #dcd6c8;
+  background: #fdfcf9;
+}
+
+.home-header {
+  width: 100%;
+  max-width: var(--page-max-w, 1440px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: var(--page-py, clamp(20px, 2.5vw, 36px)) var(--page-px, clamp(20px, 3.2vw, 56px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER LEFT
+========================================================= */
+
+.header-left {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 24px;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.zenve-logo {
+  width: clamp(70px, 6vw, 100px);
+  height: auto;
+  max-height: 100px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zenve-logo img {
+  width: 100%;
+  height: auto;
+  max-height: 90px;
+
+  display: block;
+
+  object-fit: contain;
+}
+
+
+/* =========================================================
+   HOME TITLE
+========================================================= */
+
+.home-title {
+  margin: 0;
+
+  color: #201914;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: var(--font-h1, clamp(22px, 2.8vw, 40px));
+
+  font-weight: 400;
+
+  line-height: 1.15;
+
+  letter-spacing: -1px;
+}
+
+
+/* =========================================================
+   HEADER RIGHT
+========================================================= */
+
+.header-right {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.home-search {
+  width: 285px;
+  height: 48px;
+
+  padding: 0 10px 0 17px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border: 1px solid #dedbd4;
+
+  border-radius: 7px;
+
+  background: #fbf9f1;
+
+  color: #6e6962;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.02);
+
+  flex-shrink: 0;
+}
+
+.home-search svg {
+  flex-shrink: 0;
+
+  color: #746e67;
+}
+
+.home-search>span {
+  min-width: 0;
+
+  flex: 1;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+
+  font-size: 15px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+.home-search kbd {
+  min-width: 28px;
+  height: 24px;
+
+  padding: 0 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dedbd4;
+
+  border-radius: 6px;
+
+  background: #faf8f3;
+
+  color: #777169;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 11px;
+
+  font-weight: 400;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+.home-user {
+  width: 204px !important;
+  height: 35px !important;
+
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  border: 1px solid #dedbd4;
+
+  border-radius: 7px;
+
+  background: #fbf9f1;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.02);
+
+  flex-shrink: 0;
+}
+
+.home-user svg {
+  flex-shrink: 0;
+
+  color: #746e67;
+}
+
+
+/* =========================================================
+   USER NAME
+========================================================= */
+
+.home-user-name {
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #15120f;
+
+  font-size: 17px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.home-admin {
+  width: auto;
+  height: 20px;
+
+  margin-left: auto;
+
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+
+  background: #f1e4d3;
+
+  color: #17120d;
+
+  font-size: 13px;
+
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   KPI SECTION
+========================================================= */
+
+.kpi-section {
+  width: 100%;
+  max-width: var(--page-max-w, 1440px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 18px var(--page-px, clamp(20px, 3.2vw, 56px)) 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--card-gap, 16px);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   KPI CARD
+========================================================= */
+
+.kpi-card {
+  width: 100%;
+
+  min-height: 120px;
+
+  padding: var(--card-padding, 20px);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  border: 1px solid #dedbd4;
+
+  border-radius: var(--radius-md, 8px);
+
+  background: #fefdfb;
+
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.02),
+    0 10px 22px rgba(48, 37, 26, 0.05);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(48, 37, 26, 0.09);
+}
+
+
+/* =========================================================
+   KPI LABEL
+========================================================= */
+
+.kpi-label {
+  margin-bottom: 8px;
+
+  color: #766e65;
+
+  font-size: var(--font-label, 13px);
+
+  font-weight: 500;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   KPI VALUE
+========================================================= */
+
+.kpi-value {
+  margin-bottom: 6px;
+
+  color: #090806;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: var(--font-kpi, 36px);
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  letter-spacing: -1px;
+}
+
+
+/* =========================================================
+   KPI SUBTITLE
+========================================================= */
+
+.kpi-subtitle {
+  color: #776f67;
+
+  font-size: var(--font-sub, 14px);
+
+  font-weight: 400;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   LAYERS SECTION
+========================================================= */
+
+.layers-section {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 36px 0 72px;
+  background: #faf9f5;
+}
+
+.layers-header,
+.layers-grid {
+  width: 100%;
+  max-width: var(--page-max-w, 1440px);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-px, clamp(20px, 3.2vw, 56px));
+  padding-right: var(--page-px, clamp(20px, 3.2vw, 56px));
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   LAYERS HEADER
+========================================================= */
+
+.layers-header {
+  width: 100%;
+
+  margin-bottom: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   LAYERS TITLE
+========================================================= */
+
+.layers-title-wrapper {
+  min-width: 0;
+
+  display: flex;
+  align-items: baseline;
+
+  gap: 13px;
+}
+
+.layers-title-wrapper h2 {
+  margin: 0;
+
+  color: #18130f;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 25px;
+
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+.layers-count {
+  color: #766e65;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 17px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   EXCEPTION BADGE
+========================================================= */
+
+.exception-badge {
+  min-height: 32px;
+
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: #f3e5d2;
+
+  color: #241b14;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   LAYERS FILTER TABS
+========================================================= */
+
+.layers-filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #eae5dc;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.layers-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #72685e;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.layers-tab-btn:hover {
+  color: #17130f;
+}
+
+.layers-tab-btn.active {
+  background: #fffdfa;
+  color: #17130f;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================================
+   LAYER CLEARANCE PILLS
+========================================================= */
+
+.layer-clearance-pill {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.layer-clearance-pill.authorized {
+  background: #eef6f0;
+  color: #217336;
+  border: 1px solid #cce5d1;
+}
+
+.layer-clearance-pill.restricted {
+  background: #fbf0ee;
+  color: #9c4538;
+  border: 1px solid #eed6d2;
+}
+
+/* =========================================================
+   RESTRICTED LAYER CARD
+========================================================= */
+
+.layer-card.restricted {
+  opacity: 0.72;
+  background: #faf8f4;
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.layer-card.restricted:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  border-color: #c9857b;
+  box-shadow: 0 6px 16px rgba(156, 69, 56, 0.08);
+}
+
+/* =========================================================
+   CLEARANCE MODAL
+========================================================= */
+
+.clearance-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 16, 12, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.clearance-modal {
+  max-width: 490px;
+  width: 100%;
+  background: #fffdfa;
+  border: 1px solid #ded8cf;
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(35, 25, 18, 0.2);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.modal-lock-icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #f9ebe8;
+  color: #a34c3f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #a34c3f;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-family: var(--serif, Georgia, serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  color: #120e0a;
+}
+
+.modal-desc {
+  font-size: 13.5px;
+  color: #685e54;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.modal-roles-box {
+  background: #fbf9f4;
+  border: 1px solid #e6e0d6;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.modal-roles-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #796e63;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.modal-roles-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-role-pill {
+  border: 1px solid #ded7cc;
+  background: #fffdfa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2b221a;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.modal-role-pill:hover {
+  background: #251b14;
+  color: #ffffff;
+  border-color: #251b14;
+  transform: translateX(2px);
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-modal-primary {
+  height: 42px;
+  border-radius: 6px;
+  background: #251b14;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-modal-primary:hover {
+  background: #110c08;
+}
+
+.btn-modal-dismiss {
+  height: 38px;
+  border: 1px solid #ded8cf;
+  background: transparent;
+  color: #665b50;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-modal-dismiss:hover {
+  background: #f5f0e8;
+  color: #1a130e;
+}
+
+@media (max-width: 640px) {
+  .layers-filter-tabs {
+    width: 100%;
+    display: flex;
+  }
+
+  .layers-tab-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 11.5px;
+    padding: 7px 6px;
+  }
+
+  .clearance-modal {
+    padding: 24px 18px;
+  }
+}
+
+
+/* =========================================================
+   LAYER GRID
+========================================================= */
+
+.layers-grid {
+  width: 100%;
+  max-width: var(--page-max-w, 1440px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+
+/* =========================================================
+   LAYER CARD (EXACT REPLICATED VIEW)
+========================================================= */
+
+.layer-card {
+  width: 100%;
+  min-height: 165px;
+  padding: 24px 26px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-decoration: none;
+  border: 1px solid #ede8e1;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    0 4px 14px rgba(40, 30, 20, 0.035);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.layer-card:hover {
+  transform: translateY(-2px);
+  border-color: #ded6cb;
+  box-shadow:
+    0 6px 20px rgba(40, 30, 20, 0.07);
+}
+
+.layer-card:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   LAYER TOP
+========================================================= */
+
+.layer-top {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+
+/* =========================================================
+   LAYER GROUP
+========================================================= */
+
+.layer-group {
+  color: #8c827a;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   LAYER NUMBER
+========================================================= */
+
+.layer-number {
+  color: #c59358;
+  font-family:
+    'Playfair Display',
+    'Cormorant Garamond',
+    Georgia,
+    'Times New Roman',
+    serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   LAYER NAME
+========================================================= */
+
+.layer-name {
+  margin: 18px 0 9px 0;
+  color: #171412;
+  font-family:
+    'Playfair Display',
+    'Cormorant Garamond',
+    Georgia,
+    'Times New Roman',
+    serif;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+
+/* =========================================================
+   LAYER DESCRIPTION
+========================================================= */
+
+.layer-blurb {
+  margin: 0;
+  color: #766e66;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.52;
+}
+
+
+/* =========================================================
+   LARGE 4K / ULTRA WIDE
+   2560px+
+========================================================= */
+
+@media (min-width: 2560px) {
+
+  .home-header {
+    min-height: 230px;
+
+    padding:
+      45px 65px;
+  }
+
+  .header-left {
+    gap: 42px;
+  }
+
+  .zenve-logo {
+    width: 125px;
+    height: 135px;
+  }
+
+  .home-title {
+    font-size: 58px;
+    letter-spacing: -2.5px;
+  }
+
+  .header-right {
+    gap: 14px;
+  }
+
+  .home-search {
+    width: 380px;
+    height: 58px;
+  }
+
+  .home-search>span {
+    font-size: 17px;
+  }
+
+  .home-user {
+    min-width: 390px;
+    height: 58px;
+  }
+
+  .home-user-name {
+    font-size: 19px;
+  }
+
+  .kpi-section {
+    padding:
+      45px 65px 30px;
+
+    gap: 22px;
+  }
+
+  .kpi-card {
+    min-height: 165px;
+
+    padding:
+      27px 30px;
+  }
+
+  .kpi-label {
+    font-size: 17px;
+  }
+
+  .kpi-value {
+    font-size: 44px;
+  }
+
+  .kpi-subtitle {
+    font-size: 19px;
+  }
+
+  .layers-section {
+    padding:
+      55px 65px 100px;
+  }
+
+  .layers-header {
+    margin-bottom: 35px;
+  }
+
+  .layers-title-wrapper h2 {
+    font-size: 36px;
+  }
+
+  .layers-count {
+    font-size: 19px;
+  }
+
+  .exception-badge {
+    min-height: 38px;
+
+    padding: 0 20px;
+
+    font-size: 16px;
+  }
+
+
+}
+
+
+/* =========================================================
+   LARGE DESKTOP
+   1920px - 2559px
+========================================================= */
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+
+  .home-header {
+    min-height: 215px;
+
+    padding:
+      40px 50px;
+  }
+
+  .zenve-logo {
+    width: 115px;
+    height: 125px;
+  }
+
+  .home-title {
+    font-size: 52px;
+  }
+
+  .home-search {
+    width: 350px;
+    height: 54px;
+  }
+
+  .home-user {
+    min-width: 350px;
+    height: 54px;
+  }
+
+  .kpi-section {
+    padding:
+      35px 50px 25px;
+
+    gap: 20px;
+  }
+
+  .kpi-card {
+    min-height: 150px;
+
+    padding:
+      24px 27px;
+  }
+
+  .kpi-value {
+    font-size: 40px;
+  }
+
+  .layers-section {
+    padding:
+      50px 50px 90px;
+  }
+
+
+}
+
+
+/* =========================================================
+   DESKTOP
+   1600px - 1919px
+========================================================= */
+
+@media (min-width: 1600px) and (max-width: 1919px) {
+
+  .home-header {
+    min-height: 205px;
+
+    padding:
+      38px 40px;
+  }
+
+  .zenve-logo {
+    width: 112px;
+    height: 120px;
+  }
+
+  .home-title {
+    font-size: 48px;
+  }
+
+  .home-search {
+    width: 330px;
+    height: 52px;
+  }
+
+  .home-user {
+    min-width: 335px;
+    height: 52px;
+  }
+
+  .kpi-section {
+    padding:
+      25px var(--page-px, clamp(20px, 3.2vw, 56px)) 25px;
+
+    gap: 20px;
+  }
+
+  .kpi-card {
+    min-height: 145px;
+  }
+
+  .kpi-value {
+    font-size: 39px;
+  }
+
+  .layers-section {
+    padding:
+      50px 40px 85px;
+  }
+
+
+}
+
+
+/* =========================================================
+   LAPTOP
+   1200px - 1599px
+========================================================= */
+
+@media (min-width: 1200px) and (max-width: 1599px) {
+
+  .home-header {
+    min-height: 100px;
+
+    padding:
+      30px var(--page-px, clamp(20px, 3.2vw, 56px));
+  }
+
+  .header-left {
+    gap: 25px;
+  }
+
+  .zenve-logo {
+    width: 95px;
+    height: 105px;
+  }
+
+  .home-title {
+    font-size: 40px;
+  }
+
+  .home-search {
+    width: 270px;
+    height: 48px;
+  }
+
+  .home-user {
+    min-width: 250px;
+    height: 48px;
+  }
+
+  .home-user-name {
+    font-size: 14px;
+  }
+
+  .kpi-section {
+    padding:
+      18px var(--page-px, clamp(20px, 3.2vw, 56px)) 24px;
+
+    gap: 15px;
+  }
+
+  .kpi-card {
+    min-height: 115px;
+
+    padding:
+      19px 20px;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+  }
+
+  .kpi-subtitle {
+    font-size: 16px;
+  }
+
+  .layers-section {
+    padding:
+      40px 35px 70px;
+  }
+
+
+}
+
+
+/* =========================================================
+   SMALL LAPTOP
+   900px - 1199px
+========================================================= */
+
+@media (min-width: 900px) and (max-width: 1199px) {
+
+  .home-header {
+    min-height: 110px;
+
+    padding:
+      20px var(--page-px, clamp(20px, 3.2vw, 56px));
+
+    gap: 20px;
+  }
+
+  .header-left {
+    gap: 18px;
+  }
+
+  .zenve-logo {
+    width: 80px;
+    height: 90px;
+  }
+
+  .home-title {
+    font-size: 31px;
+
+    letter-spacing: -1px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .home-search {
+    width: 210px;
+    height: 35px;
+
+    padding-left: 12px;
+
+    gap: 8px;
+  }
+
+  .home-search>span {
+    font-size: 13px;
+  }
+
+  .home-user {
+    min-width: 204px;
+    height: 35px;
+
+    padding: 0 12px;
+
+    gap: 8px;
+  }
+
+  .home-user-name {
+    font-size: 12px;
+  }
+
+  .home-admin {
+    width: 20px !important;
+
+    padding: 0 8px;
+
+    font-size: 12px;
+  }
+
+  .kpi-section {
+    padding:
+      22px var(--page-px, clamp(20px, 3.2vw, 56px)) 18px;
+
+    gap: 12px;
+  }
+
+  .kpi-card {
+    min-height: 120px;
+
+    padding:
+      17px 18px;
+  }
+
+  .kpi-label {
+    font-size: 12px;
+
+    letter-spacing: 1.5px;
+  }
+
+  .kpi-value {
+    font-size: 31px;
+  }
+
+  .kpi-subtitle {
+    font-size: 14px;
+  }
+
+  .layers-section {
+    padding:
+      35px 0 60px;
+  }
+
+
+}
+
+
+/* =========================================================
+   TABLET
+   700px - 899px
+========================================================= */
+
+@media (min-width: 700px) and (max-width: 899px) {
+
+  .home-header {
+    min-height: auto;
+
+    padding:
+      25px 22px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 22px;
+  }
+
+  .header-left {
+    width: 100%;
+
+    gap: 20px;
+  }
+
+  .zenve-logo {
+    width: 75px;
+    height: 85px;
+  }
+
+  .home-title {
+    font-size: 32px;
+
+    white-space: normal;
+  }
+
+  .header-right {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr) minmax(0, 1fr);
+
+    gap: 10px;
+  }
+
+  .home-search {
+    width: 100%;
+  }
+
+  .home-user {
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .kpi-section {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    padding:
+      20px 22px 20px;
+
+    gap: 14px;
+  }
+
+  .kpi-card {
+    min-height: 130px;
+  }
+
+  .layers-section {
+    padding:
+      35px 22px 55px;
+  }
+
+  .layers-header {
+    align-items: flex-start;
+  }
+
+  .layers-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .layer-card {
+    min-height: 195px;
+
+    padding:
+      22px 22px;
+  }
+
+  .layer-name {
+    font-size: 24px;
+
+    margin-top: 26px;
+  }
+
+  .layer-blurb {
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   450px - 699px
+========================================================= */
+
+@media (min-width: 450px) and (max-width: 699px) {
+
+  .home-header {
+    min-height: auto;
+
+    padding:
+      22px 18px 28px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 22px;
+  }
+
+  .header-left {
+    width: 100%;
+
+    gap: 14px;
+  }
+
+  .zenve-logo {
+    width: 62px;
+    height: 72px;
+  }
+
+  .home-title {
+    font-size: 28px;
+
+    line-height: 1.08;
+
+    letter-spacing: -0.6px;
+
+    white-space: normal;
+  }
+
+  .header-right {
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 10px;
+  }
+
+  .home-search {
+    width: 100%;
+
+    height: 48px;
+  }
+
+  .home-search>span {
+    font-size: 15px;
+  }
+
+  .home-user {
+    width: 100%;
+
+    min-width: 0;
+
+    height: 48px;
+  }
+
+  .home-user-name {
+    font-size: 15px;
+  }
+
+  .home-admin {
+    height: 28px;
+
+    min-width: 65px;
+  }
+
+  .kpi-section {
+    grid-template-columns: 1fr;
+
+    padding:
+      15px 18px 25px;
+
+    gap: 12px;
+  }
+
+  .kpi-card {
+    min-height: 125px;
+
+    padding:
+      20px;
+  }
+
+  .layers-section {
+    padding:
+      30px 18px 45px;
+  }
+
+  .layers-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+  }
+
+  .layers-title-wrapper {
+    width: 100%;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+  }
+
+  .layers-title-wrapper h2 {
+    font-size: 26px;
+  }
+
+  .layers-count {
+    font-size: 15px;
+  }
+
+  .layers-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .layer-card {
+    min-height: 185px;
+
+    padding:
+      21px 20px;
+  }
+
+  .layer-name {
+    font-size: 24px;
+
+    margin-top: 25px;
+  }
+
+  .layer-blurb {
+    font-size: 16px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   320px - 449px
+========================================================= */
+
+@media (max-width: 449px) {
+
+  .home-header {
+    min-height: auto;
+
+    padding:
+      18px 14px 24px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 20px;
+  }
+
+  .header-left {
+    width: 100%;
+
+    gap: 11px;
+
+    align-items: center;
+  }
+
+  .zenve-logo {
+    width: 52px;
+    height: 62px;
+  }
+
+  .home-title {
+    font-size: 24px;
+
+    line-height: 1.08;
+
+    letter-spacing: -0.4px;
+
+    white-space: normal;
+  }
+
+  .header-right {
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 9px;
+  }
+
+  .home-search {
+    width: 100%;
+
+    height: 46px;
+
+    padding:
+      0 10px 0 13px;
+
+    gap: 9px;
+  }
+
+  .home-search>span {
+    font-size: 14px;
+  }
+
+  .home-search kbd {
+    min-width: 25px;
+
+    height: 22px;
+
+    padding: 0 5px;
+
+    font-size: 10px;
+  }
+
+  .home-user {
+    width: 100%;
+
+    min-width: 0;
+
+    height: 46px;
+
+    padding:
+      0 12px;
+
+    gap: 8px;
+  }
+
+  .home-user-name {
+    font-size: 14px;
+  }
+
+  .home-admin {
+    min-width: 58px;
+
+    height: 26px;
+
+    padding:
+      0 9px;
+
+    font-size: 12px;
+  }
+
+  .kpi-section {
+    grid-template-columns: 1fr;
+
+    padding:
+      14px 14px 25px;
+
+    gap: 10px;
+  }
+
+  .kpi-card {
+    min-height: 120px;
+
+    padding:
+      18px;
+  }
+
+  .kpi-label {
+    margin-bottom: 10px;
+
+    font-size: 12px;
+
+    letter-spacing: 1.6px;
+  }
+
+  .kpi-value {
+    font-size: 32px;
+  }
+
+  .kpi-subtitle {
+    font-size: 15px;
+  }
+
+  .layers-section {
+    padding:
+      28px 14px 40px;
+  }
+
+  .layers-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+  }
+
+  .layers-title-wrapper {
+    width: 100%;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+  }
+
+  .layers-title-wrapper h2 {
+    font-size: 24px;
+  }
+
+  .layers-count {
+    font-size: 14px;
+  }
+
+  .exception-badge {
+    min-height: 30px;
+
+    padding:
+      0 13px;
+
+    font-size: 13px;
+  }
+
+  .layers-grid {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+  }
+
+  .layer-card {
+    min-height: 180px;
+
+    padding:
+      20px 18px;
+  }
+
+  .layer-group {
+    font-size: 11px;
+
+    letter-spacing: 1.4px;
+  }
+
+  .layer-number {
+    font-size: 23px;
+  }
+
+  .layer-name {
+    margin:
+      24px 0 10px;
+
+    font-size: 23px;
+  }
+
+  .layer-blurb {
+    font-size: 15px;
+
+    line-height: 1.4;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+   BELOW 360px
+========================================================= */
+
+@media (max-width: 359px) {
+
+  .home-header {
+    padding:
+      16px 12px 22px;
+  }
+
+  .header-left {
+    gap: 9px;
+  }
+
+  .zenve-logo {
+    width: 46px;
+    height: 55px;
+  }
+
+  .home-title {
+    font-size: 21px;
+  }
+
+  .home-search {
+    height: 44px;
+  }
+
+  .home-user {
+    height: 44px;
+  }
+
+  .home-user-name {
+    font-size: 13px;
+  }
+
+  .home-admin {
+    min-width: 52px;
+
+    padding:
+      0 7px;
+
+    font-size: 11px;
+  }
+
+  .kpi-card {
+    min-height: 115px;
+
+    padding: 16px;
+  }
+
+  .kpi-value {
+    font-size: 29px;
+  }
+
+  .layers-section {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .layer-card {
+    padding:
+      18px 16px;
+  }
+
+  .layer-name {
+    font-size: 21px;
+  }
+
+  .layer-blurb {
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+.layer-card:focus-visible,
+.home-search:focus-within,
+.home-user:focus-within {
+  outline: 2px solid #b87333;
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .layer-card {
+    transition: none;
+  }
+
+  .layer-card:hover {
+    transform: none;
+  }
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+  .home-page {
+    background: #ffffff;
+  }
+
+  .home-header,
+  .kpi-section,
+  .layers-section {
+    background: #ffffff;
+  }
+
+  .layer-card,
+  .kpi-card {
+    box-shadow: none;
+  }
+}
+
+/* =========================================================
+   4K & ULTRA-WIDE SCREENS
+   1920px AND ABOVE
+========================================================= */
+
+@media (min-width: 1920px) {
+
+  .home-header,
+  .kpi-section {
+    max-width: var(--page-max-w, 1680px);
+  }
+
+  .layers-header,
+  .layers-grid {
+    max-width: var(--page-max-w, 1440px);
+  }
+
+  .kpi-card {
+    min-height: 145px;
+  }
+}

@@ -1,0 +1,1175 @@
+:root {
+  --ink: #14181f;
+  --ink-soft: #3b4149;
+  --paper: #f7f5f0;
+  --panel: #fffdf9;
+  --line: #dcd6c8;
+  --brass: #a8712f;
+  --brass-deep: #7c521f;
+  --moss: #57684f;
+  --brick: #a34c3f;
+  --brick-soft: #f4e6e2;
+  --moss-soft: #e9efe4;
+
+  --serif: 'Playfair Display', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Standardized Responsive Spacing Scale (Mobile 320px -> 4K 3840px) */
+  --page-px: clamp(20px, 3.2vw, 56px);
+  --page-py: clamp(18px, 2.2vw, 36px);
+  --page-max-w: 1440px;
+
+  --section-gap: clamp(18px, 2.4vw, 32px);
+  --card-padding: clamp(16px, 2vw, 26px);
+  --card-gap: clamp(12px, 1.6vw, 22px);
+
+  /* Fluid Modular Typography Hierarchy */
+  --font-h1: clamp(24px, 2.8vw, 40px);
+  --font-h2: clamp(19px, 2.2vw, 28px);
+  --font-h3: clamp(16px, 1.6vw, 22px);
+  --font-body: clamp(13.5px, 1vw, 15px);
+  --font-sub: clamp(11.5px, 0.85vw, 13px);
+  --font-kpi: clamp(28px, 3.4vw, 44px);
+  --font-label: clamp(11px, 0.8vw, 12.5px);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* Global Responsive Layout Utilities */
+.zenve-container {
+  width: 100%;
+  max-width: var(--page-max-w);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-px);
+  padding-right: var(--page-px);
+  box-sizing: border-box;
+}
+
+.zenve-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--brass);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 32px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.brand-mark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.01em;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  border-left: 1px solid var(--line);
+  padding-left: 10px;
+}
+
+.back-link {
+  font-size: 13px;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.back-link:hover {
+  border-color: var(--brass);
+  color: var(--brass-deep);
+}
+
+.search-fake {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+
+.search-fake kbd {
+  font-family: var(--sans);
+  font-size: 11px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 5px;
+  background: var(--panel);
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.who-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--brass);
+  color: var(--panel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.who-text {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.who-text .role {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+/* ---------- Home hero ---------- */
+
+.hero {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-eyebrow {
+  font-size: 13px;
+  color: var(--brass-deep);
+  margin-bottom: 14px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(32px, 4.4vw, 52px);
+  line-height: 1.08;
+  margin: 0 0 16px;
+  max-width: 14ch;
+}
+
+.hero p {
+  font-size: 16px;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---------- Stat strip ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.stat {
+  padding: 26px 32px;
+  border-left: 1px solid var(--line);
+}
+
+.stat:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.stat-value {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.stat-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* ---------- Layer ledger ---------- */
+
+.ledger {
+  padding: 44px 0 80px;
+}
+
+.ledger-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.ledger-head h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  margin: 0;
+}
+
+.ledger-flag {
+  font-size: 13px;
+  color: var(--brick);
+  background: var(--brick-soft);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.ledger-list {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.ledger-row {
+  display: grid;
+  grid-template-columns: 56px 110px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.15s ease;
+}
+
+.ledger-row:hover {
+  background: var(--panel);
+}
+
+.ledger-num {
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.ledger-group {
+  font-size: 12px;
+  color: var(--brass-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ledger-name {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 500;
+  margin: 0 0 3px;
+}
+
+.ledger-blurb {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.ledger-cta {
+  font-size: 13px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 7px 14px;
+  white-space: nowrap;
+}
+
+.ledger-row:hover .ledger-cta {
+  border-color: var(--brass);
+  color: var(--brass-deep);
+}
+
+@media (max-width: 720px) {
+  .ledger-row {
+    grid-template-columns: 40px 1fr;
+    grid-template-areas:
+      'num name'
+      'group name'
+      '. cta';
+    row-gap: 6px;
+  }
+
+  .ledger-num {
+    grid-area: num;
+  }
+
+  .ledger-group {
+    grid-area: group;
+  }
+
+  .ledger-name,
+  .ledger-blurb {
+    grid-area: name;
+  }
+
+  .ledger-blurb {
+    margin-top: 32px;
+  }
+
+  .ledger-cta {
+    grid-area: cta;
+    justify-self: start;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat:nth-child(3) {
+    border-left: none;
+  }
+
+  .stat:nth-child(3),
+  .stat:nth-child(4) {
+    padding-top: 20px;
+  }
+}
+
+/* ---------- Layer detail page ---------- */
+
+.layer-head {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.layer-crumb {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.layer-crumb:hover {
+  color: var(--brass-deep);
+}
+
+.layer-tag {
+  font-size: 13px;
+  color: var(--brass-deep);
+  margin-bottom: 10px;
+}
+
+.layer-head h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.6vw, 40px);
+  margin: 0 0 12px;
+}
+
+.layer-head p {
+  color: var(--ink-soft);
+  max-width: 60ch;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.layer-body {
+  padding: 40px 0 80px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 56px;
+}
+
+@media (max-width: 800px) {
+  .layer-body {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+.layer-stat-block {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 24px;
+  border-radius: 3px;
+  height: fit-content;
+}
+
+.layer-stat-block .stat-value {
+  font-size: 36px;
+}
+
+.layer-stat-block .stat-label {
+  margin-top: 6px;
+}
+
+.layer-table-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 0 0 14px;
+}
+
+.layer-table {
+  border-top: 1px solid var(--line);
+}
+
+.layer-table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.layer-table-row .name {
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.layer-table-row .note {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+.pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  background: var(--moss-soft);
+  color: var(--moss);
+}
+
+.pill.warn {
+  background: var(--brick-soft);
+  color: var(--brick);
+}
+
+/* ---------- Storefront ---------- */
+
+.shop-head {
+  padding: 40px 0 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.shop-head h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.6vw, 40px);
+  margin: 0 0 8px;
+}
+
+.shop-head p {
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+.shop-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.shop-stats .stat {
+  padding: 22px 32px;
+}
+
+.shop-layout {
+  padding: 40px 0 100px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 48px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.shop-section-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 6px;
+}
+
+.shop-section-note {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0 0 24px;
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 560px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product-card {
+  background: var(--panel);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-swatch {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 3px;
+  background: linear-gradient(135deg, var(--swatch-a, #e7ded0), var(--swatch-b, #cfc4ac));
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.product-badge {
+  font-size: 11px;
+  background: var(--ink);
+  color: var(--panel);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.product-name {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  margin: 4px 0 0;
+}
+
+.product-maker {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.price-now {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.price-was {
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-decoration: line-through;
+}
+
+.product-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.product-return {
+  font-size: 12px;
+  color: var(--moss);
+}
+
+.product-return.warn {
+  color: var(--brick);
+}
+
+.btn-bag {
+  margin-top: 8px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--panel);
+  padding: 9px 14px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-bag:hover {
+  background: var(--brass-deep);
+  border-color: var(--brass-deep);
+}
+
+.btn-bag:disabled {
+  background: var(--line);
+  border-color: var(--line);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+
+.bag-panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 22px;
+  border-radius: 3px;
+  position: sticky;
+  top: 24px;
+}
+
+.bag-panel h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.bag-panel .note {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+.bag-empty {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  padding: 20px 0;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: 3px;
+}
+
+.bag-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13.5px;
+}
+
+.bag-item .name {
+  font-weight: 500;
+}
+
+.bag-item .variant {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.bag-item button {
+  background: none;
+  border: none;
+  color: var(--brick);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.bag-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.btn-checkout {
+  width: 100%;
+  padding: 12px;
+  border-radius: 3px;
+  border: none;
+  background: var(--brass);
+  color: var(--panel);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-checkout:hover {
+  background: var(--brass-deep);
+}
+
+.btn-checkout:disabled {
+  background: var(--line);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+
+.confirm-banner {
+  margin-top: 14px;
+  font-size: 13px;
+  background: var(--moss-soft);
+  color: var(--moss);
+  padding: 10px 12px;
+  border-radius: 3px;
+}
+
+.footer-note {
+  border-top: 1px solid var(--line);
+  padding: 20px 0 40px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* =========================================================
+   COMPREHENSIVE MULTI-SCREEN VIEWPORT STYLES
+   Mobile (320-640px), Tablet (641-1024px), Laptop (1025-1440px),
+   Desktop (1441-1920px), and 4K Ultra HD (1921-3840px)
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. MOBILE PHONES (320px - 640px)
+   Apple iPhone, Google Pixel, Samsung Galaxy
+--------------------------------------------------------- */
+@media (max-width: 640px) {
+  :root {
+    --page-px: 14px;
+    --page-py: 16px;
+    --section-gap: 16px;
+    --card-padding: 14px;
+    --card-gap: 10px;
+    --font-h1: 22px;
+    --font-h2: 18px;
+    --font-h3: 15px;
+    --font-kpi: 24px;
+  }
+
+  .zenve-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Header & Navigation */
+  .ZENVE-header-inner,
+  .top-header,
+  .page-header,
+  .header-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .header-actions {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Search Inputs & Filter Bars */
+  .search-input-wrap,
+  .search-input,
+  .search-box,
+  .filter-bar input,
+  .filter-bar select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .filter-row,
+  .filter-bar,
+  .controls-row,
+  .action-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  /* Tabs horizontal scroll with clean touch momentum */
+  .tab-group,
+  .nav-tabs,
+  .tabs-container,
+  .layer-pills {
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+  }
+
+  .tab-group::-webkit-scrollbar,
+  .layer-pills::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* KPI & Stats Grids: 2-column or 1-column */
+  .kpi-grid,
+  .metrics-grid,
+  .stats-grid,
+  .summary-grid,
+  .kpi-bar {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Responsive Horizontal Scroll for all Data Tables */
+  .zenve-table-responsive,
+  .table-wrap,
+  .table-container {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+
+  table {
+    min-width: 680px !important;
+  }
+
+  th,
+  td {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+
+  /* Modals and Drawers */
+  .modal-box,
+  .dialog-content,
+  .drawer-panel {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    padding: 16px !important;
+  }
+}
+
+/* Extra small mobile screens (< 380px) */
+@media (max-width: 380px) {
+
+  .kpi-grid,
+  .metrics-grid,
+  .stats-grid,
+  .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   2. TABLETS & SMALL LAPTOPS (641px - 1024px)
+   Apple iPad, iPad Pro, Android Tablets
+--------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --page-px: 24px;
+    --page-py: 22px;
+    --section-gap: 20px;
+    --card-padding: 18px;
+    --card-gap: 14px;
+  }
+
+  .zenve-container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* KPI Grids: Balanced 2 or 3 columns */
+  .kpi-grid,
+  .metrics-grid,
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* 2-column content sections */
+  .grid-2col,
+  .charts-split,
+  .report-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .zenve-table-responsive,
+  .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. STANDARD LAPTOPS (1025px - 1440px)
+   MacBook Air, MacBook Pro 13/14, ThinkPad
+--------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  :root {
+    --page-max-w: 1360px;
+  }
+}
+
+/* ---------------------------------------------------------
+   4. FULL HD & WIDESCREEN DESKTOPS (1441px - 1920px)
+   24"-27" 1080p / 1440p Desktop Displays
+--------------------------------------------------------- */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  :root {
+    --page-max-w: 1600px;
+  }
+}
+
+/* ---------------------------------------------------------
+   5. 4K ULTRA HD DISPLAYS (1921px - 3840px+)
+   Studio Displays, 4K Pro Monitors, 3840x2160 UHD
+--------------------------------------------------------- */
+@media (min-width: 1921px) {
+  :root {
+    --page-max-w: 3200px !important;
+    --page-px: clamp(48px, 3.5vw, 120px) !important;
+    --page-py: clamp(32px, 2.5vw, 64px) !important;
+    --section-gap: clamp(28px, 2vw, 48px) !important;
+    --card-padding: clamp(24px, 1.6vw, 40px) !important;
+    --card-gap: clamp(20px, 1.4vw, 32px) !important;
+
+    /* Scaled Fluid Typography for expansive 4K screens */
+    --font-h1: clamp(32px, 2vw, 54px) !important;
+    --font-h2: clamp(24px, 1.5vw, 40px) !important;
+    --font-h3: clamp(20px, 1.2vw, 30px) !important;
+    --font-body: clamp(15px, 0.95vw, 20px) !important;
+    --font-kpi: clamp(36px, 2.4vw, 64px) !important;
+    --font-label: clamp(12px, 0.75vw, 16px) !important;
+  }
+
+  .zenve-container {
+    max-width: 3200px !important;
+    padding-left: var(--page-px) !important;
+    padding-right: var(--page-px) !important;
+  }
+
+  /* Expansive 4K KPI Row: spread across 5 or 6 columns smoothly */
+  .kpi-grid,
+  .metrics-grid,
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 24px !important;
+  }
+
+  /* 4K Data Tables: high readability with comfortable padding */
+  th,
+  td {
+    padding: 16px 20px !important;
+    font-size: 15px !important;
+  }
+
+  /* 4K Buttons & Inputs */
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 14.5px;
+  }
+
+  /* Charts and visual modules have generous vertical room */
+  .chart-container,
+  .analytics-card {
+    min-height: 380px;
+  }
+}
+
+/* Extreme 4K Resolution (3200px - 3840px Native) */
+@media (min-width: 3200px) {
+  :root {
+    --page-max-w: 3600px !important;
+  }
+
+  .kpi-grid,
+  .metrics-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+}
+
+/* =========================================================
+   ZENVE SWEETALERT BOTTOM-RIGHT TOAST THEME
+   Unified toast notifications for success/error in all layers
+========================================================= */
+
+.zenve-swal-toast {
+  font-family: var(--sans, 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif) !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 12px 18px !important;
+  margin-bottom: 24px !important;
+  margin-right: 24px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e7e5e4 !important;
+  align-items: center !important;
+  min-width: 280px !important;
+  max-width: 400px !important;
+}
+
+.zenve-swal-toast.zenve-swal-toast-success {
+  border-left: 4px solid #16a34a !important;
+}
+
+.zenve-swal-toast.zenve-swal-toast-error {
+  border-left: 4px solid #dc2626 !important;
+}
+
+.zenve-swal-toast .swal2-icon {
+  margin: 0 12px 0 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  border-width: 2px !important;
+  font-size: 11px !important;
+}
+
+.zenve-swal-toast .swal2-icon.swal2-success [class^='swal2-success-line'] {
+  height: 2px !important;
+}
+
+.zenve-swal-toast .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+  height: 2px !important;
+}
+
+.zenve-swal-toast-title {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--ink, #1c1917) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  line-height: 1.4 !important;
+}
+
+.zenve-swal-progress-success {
+  background: #16a34a !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.zenve-swal-progress-error {
+  background: #dc2626 !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.zenve-swal-progress-warning {
+  background: #f59e0b !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.zenve-swal-progress-info {
+  background: #2563eb !important;
+  height: 3px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+/* =========================================================
+   UNIVERSAL SUPPRESSION OF ALL TOP-OF-PAGE ALERT BANNERS
+   All notifications (success, error, warning) show ONLY via
+   SweetAlert toast notifications. No banners ever appear at the top.
+========================================================= */
+.ZENVE-alert,
+.ZENVE-alert-success,
+.ZENVE-alert-error,
+.ZENVE-alert-warning,
+.ZENVE-alert-info,
+.ZENVE-alert-danger,
+.ZENVE-alert.error,
+.ZENVE-alert.success,
+.ZENVE-alert.warning,
+.ZENVE-alert.info,
+.ZENVE-alert.danger,
+.ZENVE-alert[class*="alert"],
+.ZENVE-banner-alert,
+.ZENVE-sf-alert,
+.ZENVE-orders-alert,
+.ZENVE-inv-alert,
+.ZENVE-returns-alert,
+.ZENVE-settlement-alert,
+.ZENVE-delivery-alert,
+.crm-error-banner,
+.cc-error-banner,
+.analytics-error-banner,
+.dashboard-error,
+.crm-toast,
+.cc-toast,
+.analytics-toast {
+  display: none !important;
+}
