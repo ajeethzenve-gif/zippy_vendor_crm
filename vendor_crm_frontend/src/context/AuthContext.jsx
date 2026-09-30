@@ -105,10 +105,10 @@ export function AuthProvider({ children }) {
   }, [currentUser]);
 
 
-  const loginCustom = async (email, password) => {
+  const loginCustom = async (email, password, { staffOnly = false, vendorOnly = false } = {}) => {
     const response = await fetch(`${API_BASE_URL}/login/`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify({ username: email, password, ...(vendorOnly ? { audience: "vendor" } : staffOnly ? { audience: "staff" } : {}) }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Sign in failed.");
@@ -116,6 +116,12 @@ export function AuthProvider({ children }) {
     const roleId = data.is_superuser ? "admin" : (roleMap[data.role] || (data.is_staff ? "admin" : null));
     const role = ROLES.find(r => r.id === roleId);
     if (!role) throw new Error("This account does not have CRM access.");
+    if (staffOnly && role.id === "designer") {
+      throw new Error("This login is for CRM staff. Please use the separate vendor login for your vendor account.");
+    }
+    if (vendorOnly && (role.id !== "designer" || !data.vendor_id)) {
+      throw new Error("This login is for vendor accounts only. Staff should use the CRM login.");
+    }
     sessionStorage.setItem("zippy_access_token", data.access);
     const updated = { ...role, email: data.email, user: [data.first_name, data.last_name].filter(Boolean).join(" ") || data.username, vendorId: data.vendor_id };
     setCurrentUser(updated);

@@ -163,10 +163,6 @@ class LoginAPIView(APIView):
             )
 
 
-        refresh = RefreshToken.for_user(user)
-
-
-
         # Get User Role
 
         try:
@@ -178,6 +174,24 @@ class LoginAPIView(APIView):
 
             role = None
 
+        audience = request.data.get("audience")
+        vendor_id = getattr(getattr(user, "vendor", None), "pk", None)
+        if audience not in (None, "staff", "vendor"):
+            return Response({"message": "Invalid login audience."}, status=status.HTTP_400_BAD_REQUEST)
+        if audience == "vendor" and (role != "Vendor" or user.is_superuser or not vendor_id):
+            return Response(
+                {"message": "This login is for vendor accounts only. Staff should use the CRM login."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        staff_roles = {"Admin", "Merchandiser", "Catalogue QA", "Operations", "Finance", "Media"}
+        is_crm_staff = user.is_superuser or role in staff_roles or (user.is_staff and role != "Vendor")
+        if audience == "staff" and not is_crm_staff:
+            return Response(
+                {"message": "This login is for CRM staff. Vendors should use the vendor login."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        refresh = RefreshToken.for_user(user)
 
 
         return Response(
@@ -185,7 +199,7 @@ class LoginAPIView(APIView):
                 "message":"Login Successful",
                 "is_staff": user.is_staff,
                 "is_superuser": user.is_superuser,
-                "vendor_id": getattr(getattr(user, "vendor", None), "pk", None),
+                "vendor_id": vendor_id,
 
                 "access":
                 str(refresh.access_token),

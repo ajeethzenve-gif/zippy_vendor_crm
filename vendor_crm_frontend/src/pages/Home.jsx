@@ -4,7 +4,6 @@ import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
 import "../styles/Home.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 
 import {
   getDesigners,
@@ -470,46 +469,6 @@ function Home() {
           ===================================================== */}
 
       <div className="header-content">
-
-        <header className="home-header">
-
-          {/* =================================================
-              LEFT SIDE
-              ================================================= */}
-
-          <div className="header-left">
-
-            {/* LOGO */}
-
-            <Link
-              to="/"
-              className="zenve-logo"
-            >
-              <img
-                src={logo}
-                alt="Zippy Vendor CRM"
-              />
-            </Link>
-
-            {/* TITLE */}
-
-            <h1 className="home-title">
-              Zippy Vendor CRM
-            </h1>
-
-          </div>
-
-          {/* =================================================
-              RIGHT SIDE
-              ================================================= */}
-
-          <div className="header-right">
-
-            <SearchBar />
-
-          </div>
-
-        </header>
 
         {/* ===================================================
             ERROR MESSAGE

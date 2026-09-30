@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Returns.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zippy_logo.jpeg";
 import {
   getReturns,
   createReturn,
@@ -389,16 +388,7 @@ export default function Returns() {
       ===================================================== */}
       <header className="ZENVE-returns-header">
         <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zippy Vendor CRM" />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">09</span>
               <span>Returns Engine</span>
@@ -408,10 +398,6 @@ export default function Returns() {
               Returns layer · Request, pickup, inspection, refund / exchange
             </p>
           </div>
-        </div>
-
-        <div className="ZENVE-header-right">
-          <SearchBar />
         </div>
       </header>
 

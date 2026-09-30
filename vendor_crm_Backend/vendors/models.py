@@ -42,6 +42,7 @@ class Vendor(models.Model):
     brand_name = models.CharField(max_length=255, default="")
     city = models.CharField(max_length=100, blank=True)
     primary_category = models.CharField(max_length=150, blank=True)
+    fulfillment = models.CharField(max_length=10, blank=True, default="", choices=[("HUBSHIP", "Hubship"), ("DROPSHIP", "Dropship"), ("BOTH", "Both")])
     lead_source = models.CharField(max_length=30, default="Referral", choices=[(v, v) for v in ["Referral", "Outreach", "Inbound", "Instagram", "Trade Show", "Agency"]])
     sales_owner = models.CharField(max_length=150, default="Unassigned", choices=[(v, v) for v in ["Nisha Kapoor", "Dev Ranganathan", "Sana Qureshi", "Unassigned"]])
     next_followup_date = models.DateField(null=True, blank=True)

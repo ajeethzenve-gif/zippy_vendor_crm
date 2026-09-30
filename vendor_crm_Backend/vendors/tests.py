@@ -155,6 +155,35 @@ class VendorRegistrationTests(TestCase):
             self.assertEqual(response.status_code, 400, response.data)
         self.assertFalse(Vendor.objects.exists())
 
+    def test_crm_fulfillment_and_renewal_choices_persist(self):
+        for index, fulfillment in enumerate(["HUBSHIP", "DROPSHIP", "BOTH"]):
+            with self.subTest(fulfillment=fulfillment):
+                response = self.client.post("/api/vendors/", {
+                    "vendor_name": "Nisha", "brand_name": "Pet Store",
+                    "email": f"fulfillment{index}@example.com",
+                    "fulfillment": fulfillment, "renewal_likelihood": 100,
+                }, format="json")
+                self.assertEqual(response.status_code, 201, response.data)
+                vendor = Vendor.objects.get(pk=response.data["id"])
+                self.assertEqual(vendor.fulfillment, fulfillment)
+                self.assertEqual(vendor.renewal_likelihood, 100)
+                self.assertEqual(vendor.acquisition_cost, 0)
+                url = f"/api/vendors/{vendor.pk}/"
+                response = self.client.patch(url, {"fulfillment": "BOTH", "renewal_likelihood": 0}, format="json")
+                self.assertEqual(response.status_code, 200, response.data)
+                saved = self.client.get(url).data
+                self.assertEqual(saved["fulfillment"], "BOTH")
+                self.assertEqual(saved["renewal_likelihood"], 0)
+
+    def test_crm_rejects_unknown_fulfillment(self):
+        response = self.client.post("/api/vendors/", {
+            "vendor_name": "Nisha", "brand_name": "Pet Store",
+            "email": "fulfillment@example.com", "fulfillment": "UNKNOWN",
+        }, format="json")
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn("fulfillment", response.data)
+        self.assertFalse(Vendor.objects.exists())
+
 
 
 class VendorIntegrationTests(TestCase):

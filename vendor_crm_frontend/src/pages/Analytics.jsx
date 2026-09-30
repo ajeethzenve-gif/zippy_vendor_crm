@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Analytics.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 import {
   ResponsiveContainer,
   BarChart,
@@ -1066,15 +1065,7 @@ export default function Analytics() {
       <header className="ZENVE-header">
         <div className="ZENVE-header-inner">
           <div className="ZENVE-header-left">
-            <div className="ZENVE-portal-logo">
-              <img src={logo} alt="Zippy Vendor CRM" />
-            </div>
-
             <div className="ZENVE-header-title-block">
-              <Link to="/command-centre" className="ZENVE-back-link">
-                ← ALL 12 LAYERS
-              </Link>
-
               <h1 className="ZENVE-portal-title">
                 <span className="ZENVE-layer-num">11</span>
                 <span>BI Dashboards</span>
@@ -1084,10 +1075,6 @@ export default function Analytics() {
                 Analytics layer · Vendor, SKU, inventory, customer, marketing KPIs
               </p>
             </div>
-          </div>
-
-          <div className="ZENVE-header-right">
-            <SearchBar />
           </div>
         </div>
       </header>

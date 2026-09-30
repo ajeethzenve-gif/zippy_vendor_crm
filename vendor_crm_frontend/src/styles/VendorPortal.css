@@ -12,34 +12,22 @@
   --ZENVE-radius-sm: calc(0.4rem - 4px);
 
   /* Precise sRGB Fallbacks matching */
-  --ZENVE-paper: #faf7f1;
-  --ZENVE-panel: #fffdfa;
-  --ZENVE-line: #e2ddd5;
-  --ZENVE-ink: #1f160f;
-  --ZENVE-muted: #746a60;
-  --ZENVE-subtle: #f2eee7;
-  --ZENVE-accent: #d97706;
-  --ZENVE-amber: #b45309;
-  --ZENVE-red: #b91c1c;
-  --ZENVE-blue: #1d4ed8;
-  --ZENVE-shadow-panel: 0 1px 2px rgba(29, 20, 13, 0.06), 0 12px 32px -18px rgba(29, 20, 13, 0.25);
+  --ZENVE-paper: #f4f7fb;
+  --ZENVE-panel: #ffffff;
+  --ZENVE-line: #e2e8f0;
+  --ZENVE-ink: #0f172a;
+  --ZENVE-muted: #64748b;
+  --ZENVE-subtle: #f8fafc;
+  --ZENVE-accent: #1677ff;
+  --ZENVE-amber: #d97706;
+  --ZENVE-red: #dc2626;
+  --ZENVE-blue: #1677ff;
+  --ZENVE-shadow-panel: 0 4px 18px rgba(15, 23, 42, 0.04);
 
-  --ZENVE-font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  --ZENVE-font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --ZENVE-font-serif: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ZENVE-font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-@supports (color: oklch(97.6% 0.008 85)) {
-  :root {
-    --ZENVE-paper: oklch(97.6% 0.008 85);
-    --ZENVE-panel: oklch(99.5% 0.004 85);
-    --ZENVE-line: oklch(90% 0.012 82);
-    --ZENVE-ink: oklch(21% 0.02 60);
-    --ZENVE-muted: oklch(53% 0.02 65);
-    --ZENVE-subtle: oklch(94.5% 0.01 85);
-    --ZENVE-accent: oklch(72% 0.11 62);
-    --ZENVE-shadow-panel: 0 1px 2px oklch(20% 0.02 60 / 0.06), 0 12px 32px -18px oklch(20% 0.02 60 / 0.25);
-  }
-}
 
 .ZENVE-portal-layout {
   min-height: 100vh;

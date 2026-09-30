@@ -1,0 +1,689 @@
+/* VendorLogin.css - Pixel-accurate to the VendorHub design */
+
+.vl-container {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+  background-color: #dceefe;
+  background-image: url("../assest/vendor-login-background.png");
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Subtle ambient overlay to ensure maximum contrast while keeping the scene vivid */
+.vl-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 45%, transparent 75%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vl-layout {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1440px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: 1.15fr 460px;
+  gap: 40px;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* LEFT SIDE: Brand & Story */
+.vl-story {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 120px);
+  padding: 12px 0 24px;
+}
+
+/* Brand Logo & Name */
+.vl-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vl-brand-logo {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.vl-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.vl-brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #0b192c;
+  line-height: 1.1;
+}
+
+.vl-brand-tagline {
+  margin-top: 4px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #556987;
+  letter-spacing: 0.2px;
+}
+
+/* Main Headline & Intro */
+.vl-intro {
+  margin-top: clamp(24px, 5vh, 60px);
+  max-width: 520px;
+}
+
+.vl-headline {
+  margin: 0;
+  font-size: clamp(38px, 4vw, 54px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: #091a32;
+}
+
+.vl-headline-accent {
+  color: #0066f5;
+  display: block;
+}
+
+.vl-description {
+  margin: 22px 0 32px;
+  font-size: clamp(15px, 1.25vw, 17px);
+  line-height: 1.6;
+  color: #475569;
+  max-width: 440px;
+}
+
+/* 3 Feature Pills */
+.vl-features {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.vl-feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 90px;
+}
+
+.vl-feature-icon-badge {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e2effe;
+  color: #0066f5;
+  box-shadow: 0 4px 12px rgba(0, 102, 245, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vl-feature-item:hover .vl-feature-icon-badge {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 102, 245, 0.2);
+}
+
+.vl-feature-icon-badge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.vl-feature-label {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #1e293b;
+}
+
+/* Floating 3D Logistics Elements in the scene */
+.vl-scene-elements {
+  position: absolute;
+  left: 36%;
+  top: 18%;
+  width: 320px;
+  height: 380px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.vl-glowing-path {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.vl-glass-card {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 16px 36px rgba(0, 80, 200, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  animation: vl-float 5s ease-in-out infinite;
+}
+
+.vl-glass-card.pin {
+  top: 8px;
+  left: 70px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0084ff;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 24px rgba(0, 132, 255, 0.45);
+  animation-delay: 0s;
+}
+
+.vl-glass-card.pin svg {
+  width: 26px;
+  height: 26px;
+}
+
+.vl-glass-card.truck {
+  top: 85px;
+  left: -20px;
+  width: 62px;
+  height: 62px;
+  color: #0070f3;
+  animation-delay: -1.2s;
+}
+
+.vl-glass-card.chart {
+  top: 155px;
+  left: 95px;
+  width: 64px;
+  height: 64px;
+  color: #0070f3;
+  animation-delay: -2.4s;
+}
+
+.vl-glass-card.checklist {
+  top: 250px;
+  left: 15px;
+  width: 58px;
+  height: 58px;
+  color: #0070f3;
+  animation-delay: -3.6s;
+}
+
+@keyframes vl-float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+/* RIGHT SIDE: Vendor Login Card */
+.vl-card-wrap {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.vl-login-card {
+  width: 100%;
+  max-width: 470px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 44px 38px 36px;
+  box-shadow: 0 24px 60px rgba(12, 45, 95, 0.11),
+    0 6px 18px rgba(12, 45, 95, 0.04);
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Card Header */
+.vl-card-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vl-avatar-badge {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #ebf4ff;
+  color: #0066f5;
+  margin-bottom: 18px;
+}
+
+.vl-avatar-badge svg {
+  width: 40px;
+  height: 40px;
+  stroke-width: 1.6;
+}
+
+.vl-card-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+  color: #0f172a;
+}
+
+.vl-card-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 450;
+  color: #64748b;
+}
+
+/* Tab Switcher: Username & Password vs Mobile OTP */
+.vl-tabs-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 4px;
+  padding: 4px;
+  margin-top: 26px;
+  background: #f1f5f9;
+  border-radius: 12px;
+}
+
+.vl-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #64748b;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.vl-tab-btn svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.vl-tab-btn.active {
+  background: #0066f5;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 102, 245, 0.28);
+}
+
+.vl-tab-btn:hover:not(.active) {
+  color: #1e293b;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Login Form */
+.vl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 26px;
+}
+
+.vl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vl-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.vl-input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 1.5px solid #d8e2ec;
+  border-radius: 10px;
+  box-sizing: border-box;
+  gap: 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vl-input-box:focus-within {
+  border-color: #0066f5;
+  box-shadow: 0 0 0 3.5px rgba(0, 102, 245, 0.12);
+}
+
+.vl-input-box .vl-input-icon {
+  width: 20px;
+  height: 20px;
+  color: #94a3b8;
+  flex-shrink: 0;
+  stroke-width: 1.8;
+}
+
+.crm-theme .vl-container .vl-input-box input.vl-input,
+.vl-input-box input.vl-input {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 14.5px !important;
+  font-family: inherit !important;
+  color: #0f172a !important;
+  box-sizing: border-box !important;
+}
+
+.vl-input-box input.vl-input::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+.vl-input-box .vl-eye-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.vl-input-box .vl-eye-btn:hover {
+  color: #0066f5;
+  background: #f1f5f9;
+}
+
+.vl-input-box .vl-eye-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Error banner */
+.vl-error-alert {
+  margin: 0;
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vl-info-alert {
+  margin: 0;
+  padding: 10px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 9px;
+  color: #1d4ed8;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Submit Action Button */
+.vl-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0275ff 0%, #0056d6 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0, 102, 245, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  font-family: inherit;
+}
+
+.vl-submit-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+  transition: transform 0.15s ease;
+}
+
+.vl-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(0, 102, 245, 0.38);
+}
+
+.vl-submit-btn:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.vl-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.vl-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+/* Forgot Password */
+.vl-forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0066f5;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: center;
+  margin-top: -4px;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+
+.vl-forgot-link:hover {
+  color: #0047cc;
+  text-decoration: underline;
+}
+
+/* OR Divider */
+.vl-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+}
+
+.vl-divider::before,
+.vl-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+/* Security Trust Badge Footer */
+.vl-security-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.vl-security-footer svg {
+  width: 17px;
+  height: 17px;
+  color: #0066f5;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+  .vl-layout {
+    grid-template-columns: 1fr 430px;
+    gap: 32px;
+    padding: 32px;
+  }
+
+  .vl-scene-elements {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .vl-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 32px 24px;
+    align-items: center;
+  }
+
+  .vl-story {
+    min-height: auto;
+    text-align: center;
+    align-items: center;
+  }
+
+  .vl-intro {
+    margin-top: 28px;
+    text-align: center;
+  }
+
+  .vl-description {
+    margin: 16px auto 24px;
+  }
+
+  .vl-features {
+    justify-content: center;
+  }
+
+  .vl-card-wrap {
+    justify-content: center;
+  }
+
+  .vl-scene-elements {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .vl-layout {
+    padding: 24px 16px;
+  }
+
+  .vl-login-card {
+    padding: 32px 22px;
+    border-radius: 22px;
+  }
+
+  .vl-avatar-badge {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 14px;
+  }
+
+  .vl-avatar-badge svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .vl-card-title {
+    font-size: 24px;
+  }
+
+  .vl-headline {
+    font-size: 32px;
+  }
+
+  .vl-features {
+    gap: 16px;
+  }
+
+  .vl-feature-item {
+    width: 78px;
+  }
+
+  .vl-feature-icon-badge {
+    width: 40px;
+    height: 40px;
+  }
+
+  .vl-feature-icon-badge svg {
+    width: 20px;
+    height: 20px;
+  }
+}

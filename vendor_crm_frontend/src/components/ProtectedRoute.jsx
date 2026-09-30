@@ -2,8 +2,6 @@ import React from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth, ROLES } from "../context/AuthContext";
 import { layers } from "../data/layers";
-import Header from "./Header";
-import zenveLogo from "../assest/logo/zippy_logo.jpeg";
 
 function LockIcon() {
   return (
@@ -14,11 +12,11 @@ function LockIcon() {
   );
 }
 
-export default function ProtectedRoute({ layer, children }) {
+export default function ProtectedRoute({ layer, children, loginPath = "/login" }) {
   const { currentUser, hasAccess } = useAuth();
 
-  if (!currentUser) return <Navigate to="/login" replace />;
-  const isAuthorized = hasAccess(layer);
+  if (!currentUser) return <Navigate to={loginPath} replace />;
+  const isAuthorized = layer == null || hasAccess(layer);
 
   if (isAuthorized) {
     return children;
@@ -39,35 +37,6 @@ export default function ProtectedRoute({ layer, children }) {
       display: "flex",
       flexDirection: "column",
     }}>
-      {/* MINIMAL TOP BAR */}
-      <header style={{
-        padding: "18px 32px",
-        background: "var(--panel, #fffdfa)",
-        borderBottom: "1px solid var(--line, #ded8d0)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <Link to="/" style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none", color: "inherit" }}>
-          <img src={zenveLogo} alt="Zenve" style={{ width: "42px", height: "42px", objectFit: "contain" }} />
-          <span style={{ fontFamily: "var(--serif, Georgia, serif)", fontSize: "18px", fontWeight: "600" }}>
-            Zippy Vendor CRM
-          </span>
-        </Link>
-
-        <Link to="/login" style={{
-          fontSize: "12.5px",
-          fontWeight: "600",
-          color: "var(--brass, #a8712f)",
-          textDecoration: "none",
-          padding: "6px 14px",
-          border: "1px solid var(--brass, #a8712f)",
-          borderRadius: "6px",
-          background: "#fffdfa",
-        }}>
-          Switch Role Persona
-        </Link>
-      </header>
 
       {/* ACCESS RESTRICTED CARD CONTAINER */}
       <main style={{

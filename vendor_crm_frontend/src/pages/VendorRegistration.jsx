@@ -43,11 +43,11 @@ export default function VendorRegistration() {
     finally { setBusy(false); }
   }
   return <div className="zippy-registration">
-    <header className="zippy-nav"><Link to="/" className="zippy-wordmark">Zippy<span>VENDOR CRM</span></Link><Link to="/login">Back to sign in ↗</Link></header>
+    <header className="zippy-nav"><Link to="/vendor-login" className="zippy-wordmark">Zippy<span>VENDOR CRM</span></Link><Link to="/vendor-login">Back to sign in ↗</Link></header>
     <main className="zippy-registration-grid">
       <section className="zippy-story"><span className="zippy-eyebrow">GROW WITH ZIPPY</span><h1>Your business.<br />Our next great partner.</h1><p>Bring your products to Zippy. Keep your catalogue, orders and settlements together in one place.</p><img src={logo} alt="Zippy" className="zippy-hero-logo" /><div className="zippy-steps"><span>01 · Register</span><span>02 · Get reviewed</span><span>03 · Start selling</span></div></section>
       <section className="zippy-form-card">
-        {result ? <div role="status" className="zippy-success"><span className="zippy-eyebrow">REGISTRATION RECEIVED</span><h2>Welcome to Zippy.</h2><p>Your vendor reference is <strong>{result.vendor_code}</strong>.</p><p>Your business is awaiting onboarding and KYC review. Registration does not activate selling access.</p><Link className="zippy-primary" to="/">Back to home</Link></div> : <><span className="zippy-eyebrow">BECOME A VENDOR</span><h2>Let’s meet your business.</h2><p className="zippy-form-intro">Tell us a little about yourself to get started.</p>
+        {result ? <div role="status" className="zippy-success"><span className="zippy-eyebrow">REGISTRATION RECEIVED</span><h2>Welcome to Zippy.</h2><p>Your vendor reference is <strong>{result.vendor_code}</strong>.</p><p>Your business is awaiting onboarding and KYC review. Registration does not activate selling access.</p><Link className="zippy-primary" to="/vendor-login">Sign in to vendor account</Link></div> : <><span className="zippy-eyebrow">BECOME A VENDOR</span><h2>Let’s meet your business.</h2><p className="zippy-form-intro">Tell us a little about yourself to get started.</p>
         <form onSubmit={submit} className="zippy-form" aria-busy={busy}>
           {Object.entries(errors).filter(([key]) => !fields.some(([name]) => name === key)).map(([key, value]) => <p role="alert" className="zippy-error" key={key}>{Array.isArray(value) ? value.join(" ") : String(value)}</p>)}
           {fields.map(([name, label, type, placeholder, maxLength, optional]) => {

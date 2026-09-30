@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Settlement.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zippy_logo.jpeg";
 import {
   getSettlements,
   transitionSettlement,
@@ -309,16 +308,7 @@ export default function Settlement() {
       ===================================================== */}
       <header className="ZENVE-settlement-header">
         <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zippy Vendor CRM" />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">10</span>
               <span>Settlement</span>
@@ -328,10 +318,6 @@ export default function Settlement() {
               Finance layer · Take rate, payout, refunds, reconciliation
             </p>
           </div>
-        </div>
-
-        <div className="ZENVE-header-right">
-          <SearchBar />
         </div>
       </header>
 

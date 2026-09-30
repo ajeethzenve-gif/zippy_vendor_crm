@@ -21,7 +21,15 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:5173. Register at `/register`, then sign in with the registered email and password. For staff access, create a Django superuser using `python manage.py createsuperuser`. The role preview on the login page does not grant access.
+Open http://localhost:5173. Staff sign in at `/login`; vendors sign in at `/vendor-login` with their registered username or email and password. Vendor registration is at `/register`. For staff access, create a Django superuser using `python manage.py createsuperuser`.
+
+## Vendor login links
+
+Share `/vendor-login` on the public frontend domain. Successful vendor sign-in opens `/vendor-portal`. Staff accounts use `/login`, and each login checks its account type before creating a session. Vendor logout and signed-out portal visits return to `/vendor-login`.
+
+The Vendor CRM contact card has **Share Login on WhatsApp** (opens a draft for the team to review and send) and **Copy vendor login link** for email or other services. Links contain no credentials or vendor identifiers.
+
+The link uses the current frontend origin by default. If the team uses a different internal address, set `VITE_PUBLIC_APP_URL` to the public frontend origin before building. Localhost links only work on the current computer. The public host must serve the frontend for direct visits to `/vendor-login`; its API URL must also be reachable by vendors.
 
 The backend reads `vendor_crm_Backend/.env`. MySQL is the default. Set `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` and `DB_PORT` for your database. For an isolated SQLite setup, set `$env:DB_ENGINE='sqlite'` before running migrations. Frontend API location is configurable with `VITE_API_BASE_URL` (default `http://127.0.0.1:8000/api`).
 

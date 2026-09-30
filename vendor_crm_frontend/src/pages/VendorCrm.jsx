@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/VendorCrm.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 import {
   getVendors as getDesigners,
   createVendor as createDesigner,
@@ -15,6 +14,7 @@ import {
 } from "../services/api";
 
 import { maskGstNumber } from "../utils/gstUtils.js";
+import { getVendorLoginUrl } from "../utils/vendorLoginLink.js";
 import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/zenveToast";
 
 /* =========================================================
@@ -102,12 +102,20 @@ function getStageTone(stage) {
   }
 }
 
+const CREDIT_PLANS = [
+  { id: 1, code: "SILVER", name: "Silver", credit_points: 200000, sku_limit: 24, tier: "EMERGING" },
+  { id: 2, code: "GOLD", name: "Gold", credit_points: 375000, sku_limit: 49, tier: "CORE" },
+  { id: 3, code: "PLATINUM", name: "Platinum", credit_points: 500000, sku_limit: 65, tier: "PREMIUM" },
+];
+
+const DEFAULT_VENDOR_PLANS = CREDIT_PLANS;
+
 /* =========================================================
    MAIN COMPONENT: 01 DESIGNER CRM
 ========================================================= */
 
 export default function DesignerCRM() {
-  const [vendorPlans, setVendorPlans] = useState([]);
+  const [vendorPlans, setVendorPlans] = useState(DEFAULT_VENDOR_PLANS);
   const [designers, setDesigners] = useState([]);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -131,6 +139,7 @@ export default function DesignerCRM() {
     city: "",
     category: "",
     tier: "Emerging",
+    selectedPlan: "",
     fashionCreditPlan: "",
     creditPoints: 0,
     takeRate: "",
@@ -139,8 +148,8 @@ export default function DesignerCRM() {
     source: "Referral",
     owner: "Nisha Kapoor",
     nextFollowUp: "",
-    cac: "",
-    renewalProbability: "",
+    fulfillment: "",
+    renewalProbability: "0",
   });
 
   // GST Modal & Company GST State
@@ -245,7 +254,17 @@ export default function DesignerCRM() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showGstModal, newLead.gst, gstModalTarget]);
 
-  // Send WhatsApp portal access notification with direct access link
+  const handleCopyVendorLoginLink = async () => {
+    const url = getVendorLoginUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("Vendor login link copied. Share it by WhatsApp, email, or any messaging service.");
+    } catch {
+      window.prompt("Copy the vendor login link:", url);
+    }
+  };
+
+  // Prepare a WhatsApp message for the team to review and send.
   const handleSendWhatsAppPortalLink = (designer) => {
     if (!designer) return;
     const phoneRaw = designer.phone || designer.contact || "";
@@ -263,33 +282,24 @@ export default function DesignerCRM() {
 
     const designerName = designer.designer_name || designer.brand_name || "Vendor";
     const brandName = designer.brand_name || designer.designer_name || "Vendor Brand";
-    const gstVal = designer.gst_number || designer.gst || COMPANY_GST_INFO.gstNumber;
-    const portalUrl = `${window.location.origin}/vendor-portal?designer=${encodeURIComponent(brandName)}&code=${encodeURIComponent(designer.designer_code || `DSG-${designer.id}`)}`;
+    const portalUrl = getVendorLoginUrl();
 
-    const message = `🌟 *ZENVE FASHION - VENDOR PORTAL ACCESS* 🌟
+    const message = `*Zippy Vendor Login*
 
 Hello *${designerName}*,
 
-Your company details and vendor account have been successfully configured on *ZENVE Fashion*!
-
-📋 *Your Company Onboarding Details:*
-• Brand: *${brandName}*
-• Legal Entity: *${COMPANY_GST_INFO.name}*
-• GST Status: *${maskGstNumber(gstVal)}*
-• Operating City: *${designer.city || "All-India Marketplace Hub"}*
-• Vendor Code: *${designer.designer_code || `DSG-${designer.id}`}*
-
-🚀 *Direct Access to Your Vendor Portal:*
+Sign in to your vendor account using this link:
 ${portalUrl}
 
-Click the link above to directly access your Vendor Portal to manage your catalogue, view orders, track inventory, and view settlements.
+Use your registered username or email and password to open your vendor portal.
 
-Welcome to ZENVE Fashion!
-_Team ZENVE Creator Operations_`;
+If you need help accessing your account, please contact our team.
+
+Team Zippy`;
 
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    showToast(`WhatsApp portal access link opened for ${brandName}!`);
+    showToast(`WhatsApp login message opened for ${brandName}. Review it and press Send in WhatsApp.`);
   };
 
   // Fetch all live records
@@ -299,8 +309,13 @@ _Team ZENVE Creator Operations_`;
       else setLoading(true);
       setError(null);
 
-      const [designersRes, plansRes] = await Promise.all([getDesigners(), getOnlineVendorPlans()]);
-      setVendorPlans(plansRes);
+      const [designersRes, plansRes] = await Promise.all([
+        getDesigners(),
+        getOnlineVendorPlans().catch(() => DEFAULT_VENDOR_PLANS),
+      ]);
+      if (Array.isArray(plansRes) && plansRes.length > 0) {
+        setVendorPlans(plansRes);
+      }
       const [
         ordersRes,
         productsRes,
@@ -685,8 +700,14 @@ _Team ZENVE Creator Operations_`;
       phone: newLead.phone.trim() || null,
       city: newLead.city.trim() || "",
       primary_category: newLead.category.trim() || "",
-      tier: newLead.tier.toUpperCase(),
+      tier: (newLead.tier || "EMERGING").toUpperCase(),
       plan_type: newLead.fashionCreditPlan ? Number(newLead.fashionCreditPlan) : null,
+      online_membership_plan: newLead.selectedPlan
+        ? newLead.selectedPlan.toUpperCase()
+        : newLead.fashionCreditPlan
+          ? (vendorPlans.find((p) => p.id === Number(newLead.fashionCreditPlan)) || CREDIT_PLANS.find((p) => p.id === Number(newLead.fashionCreditPlan)))?.code || null
+          : null,
+      credit_points: newLead.creditPoints || 0,
       take_rate: newLead.takeRate !== "" ? Number(newLead.takeRate) : 0,
       gst_number: newLead.gst.trim()
         ? newLead.gst === "COMPANY_GST_REQUESTED"
@@ -699,8 +720,9 @@ _Team ZENVE Creator Operations_`;
       lead_source: newLead.source,
       sales_owner: newLead.owner,
       next_followup_date: newLead.nextFollowUp || null,
-      acquisition_cost: newLead.cac !== "" ? Number(newLead.cac) : 0,
-      renewal_likelihood: newLead.renewalProbability !== "" ? Number(newLead.renewalProbability) : 0,
+      fulfillment: newLead.fulfillment,
+      // Keep the existing percentage storage compatible with CRM analytics.
+      renewal_likelihood: Number(newLead.renewalProbability),
       stage: "LEAD",
       kyc_status: "PENDING",
       kyc_verified: false,
@@ -729,6 +751,7 @@ _Team ZENVE Creator Operations_`;
         city: "",
         category: "",
         tier: "Emerging",
+        selectedPlan: "",
         fashionCreditPlan: "",
         creditPoints: 0,
         takeRate: "",
@@ -737,8 +760,8 @@ _Team ZENVE Creator Operations_`;
         source: "Referral",
         owner: "Nisha Kapoor",
         nextFollowUp: "",
-        cac: "",
-        renewalProbability: "",
+        fulfillment: "",
+        renewalProbability: "0",
       });
       setUseCompanyGst(false);
     } catch (err) {
@@ -753,15 +776,7 @@ _Team ZENVE Creator Operations_`;
       <header className="ZENVE-header">
         <div className="ZENVE-header-inner">
           <div className="ZENVE-header-left">
-            <div className="ZENVE-portal-logo">
-              <img src={logo} alt="Zippy Vendor CRM" />
-            </div>
-
             <div className="ZENVE-header-title-block">
-              <Link to="/command-centre" className="ZENVE-back-link">
-                ← ALL 12 LAYERS
-              </Link>
-
               <h1 className="ZENVE-portal-title">
                 <span className="ZENVE-layer-num">01</span>
                 <span>Vendor CRM</span>
@@ -771,10 +786,6 @@ _Team ZENVE Creator Operations_`;
                 Supply layer · Lead, qualification, approval, KYC, contract, status
               </p>
             </div>
-          </div>
-
-          <div className="ZENVE-header-right">
-            <SearchBar />
           </div>
         </div>
       </header>
@@ -989,7 +1000,7 @@ _Team ZENVE Creator Operations_`;
 
                         {/* Meta Line 2 */}
                         <p className="designer-subtext-line">
-                          Source {designer.lead_source || "Referral"} · owner{" "}
+                          Source {designer.lead_source || "Referral"} · sales admin{" "}
                           {designer.sales_owner || "Unassigned"} · next follow-up{" "}
                           {designer.next_followup_date
                             ? new Date(
@@ -997,7 +1008,7 @@ _Team ZENVE Creator Operations_`;
                             ).toLocaleDateString()
                             : "not set"}{" "}
                           · renewal likelihood{" "}
-                          {designer.renewal_likelihood != null ? `${designer.renewal_likelihood}%` : "—"}
+                          {designer.renewal_likelihood === 100 ? "Yes" : designer.renewal_likelihood === 0 ? "No" : designer.renewal_likelihood != null ? `${designer.renewal_likelihood}%` : "—"}
                           {designer.lost_reason
                             ? ` · lost: ${designer.lost_reason}`
                             : ""}
@@ -1087,7 +1098,7 @@ _Team ZENVE Creator Operations_`;
                     <div className="crm-whatsapp-portal-card">
                       <div className="whatsapp-card-badge-row">
                         <span className="whatsapp-pill">
-                          <WhatsAppIcon size={13} /> WHATSAPP DIRECT ACCESS
+                          <WhatsAppIcon size={13} /> VENDOR LOGIN LINK
                         </span>
                         <span className="whatsapp-status-tag">
                           {designer.phone || designer.contact ? "WhatsApp Ready" : "Contact On File"}
@@ -1111,11 +1122,12 @@ _Team ZENVE Creator Operations_`;
                           type="button"
                           className="btn-send-whatsapp-portal"
                           onClick={() => handleSendWhatsAppPortalLink(designer)}
-                          title="Click to send WhatsApp message with direct access to Vendor Portal"
+                          title="Prepare a WhatsApp message with the vendor login link"
                         >
                           <WhatsAppIcon size={16} />
-                          <span>Send WhatsApp Portal Link</span>
+                          <span>Share Login on WhatsApp</span>
                         </button>
+                        <button type="button" className="btn-secondary" onClick={handleCopyVendorLoginLink}>Copy vendor login link</button>
                       </div>
                     </div>
 
@@ -1210,7 +1222,7 @@ _Team ZENVE Creator Operations_`;
                       {/* Right: Sales Controls */}
                       <div className="crm-controls-grid">
                         <div className="crm-control-item">
-                          <span className="label-caps">Sales owner</span>
+                          <span className="label-caps">Sales admin</span>
                           <select
                             className="crm-select"
                             value={designer.sales_owner || "Nisha Kapoor"}
@@ -1250,19 +1262,36 @@ _Team ZENVE Creator Operations_`;
                         </div>
 
                         <div className="crm-control-item">
-                          <span className="label-caps">Renewal likelihood %</span>
-                          <input
-                            type="number"
-                            className="crm-input-num"
-                            min="0"
-                            max="100"
-                            value={designer.renewal_likelihood ?? ""}
+                          <span className="label-caps">Renewal likelihood</span>
+                          <select
+                            aria-label="Renewal likelihood"
+                            className="crm-select"
+                            value={[0, 100].includes(designer.renewal_likelihood) ? designer.renewal_likelihood : ""}
                             onChange={(e) =>
                               handleUpdateField(designer.id, {
-                                renewal_likelihood: e.target.value === "" ? 0 : Number(e.target.value),
+                                renewal_likelihood: Number(e.target.value),
                               })
                             }
-                          />
+                          >
+                            <option value="" disabled>Select Yes or No</option>
+                            <option value="100">Yes</option>
+                            <option value="0">No</option>
+                          </select>
+                        </div>
+
+                        <div className="crm-control-item">
+                          <span className="label-caps">Fulfillment</span>
+                          <select
+                            aria-label="Fulfillment"
+                            className="crm-select"
+                            value={designer.fulfillment || ""}
+                            onChange={(e) => handleUpdateField(designer.id, { fulfillment: e.target.value })}
+                          >
+                            <option value="">Select fulfillment</option>
+                            <option value="HUBSHIP">Hubship</option>
+                            <option value="DROPSHIP">Dropship</option>
+                            <option value="BOTH">Both</option>
+                          </select>
                         </div>
 
                         <div className="crm-control-item full-width">
@@ -1297,7 +1326,7 @@ _Team ZENVE Creator Operations_`;
         </section>
 
         {/* 3. ADD A DESIGNER LEAD (15 Fields) */}
-        <section className="crm-panel">
+        <section className="crm-panel vendor-lead-panel">
           <div className="crm-panel-header">
             <div className="crm-panel-title-block">
               <h2 className="crm-panel-title">Add a vendor lead</h2>
@@ -1380,7 +1409,7 @@ _Team ZENVE Creator Operations_`;
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Sales owner</label>
+              <label className="label-caps">Sales admin</label>
               <select
                 className="lead-select"
                 value={newLead.owner}
@@ -1433,44 +1462,58 @@ _Team ZENVE Creator Operations_`;
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Tier</label>
+              <label className="label-caps">Select plan</label>
               <select
                 className="lead-select"
-                value={newLead.tier}
-                onChange={(e) =>
-                  setNewLead({ ...newLead, tier: e.target.value })
-                }
+                value={newLead.selectedPlan || ""}
+                onChange={(e) => {
+                  const chosenPlanName = e.target.value;
+                  const plan = CREDIT_PLANS.find(
+                    (p) => p.name.toLowerCase() === chosenPlanName.toLowerCase()
+                  );
+                  if (plan) {
+                    setNewLead({
+                      ...newLead,
+                      selectedPlan: plan.name,
+                      tier: plan.tier,
+                      fashionCreditPlan: plan.id,
+                      creditPoints: plan.credit_points,
+                    });
+                  } else {
+                    setNewLead({
+                      ...newLead,
+                      selectedPlan: "",
+                      tier: "EMERGING",
+                      fashionCreditPlan: "",
+                      creditPoints: 0,
+                    });
+                  }
+                }}
               >
-                <option value="Premium">Premium</option>
-                <option value="Core">Core</option>
-                <option value="Emerging">Emerging</option>
+                <option value="">Select plan...</option>
+                <option value="Silver">Silver</option>
+                <option value="Gold">Gold</option>
+                <option value="Platinum">Platinum</option>
               </select>
             </div>
 
             <div className="lead-form-field">
               <label className="label-caps">Given credits (Points)</label>
-              <select
-                className="lead-select"
-                value={newLead.fashionCreditPlan}
-                onChange={(e) => {
-                  const selectedVal = e.target.value;
-                  const plan = vendorPlans.find((p) => p.id === Number(selectedVal));
-                  setNewLead({
-                    ...newLead,
-                    fashionCreditPlan: selectedVal,
-                    creditPoints: plan ? plan.credit_points : 0,
-                  });
-                }}
-              >
-                <option value="">Select a credit plan...</option>
-                {vendorPlans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>{plan.name} — {plan.credit_points.toLocaleString("en-IN")} Points{plan.sku_limit != null ? ` — ${plan.sku_limit} SKUs` : ""}</option>
-                ))}
-              </select>
+              <input
+                type="text"
+                className="lead-input"
+                readOnly
+                placeholder="Triggered by selected plan"
+                value={
+                  newLead.creditPoints
+                    ? `${Number(newLead.creditPoints).toLocaleString("en-IN")} Points`
+                    : ""
+                }
+              />
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Take rate %</label>
+              <label className="label-caps">Rate Taken %</label>
               <input
                 type="number"
                 className="lead-input"
@@ -1484,32 +1527,38 @@ _Team ZENVE Creator Operations_`;
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Acquisition cost (CAC)</label>
-              <input
-                type="number"
-                className="lead-input"
-                value={newLead.cac}
+              <label className="label-caps" htmlFor="lead-fulfillment">Fulfillment</label>
+              <select
+                id="lead-fulfillment"
+                className="lead-select"
+                value={newLead.fulfillment}
                 onChange={(e) =>
-                  setNewLead({ ...newLead, cac: Number(e.target.value) })
+                  setNewLead({ ...newLead, fulfillment: e.target.value })
                 }
-              />
+              >
+                <option value="">Select fulfillment</option>
+                <option value="HUBSHIP">Hubship</option>
+                <option value="DROPSHIP">Dropship</option>
+                <option value="BOTH">Both</option>
+              </select>
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Renewal likelihood %</label>
-              <input
-                type="number"
-                className="lead-input"
-                min="0"
-                max="100"
+              <label className="label-caps" htmlFor="lead-renewal">Renewal likelihood</label>
+              <select
+                id="lead-renewal"
+                className="lead-select"
                 value={newLead.renewalProbability}
                 onChange={(e) =>
                   setNewLead({
                     ...newLead,
-                    renewalProbability: Number(e.target.value),
+                    renewalProbability: e.target.value,
                   })
                 }
-              />
+              >
+                <option value="100">Yes</option>
+                <option value="0">No</option>
+              </select>
             </div>
 
             <div className="lead-form-field">

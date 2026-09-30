@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/StoreFront.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zippy_logo.jpeg";
 import { getProducts, getDesigners, createOrder } from "../services/api";
 import { showToast } from "../utils/zenveToast";
 
@@ -367,16 +366,7 @@ export default function Storefront() {
       ===================================================== */}
       <header className="ZENVE-sf-header">
         <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zippy Vendor CRM" />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">06</span>
               <span>Storefront</span>
@@ -405,8 +395,6 @@ export default function Storefront() {
               placeholder="6-digit pincode"
             />
           </div>
-
-          <SearchBar />
         </div>
       </header>
 

@@ -5,16 +5,16 @@
 ========================================================= */
 
 :root {
-  --ZENVE-paper: #fbf9f5;
+  --ZENVE-paper: #f4f7fb;
   --ZENVE-card: #ffffff;
-  --ZENVE-ink: #17130f;
-  --ZENVE-muted: #736b63;
-  --ZENVE-border: #e8e3da;
-  --ZENVE-border-hover: #c28b51;
-  --ZENVE-gold: #c28b51;
-  --ZENVE-gold-light: #fdfaf6;
-  --ZENVE-secondary: #f5f2ec;
-  --ZENVE-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --ZENVE-ink: #0f172a;
+  --ZENVE-muted: #64748b;
+  --ZENVE-border: #e2e8f0;
+  --ZENVE-border-hover: #1677ff;
+  --ZENVE-gold: #1677ff;
+  --ZENVE-gold-light: #e6f4ff;
+  --ZENVE-secondary: #f8fafc;
+  --ZENVE-font-serif: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .designer-crm-page,
@@ -628,52 +628,112 @@
    ADD DESIGNER LEAD FORM
 ========================================================= */
 
+.vendor-lead-panel {
+  padding: 14px 18px !important;
+}
+
+.vendor-lead-panel .crm-panel-header {
+  margin-bottom: 12px;
+}
+
+.vendor-lead-panel .crm-panel-title {
+  font-size: 15px !important;
+  font-weight: 700;
+}
+
+.vendor-lead-panel .crm-panel-desc {
+  font-size: 11px !important;
+  color: var(--ZENVE-muted);
+  margin-top: 2px;
+}
+
 .lead-form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 8px 12px;
 }
 
 .lead-form-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
 .lead-form-field label,
 .lead-form-field .label-caps {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1a1612;
-  letter-spacing: 0.05em;
+  font-size: 10.5px;
+  font-weight: 400;
+  color: #38312b;
+  letter-spacing: 0.03em;
   margin: 0;
 }
 
 .optional-tag {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 9.5px;
+  font-weight: 500;
   text-transform: none;
-  color: #5c534b;
-  margin-left: 4px;
+  color: #7d746c;
+  margin-left: 3px;
 }
 
 .lead-input,
 .lead-select {
-  padding: 8px 12px;
+  padding: 5px 8px;
+  height: 44px;
   background-color: var(--ZENVE-card);
   border: 1px solid #d5cec5;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 300;
   color: var(--ZENVE-ink);
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
+  box-sizing: border-box;
+}
+
+/* Keep the theme's field padding inside the control without clipping text. */
+.designer-crm-page .lead-form-field {
+  min-width: 0;
+}
+
+.designer-crm-page :is(.lead-input, .lead-select, .crm-select) {
+  min-height: 44px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.designer-crm-page select:is(.lead-select, .crm-select) {
+  appearance: none;
+  padding: 10px 42px 10px 14px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364758b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.designer-crm-page select:is(.lead-select, .crm-select):hover:not(:disabled) {
+  border-color: #94a3b8 !important;
+}
+
+.designer-crm-page select:is(.lead-select, .crm-select):disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (forced-colors: active) {
+  .designer-crm-page select:is(.lead-select, .crm-select) {
+    appearance: auto;
+    background-image: none;
+  }
 }
 
 .lead-input::placeholder {
-  color: #7d746c;
-  font-weight: 500;
+  color: #8c837a;
+  font-size: 11px;
+  font-weight: 450;
 }
 
 .lead-input:focus,
@@ -683,14 +743,14 @@
 
 .btn-create-lead {
   align-self: flex-start;
-  margin-top: 8px;
-  padding: 8px 18px;
+  margin-top: 6px;
+  padding: 6px 14px;
   background-color: var(--ZENVE-ink);
   color: #ffffff;
   border: 1px solid var(--ZENVE-ink);
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 550;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -742,21 +802,21 @@
 .lead-company-gst-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background-color: #f6efe6;
   border: 1px solid #e1d3bf;
   color: #8b5b24;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 2px 7px;
-  border-radius: 4px;
+  letter-spacing: 0.03em;
+  padding: 1px 5px;
+  border-radius: 3px;
 }
 
 .lead-company-gst-badge .badge-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background-color: #c28b51;
 }
@@ -769,29 +829,44 @@
 }
 
 .lead-gst-checkbox-row {
-  margin-top: 6px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .lead-gst-checkbox-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #1a1612;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 550;
+  color: #38312b;
   cursor: pointer;
   user-select: none;
 }
 
 .lead-gst-checkbox-label input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   accent-color: #c28b51;
   cursor: pointer;
 }
 
 .lead-gst-checkbox-label:hover span {
   color: #c28b51;
+}
+
+.lead-gst-change-btn {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border: 1px solid #d5cec5;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #5c534b;
+  cursor: pointer;
 }
 
 .designer-gst-code {

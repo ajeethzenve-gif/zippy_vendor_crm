@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/CatalogueQa.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 import { getProducts, updateProduct } from "../services/api";
 import { showToast } from "../utils/zenveToast";
 
@@ -231,16 +230,7 @@ export default function CatalogueQa() {
       ===================================================== */}
       <header className="ZENVE-qa-header">
         <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo">
-            <img src={logo} alt="Zippy Vendor CRM" />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">04</span>
               Catalogue QA
@@ -250,10 +240,6 @@ export default function CatalogueQa() {
               QA layer · Validation, approval, audit trail
             </p>
           </div>
-        </div>
-
-        <div className="ZENVE-header-right">
-          <SearchBar />
         </div>
       </header>
 

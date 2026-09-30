@@ -1,9 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import Header from "../components/Header.jsx";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 
 
 export default function LayerPage({ layer }) {
@@ -17,22 +15,9 @@ export default function LayerPage({ layer }) {
       ===================================================== */}
 
       <header className="layer-header">
-
         <div className="layer-header-content">
-
-          {/* Back */}
-          <button
-            type="button"
-            className="layer-back"
-            onClick={() => navigate(-1)}
-          >
-            <span className="layer-back-arrow">←</span>
-            <span>ALL 12 LAYERS</span>
-          </button>
-
           {/* Title */}
           <section className="layer-head">
-
             <div className="layer-tag">
               {layer.group} · {layer.n}
             </div>
@@ -44,16 +29,8 @@ export default function LayerPage({ layer }) {
             <p>
               {layer.detail}
             </p>
-
           </section>
-
         </div>
-
-        {/* Reusable SearchBar */}
-        <div className="layer-header-actions">
-          <SearchBar />
-        </div>
-
       </header>
 
       {/* =====================================================

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CommandCentre.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 import {
   getCommandCentreOverview,
   getOrders,
@@ -841,15 +840,7 @@ export default function CommandCentre() {
       <header className="ZENVE-header">
         <div className="ZENVE-header-inner">
           <div className="ZENVE-header-left">
-            <div className="ZENVE-portal-logo">
-              <img src={logo} alt="Zippy Vendor CRM" />
-            </div>
-
             <div className="ZENVE-header-title-block">
-              <Link to="/" className="ZENVE-back-link">
-                ← ALL 12 LAYERS
-              </Link>
-
               <h1 className="ZENVE-portal-title">
                 <span className="ZENVE-layer-num">12</span>
                 <span>Command Centre</span>
@@ -859,10 +850,6 @@ export default function CommandCentre() {
                 Admin layer · Approvals, controls, exceptions
               </p>
             </div>
-          </div>
-
-          <div className="ZENVE-header-right">
-            <SearchBar />
           </div>
         </div>
       </header>

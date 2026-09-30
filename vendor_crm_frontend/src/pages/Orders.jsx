@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Orders.css";
 import SearchBar from "../components/SearchBar";
-import zenveLogo from "../assest/logo/zippy_logo.jpeg";
 import { getOrders, transitionOrder, cancelOrder } from "../services/api";
 import { showToast } from "../utils/zenveToast";
 
@@ -294,16 +293,7 @@ export default function Orders() {
       ===================================================== */}
       <header className="ZENVE-orders-header">
         <div className="ZENVE-header-left">
-          <Link to="/" className="ZENVE-portal-logo" aria-label="Go to home">
-            <img src={zenveLogo} alt="Zippy Vendor CRM" />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link to="/" className="ZENVE-back-link">
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">07</span>
               <span>OMS</span>
@@ -313,10 +303,6 @@ export default function Orders() {
               Orders layer · Order lifecycle, split orders, cancellation
             </p>
           </div>
-        </div>
-
-        <div className="ZENVE-header-right">
-          <SearchBar />
         </div>
       </header>
 

@@ -21,6 +21,7 @@ const Settlement = lazy(() => import("./pages/Settlement.jsx"));
 const Analytics = lazy(() => import("./pages/Analytics.jsx"));
 const CommandCentre = lazy(() => import("./pages/CommandCentre.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
+const VendorLogin = lazy(() => import("./pages/VendorLogin.jsx"));
 import WorkspaceShell from "./components/WorkspaceShell.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -34,17 +35,18 @@ export default function App() {
         <Route path="/designer-portal" element={<Navigate to="/vendor-portal" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         {/* Home Page */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
         {/* Role-Based Login */}
         <Route path="/register" element={<VendorRegistration />} />
         <Route path="/employees" element={<Employees />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/vendor-login" element={<VendorLogin />} />
         <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
 
         {/* Operational Layers (Role Clearance Protected) */}
         <Route path="/vendor-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
-        <Route path="/vendor-portal" element={<ProtectedRoute layer="02"><DesignerPortal /></ProtectedRoute>} />
+        <Route path="/vendor-portal" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><DesignerPortal /></ProtectedRoute>} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
         <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
         <Route path="/catalogue-qa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />

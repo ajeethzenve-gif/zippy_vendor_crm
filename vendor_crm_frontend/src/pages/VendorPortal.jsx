@@ -6,7 +6,6 @@ import { MediaWorkspace } from "./MediaStudio";
 import { showToast, showErrorToast } from "../utils/zenveToast";
 import "../styles/VendorPortal.css";
 import SearchBar from "../components/SearchBar";
-import logo from "../assest/logo/zippy_logo.jpeg";
 
 import {
   getDesigners,
@@ -1944,25 +1943,7 @@ export default function VendorPortal() {
 
       <header className="ZENVE-portal-header">
         <div className="ZENVE-header-left">
-          <Link
-            to="/"
-            className="ZENVE-portal-logo"
-          >
-            <img
-              src={logo}
-              alt="Zippy Vendor CRM"
-            />
-          </Link>
-
           <div className="ZENVE-header-title-block">
-            <Link
-              to="/"
-              className="ZENVE-back-link"
-            >
-              <BackIcon />
-              <span>ALL 12 LAYERS</span>
-            </Link>
-
             <h1 className="ZENVE-portal-title">
               <span className="ZENVE-layer-num">
                 02
@@ -1978,8 +1959,6 @@ export default function VendorPortal() {
         </div>
 
         <div className="ZENVE-header-right">
-          <SearchBar />
-
           <div className="ZENVE-header-right-controls">
             <div className="ZENVE-signed-in-box">
               <span className="ZENVE-signed-in-prefix">
@@ -2140,7 +2119,9 @@ export default function VendorPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
-          {selectedDesignerId && <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />}
+          {!showProfileAndAccount && selectedDesignerId && (
+            <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+          )}
           {/* ===================================================
               DASHBOARD
           =================================================== */}
