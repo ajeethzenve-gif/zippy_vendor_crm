@@ -158,8 +158,8 @@ export default function VendorLogin() {
       }
       setIsSubmitting(true);
       try {
-        const user = await loginCustom(username.trim(), password, { vendorOnly: true });
-        navigate(user.landingPath || "/vendor-portal", { replace: true });
+        await loginCustom(username.trim(), password, { vendorOnly: true });
+        navigate("/", { replace: true });
       } catch (err) {
         setErrorMessage(err.message || "Invalid credentials. Please verify and try again.");
       } finally {
@@ -186,8 +186,8 @@ export default function VendorLogin() {
         setIsSubmitting(true);
         try {
           // Attempt vendor sign-in or demo sign-in
-          const user = await loginCustom(phoneNumber.trim(), otpCode.trim(), { vendorOnly: true });
-          navigate(user.landingPath || "/vendor-portal", { replace: true });
+          await loginCustom(phoneNumber.trim(), otpCode.trim(), { vendorOnly: true });
+          navigate("/", { replace: true });
         } catch {
           setErrorMessage("Mobile OTP verification is currently linked to registered account credentials. Please sign in using User Name & Password.");
           setLoginMethod("credentials");

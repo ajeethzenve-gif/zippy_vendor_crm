@@ -51,8 +51,8 @@ export default function Login({ audience = "staff" }) {
     setIsSubmitting(true);
     setLoginError("");
     try {
-      const user = await loginCustom(username.trim(), password, { staffOnly: !isVendor, vendorOnly: isVendor });
-      navigate(user.landingPath, { replace: true });
+      await loginCustom(username.trim(), password, { staffOnly: !isVendor, vendorOnly: isVendor });
+      navigate("/", { replace: true });
     } catch (error) {
       setLoginError(error.message || "Unable to sign in. Please try again.");
     } finally {
