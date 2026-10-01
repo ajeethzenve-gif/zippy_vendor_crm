@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 const Employees = lazy(() => import("./pages/Employees.jsx"));
-const Home = lazy(() => import("./pages/Home.jsx"));
+const Home = lazy(() => import("./pages/RolePortal.jsx"));
 const MediaStudio = lazy(() => import("./pages/MediaStudio.jsx"));
 const LayerPage = lazy(() => import("./pages/LayerPage.jsx"));
 const DesignerCRM = lazy(() => import("./pages/VendorCrm.jsx"));
@@ -46,6 +46,8 @@ export default function App() {
 
         {/* Operational Layers (Role Clearance Protected) */}
         <Route path="/vendor-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
+        <Route path="/vendor-crm/new" element={<ProtectedRoute layer="01"><DesignerCRM key="new" mode="new" /></ProtectedRoute>} />
+        <Route path="/vendor-crm/:vendorId/edit" element={<ProtectedRoute layer="01"><DesignerCRM key="edit" mode="edit" /></ProtectedRoute>} />
         <Route path="/vendor-portal" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><DesignerPortal /></ProtectedRoute>} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
         <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />

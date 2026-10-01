@@ -302,12 +302,14 @@ const getErrorMessage = (error, fallback) => {
 
 export default function VendorPortal() {
   const { currentUser } = useAuth();
+  const isVendor = currentUser?.id === "designer";
   /* =======================================================
      DESIGNER SELECTION
   ======================================================= */
 
   const [designers, setDesigners] = useState([]);
   const [selectedDesignerId, setSelectedDesignerId] = useState(() => {
+    if (isVendor) return currentUser?.vendorId ? String(currentUser.vendorId) : "";
     try {
       return localStorage.getItem("zippy_selected_vendor_id") || "";
     } catch {
@@ -504,6 +506,20 @@ export default function VendorPortal() {
 
   const totalInventoryQuantity = totalOnlineQuantity;
   const [submittingSku, setSubmittingSku] = useState(false);
+  const [pendingProducts, setPendingProducts] = useState([]);
+  const submittingProductsRef = useRef(false);
+  const vendorPendingProducts = pendingProducts.filter(
+    (item) => item.vendorId === String(selectedDesignerId)
+  );
+  useEffect(() => {
+    if (!pendingProducts.length) return;
+    const warnBeforeLeaving = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeLeaving);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeaving);
+  }, [pendingProducts.length]);
 
   /* =======================================================
      PRODUCT IMAGES
@@ -620,8 +636,11 @@ export default function VendorPortal() {
      PROFILE / ACCOUNT VIEW
   ======================================================= */
 
-  const [showProfileAndAccount, setShowProfileAndAccount] =
+  const [profileAndAccountOpen, setShowProfileAndAccount] =
     useState(false);
+  const showProfileAndAccount = isVendor && profileAndAccountOpen;
+  const [mediaContentOpen, setMediaContentOpen] = useState(false);
+  const showMediaContent = isVendor && mediaContentOpen;
 
   /* =======================================================
      CREDIT POINTS STATE
@@ -638,7 +657,7 @@ export default function VendorPortal() {
 
       const response = await getDesigners();
       const allVendors = getListFromResponse(response);
-      const list = currentUser?.vendorId ? allVendors.filter(v => v.id === currentUser.vendorId) : allVendors;
+      const list = currentUser?.vendorId ? allVendors.filter(v => String(v.id) === String(currentUser.vendorId)) : allVendors;
 
       setDesigners(list);
 
@@ -866,8 +885,13 @@ export default function VendorPortal() {
      LOAD ACCOUNT DETAILS FROM DJANGO
   ======================================================= */
 
+  const canManageAccount = Boolean(
+    portalData?.can_manage_account &&
+    String(portalData?.vendor?.id) === String(selectedDesignerId)
+  );
+
   const loadAccountDetails = async (designerId) => {
-    if (!designerId) {
+    if (!designerId || !canManageAccount) {
       setAccountForm(EMPTY_ACCOUNT_FORM);
       setSavedAccountForm(EMPTY_ACCOUNT_FORM);
       setHasAccountDetails(false);
@@ -943,10 +967,14 @@ export default function VendorPortal() {
   };
 
   useEffect(() => {
-    if (selectedDesignerId) {
+    setAccountForm(EMPTY_ACCOUNT_FORM);
+    setSavedAccountForm(EMPTY_ACCOUNT_FORM);
+    setHasAccountDetails(false);
+    setIsEditingAccount(false);
+    if (selectedDesignerId && showProfileAndAccount && canManageAccount) {
       loadAccountDetails(selectedDesignerId);
     }
-  }, [selectedDesignerId]);
+  }, [selectedDesignerId, showProfileAndAccount, canManageAccount]);
 
   /* =======================================================
      SKU SUBMIT
@@ -954,6 +982,7 @@ export default function VendorPortal() {
 
   const handleSkuSubmit = async (e) => {
     e.preventDefault();
+    if (submittingProductsRef.current) return;
 
     if (!activeDesigner || !activeDesigner.id) {
       setAlertMessage({
@@ -1347,14 +1376,23 @@ export default function VendorPortal() {
       console.groupEnd();
     }
 
-    try {
-      setSubmittingSku(true);
-
-      await createProduct(payload);
+    if (pendingProducts.some((item) => item.sku === skuPreview)) {
+      setAlertMessage({ type: "error", text: "This SKU is already in your product list. Remove it before adding a replacement." });
+      return;
+    }
+    setPendingProducts((items) => [...items, {
+      sku: skuPreview,
+      vendorId: String(activeDesigner.id),
+      name: form.name.trim(),
+      quantity: totalInventoryQuantity,
+      price: numPrice,
+      imageCount: productImages.length,
+      payload,
+    }]);
 
       setAlertMessage({
         type: "success",
-        text: `${skuPreview} submitted — now in Catalogue QA`,
+        text: `${form.name.trim()} added. Add more products or submit your list below.`,
       });
 
       setForm((prev) => ({
@@ -1374,25 +1412,32 @@ export default function VendorPortal() {
       }));
 
       setProductImages([]);
+  };
 
-      await loadDashboard(
-        selectedDesignerId
-      );
+  const handleSubmitAllProducts = async () => {
+    if (submittingProductsRef.current || !vendorPendingProducts.length) return;
+    submittingProductsRef.current = true;
+    setSubmittingSku(true);
+    let submitted = 0;
+    try {
+      for (const item of vendorPendingProducts) {
+        await createProduct(item.payload);
+        submitted += 1;
+        setPendingProducts((items) => items.filter((pending) => pending !== item));
+      }
+      setAlertMessage({ type: "success", text: `${submitted} product(s) submitted to Catalogue QA.` });
     } catch (err) {
-      console.error(
-        "Failed to upload SKU:",
-        err
-      );
-
       setAlertMessage({
         type: "error",
-        text: getErrorMessage(
-          err,
-          "Failed to submit SKU to QA."
-        ),
+        text: `${submitted} product(s) submitted. Remaining products are kept for retry. ${getErrorMessage(err, "Could not submit products.")}`,
       });
     } finally {
-      setSubmittingSku(false);
+      try {
+        if (submitted) await loadDashboard(selectedDesignerId);
+      } finally {
+        submittingProductsRef.current = false;
+        setSubmittingSku(false);
+      }
     }
   };
 
@@ -1960,59 +2005,22 @@ export default function VendorPortal() {
 
         <div className="ZENVE-header-right">
           <div className="ZENVE-header-right-controls">
-            <div className="ZENVE-signed-in-box">
-              <span className="ZENVE-signed-in-prefix">
-                AS
-              </span>
-
-              <div className="ZENVE-select-wrap">
-                <select
-                  value={selectedDesignerId}
-                  onChange={(e) => {
-                    const newId = e.target.value;
-                    setSelectedDesignerId(newId);
-                    try {
-                      localStorage.setItem("zippy_selected_vendor_id", newId);
-                    } catch {
-                      // ignore
-                    }
-                  }}
-                  disabled={
-                    loadingDesigners ||
-                    designers.length === 0
-                  }
-                  className="ZENVE-designer-select"
-                  title="Switch active signed in vendor"
-                >
-                  {designers.length === 0 ? (
-                    <option value="">
-                      {loadingDesigners
-                        ? "Loading..."
-                        : "No vendors found"}
-                    </option>
-                  ) : (
-                    designers.map((d) => (
-                      <option
-                        key={d.id}
-                        value={d.id}
-                      >
-                        {d.brand_name ||
-                          d.brand ||
-                          d.designer_name ||
-                          d.name ||
-                          `Vendor #${d.id}`}
-                      </option>
-                    ))
-                  )}
-                </select>
-
-                <span className="ZENVE-select-chevron">
-                  <ArrowDownIcon />
-                </span>
-              </div>
-            </div>
-
-            <div className="ZENVE-header-actions-group">
+            {isVendor && <div className="ZENVE-header-actions-group">
+              <button
+                type="button"
+                className={`ZENVE-header-profile-btn ZENVE-header-media-btn ${showMediaContent ? "active" : ""}`}
+                aria-label="Media Content"
+                aria-pressed={showMediaContent}
+                aria-controls="zenve-media-content"
+                title={showMediaContent ? "Back to dashboard" : "Media Content"}
+                onClick={() => {
+                  setShowProfileAndAccount(false);
+                  setMediaContentOpen(previous => !previous);
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8" cy="8" r="1.5" /><path d="m21 15-5-5L5 21m9-7-4-4-7 7" /></svg>
+                {/*<span>Media Content</span>*/}
+              </button>
               <button
                 type="button"
                 className={`ZENVE-header-profile-btn ${showProfileAndAccount
@@ -2020,6 +2028,7 @@ export default function VendorPortal() {
                   : ""
                   }`}
                 onClick={() => {
+                  setMediaContentOpen(false);
                   setShowProfileAndAccount(
                     (prev) => {
                       const nextState = !prev;
@@ -2087,10 +2096,65 @@ export default function VendorPortal() {
                   </span>
                 )}
               </button>
-            </div>
+            </div>}
           </div>
         </div>
       </header>
+
+      {!isVendor && <section className="ZENVE-brand-selection-body ZENVE-portal-card" aria-label="Vendor brand selection">
+            <div className="ZENVE-signed-in-box">
+              <span className="ZENVE-signed-in-prefix">
+                Select brand
+              </span>
+
+              <div className="ZENVE-select-wrap">
+                <select
+                  value={selectedDesignerId}
+                  onChange={(e) => {
+                    const newId = e.target.value;
+                    setSelectedDesignerId(newId);
+                    try {
+                      localStorage.setItem("zippy_selected_vendor_id", newId);
+                    } catch {
+                      // ignore
+                    }
+                  }}
+                  disabled={
+                    submittingSku || loadingDesigners ||
+                    designers.length === 0
+                  }
+                  className="ZENVE-designer-select"
+                  title="Select vendor brand" aria-label="Select vendor brand"
+                >
+                  {designers.length === 0 ? (
+                    <option value="">
+                      {loadingDesigners
+                        ? "Loading..."
+                        : "No vendors found"}
+                    </option>
+                  ) : (
+                    designers.map((d) => (
+                      <option
+                        key={d.id}
+                        value={d.id}
+                      >
+                        {d.brand_name ||
+                          d.brand ||
+                          d.designer_name ||
+                          d.name ||
+                          `Vendor #${d.id}`}
+                      </option>
+                    ))
+                  )}
+                </select>
+
+                <span className="ZENVE-select-chevron">
+                  <ArrowDownIcon />
+                </span>
+              </div>
+            </div>
+
+      </section>}
 
       {/* =====================================================
           EMPTY DESIGNER
@@ -2119,14 +2183,16 @@ export default function VendorPortal() {
         </div>
       ) : (
         <main className="ZENVE-portal-main">
-          {!showProfileAndAccount && selectedDesignerId && (
-            <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+          {!showProfileAndAccount && (!isVendor || showMediaContent) && selectedDesignerId && (
+            <div id="zenve-media-content">
+              <MediaWorkspace key={selectedDesignerId} designerId={selectedDesignerId} />
+            </div>
           )}
           {/* ===================================================
               DASHBOARD
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaContent && (
             <section className="ZENVE-portal-card">
               <div className="ZENVE-card-header">
                 <div>
@@ -2360,7 +2426,7 @@ export default function VendorPortal() {
               CREDIT POINTS SECTION
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaContent && (
             <section
               className="ZENVE-portal-card ZENVE-credits-section-card"
               id="zenve-credits-section"
@@ -2964,7 +3030,7 @@ export default function VendorPortal() {
                   ACCOUNT DETAILS
               ================================================= */}
 
-              <section
+              {canManageAccount && <section
                 id="zenve-account-section"
                 className="ZENVE-portal-card"
               >
@@ -3352,7 +3418,7 @@ export default function VendorPortal() {
                     </div>
                   </form>
                 )}
-              </section>
+              </section>}
             </div>
           )}
 
@@ -3360,7 +3426,7 @@ export default function VendorPortal() {
               SKU + ORDERS
           =================================================== */}
 
-          {!showProfileAndAccount && (
+          {!showProfileAndAccount && !showMediaContent && (
             <>
               {/* =================================================
                   UPLOAD SKU
@@ -3370,12 +3436,11 @@ export default function VendorPortal() {
                 <div className="ZENVE-card-header">
                   <div>
                     <h2 className="ZENVE-card-title">
-                      Upload a SKU
+                      Add products
                     </h2>
 
                     <p className="ZENVE-card-description">
-                      SKU ID is auto-generated and the
-                      row goes straight to QA.
+                      Add each product to your list, then submit all products to QA when ready.
                     </p>
                   </div>
                 </div>
@@ -3996,10 +4061,32 @@ export default function VendorPortal() {
                     >
                       {submittingSku
                         ? "Submitting..."
-                        : "Submit to QA"}
+                        : "Add product"}
                     </button>
                   </div>
                 </form>
+                <div className="ZENVE-product-queue" aria-live="polite">
+                  <h3>Products ready to submit ({vendorPendingProducts.length})</h3>
+                  <p>Products in this list are unsaved until submitted. Keep this page open.</p>
+                  {vendorPendingProducts.map((item) => (
+                    <div className="ZENVE-product-queue-row" key={item.sku}>
+                      <div>
+                        <strong>{item.name}</strong>
+                        <p>{item.quantity} units · {formatInr(item.price)} · {item.imageCount} image(s)</p>
+                      </div>
+                      <button type="button" className="ZENVE-btn-outline-sm" disabled={submittingSku}
+                        aria-label={`Remove ${item.name}`}
+                        onClick={() => setPendingProducts((items) => items.filter((pending) => pending !== item))}>
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button type="button" className="ZENVE-btn-primary"
+                    disabled={submittingSku || !vendorPendingProducts.length}
+                    onClick={handleSubmitAllProducts}>
+                    {submittingSku ? "Submitting products..." : `Submit all products (${vendorPendingProducts.length})`}
+                  </button>
+                </div>
               </section>
 
               {/* =================================================
@@ -4098,6 +4185,7 @@ export default function VendorPortal() {
               {/* =================================================
                   ORDERS
               ================================================= */}
+
 
               <section className="ZENVE-portal-card">
                 <div className="ZENVE-card-header">
@@ -4213,7 +4301,7 @@ export default function VendorPortal() {
           NOTIFICATION SIDEBAR
       ===================================================== */}
 
-      {notifSidebarOpen && (
+      {isVendor && notifSidebarOpen && (
         <div
           className="ZENVE-notif-backdrop"
           onClick={() =>

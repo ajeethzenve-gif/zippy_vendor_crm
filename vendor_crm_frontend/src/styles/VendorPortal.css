@@ -2926,3 +2926,23 @@
 .ZENVE-stock-entry > label { flex: 0 0 60px; }
 .ZENVE-stock-entry > input { width: 100%; min-width: 0; box-sizing: border-box; }
 .ZENVE-stock-hint { font-size: 12px; color: #666; }
+.ZENVE-product-queue {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+.ZENVE-product-queue p { color: #64748b; font-size: 14px; }
+.ZENVE-product-queue-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  margin: 12px 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.ZENVE-brand-selection-body{margin:24px 32px 0!important}.ZENVE-brand-selection-body .ZENVE-signed-in-box{justify-content:flex-start;gap:16px}.ZENVE-brand-selection-body .ZENVE-signed-in-prefix{white-space:nowrap}.ZENVE-brand-selection-body .ZENVE-select-wrap{flex:1;max-width:520px}.ZENVE-brand-selection-body .ZENVE-designer-select{width:100%}@media(max-width:700px){.ZENVE-brand-selection-body{margin:18px 16px 0!important}.ZENVE-brand-selection-body .ZENVE-signed-in-box{align-items:stretch;flex-direction:column}.ZENVE-brand-selection-body .ZENVE-select-wrap{max-width:none}}
+.ZENVE-header-actions-group .ZENVE-header-media-btn{width:auto;min-width:44px;gap:8px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center}.ZENVE-header-media-btn span{font-size:13px;font-weight:600;white-space:nowrap}

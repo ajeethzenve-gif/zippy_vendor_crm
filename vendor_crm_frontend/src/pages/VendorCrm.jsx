@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "../styles/VendorCrm.css";
 import SearchBar from "../components/SearchBar";
 import {
@@ -114,9 +114,73 @@ const DEFAULT_VENDOR_PLANS = CREDIT_PLANS;
    MAIN COMPONENT: 01 DESIGNER CRM
 ========================================================= */
 
-export default function DesignerCRM() {
+function VendorDetailsEditor({ vendor, onSaved }) {
+  const fields = [["vendor_name", "Vendor name"], ["brand_name", "Brand"], ["email", "Email"], ["phone", "Phone"], ["city", "City"], ["state", "State"], ["primary_category", "Category"], ["gst_number", "GST number"], ["take_rate", "Take rate (%)"], ["renewal_likelihood", "Renewal likelihood (%)"], ["next_followup_date", "Next follow-up"], ["contract_end_date", "Contract end date"]];
+  const [values, setValues] = useState(() => Object.fromEntries(fields.map(([key]) => [key, vendor[key] || ""])));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const save = async (event) => {
+    event.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setSaveError("");
+    try {
+      const updated = await updateDesigner(vendor.id, {
+        ...values,
+        email: values.email.trim() || null,
+        phone: values.phone.trim() || null,
+        next_followup_date: values.next_followup_date || null,
+        contract_end_date: values.contract_end_date || null,
+        take_rate: Number(values.take_rate || 0),
+        renewal_likelihood: Number(values.renewal_likelihood || 0),
+      });
+      onSaved(updated);
+      showSuccessToast("Vendor details saved.");
+    } catch (error) {
+      setSaveError(error.message || "Could not save vendor details.");
+    } finally { setSaving(false); }
+  };
+  return <form className="lead-form-grid crm-vendor-details-editor" onSubmit={save}>
+    {fields.map(([key, label]) => <label className="lead-form-field" key={key}>{label}
+      <input className="lead-input" type={key === "email" ? "email" : key.endsWith("_date") ? "date" : ["take_rate", "renewal_likelihood"].includes(key) ? "number" : "text"} disabled={saving}
+        min={["take_rate", "renewal_likelihood"].includes(key) ? 0 : undefined}
+        max={["take_rate", "renewal_likelihood"].includes(key) ? 100 : undefined}
+        step={key === "take_rate" ? "0.01" : undefined}
+        required={["vendor_name", "brand_name"].includes(key)}
+        value={values[key]} onChange={(event) => setValues((previous) => ({ ...previous, [key]: event.target.value }))} />
+    </label>)}
+    {saveError && <p role="alert">{saveError}</p>}
+    <button type="submit" className="btn-create-lead" disabled={saving}>{saving ? "Saving…" : "Save details"}</button>
+  </form>;
+}
+
+export default function DesignerCRM({ mode = "list" }) {
+  const navigate = useNavigate();
+  const { vendorId } = useParams();
   const [vendorPlans, setVendorPlans] = useState(DEFAULT_VENDOR_PLANS);
   const [designers, setDesigners] = useState([]);
+  const [vendorSearch, setVendorSearch] = useState("");
+  const editingVendorId = mode === "edit" ? Number(vendorId) : null;
+  const showFreshVendor = mode === "new";
+  const [freezingVendorId, setFreezingVendorId] = useState(null);
+  const freezeVendor = async (vendor) => {
+    if (freezingVendorId) return;
+    const unfreezing = vendor.stage === "INACTIVE";
+    setFreezingVendorId(vendor.id);
+    try {
+      const updated = await updateDesigner(vendor.id, { stage: unfreezing ? "ACTIVE" : "INACTIVE" });
+      setDesigners((items) => items.map((item) => item.id === vendor.id ? { ...item, ...updated } : item));
+      showSuccessToast(unfreezing ? "Vendor unfrozen. Status changed to Active." : "Vendor frozen. Status changed to Inactive.");
+    } catch (error) {
+      showErrorToast(error.message || (unfreezing ? "Could not unfreeze vendor." : "Could not freeze vendor."));
+    } finally { setFreezingVendorId(null); }
+  };
+  const filteredVendors = designers.filter((vendor) =>
+    Object.values(vendor).some((value) =>
+      ["string", "number"].includes(typeof value) &&
+      String(value).toLowerCase().includes(vendorSearch.trim().toLowerCase())
+    )
+  );
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [returns, setReturns] = useState([]);
@@ -742,6 +806,8 @@ Team Zippy`;
     try {
       const created = await createDesigner(payload);
       setDesigners((prev) => [created, ...prev]);
+      navigate("/vendor-crm");
+      setVendorSearch("");
       showToast(`${newLead.brand} added as a new lead.`);
       setNewLead({
         name: "",
@@ -779,7 +845,7 @@ Team Zippy`;
             <div className="ZENVE-header-title-block">
               <h1 className="ZENVE-portal-title">
                 <span className="ZENVE-layer-num">01</span>
-                <span>Vendor CRM</span>
+                <span>{mode === "new" ? "Add New Vendor" : mode === "edit" ? "Edit Vendor" : "Vendor CRM"}</span>
               </h1>
 
               <p className="ZENVE-portal-desc">
@@ -795,6 +861,7 @@ Team Zippy`;
 
       {/* MAIN CONTAINER */}
       <main className="crm-container">
+        {mode !== "list" && <Link className="crm-back-link" to="/vendor-crm">← Back to vendor list</Link>}
         {/* ERROR BANNER */}
         {error && (
           <div className="crm-error-banner">
@@ -806,9 +873,9 @@ Team Zippy`;
         )}
 
         {/* 1. TOP 5 KPI CARDS */}
-        <section className="crm-kpi-grid">
+        <section hidden={mode !== "list"} className="crm-kpi-grid">
           <div className="crm-kpi-card">
-            <p className="label-caps">Pipeline</p>
+            <p className="label-caps">Vendors</p>
             <p className="crm-kpi-value">{loading ? "..." : pipelineCount}</p>
             <p className="crm-kpi-hint">All vendors</p>
           </div>
@@ -841,18 +908,51 @@ Team Zippy`;
         </section>
 
         {/* 2. DESIGNER PIPELINE */}
-        <section className="crm-panel">
+        <section hidden={mode === "new"} className="crm-panel">
+          {mode === "list" && <>
           <div className="crm-panel-header">
             <div className="crm-panel-title-block">
-              <h2 className="crm-panel-title">Vendor pipeline</h2>
+              <h2 className="crm-panel-title">All vendors</h2>
               <p className="crm-panel-desc">
-                Stages follow the blueprint: lead → qualified → portfolio →
-                review → approved → contract → signed → live → active.
+                Search vendor details or choose Edit to manage a vendor.
               </p>
             </div>
           </div>
 
-          {loading ? (
+          <div className="crm-vendor-toolbar">
+            <input type="search" className="lead-input" aria-label="Search vendors"
+              placeholder="Search name, brand, phone, email, city or status…"
+              value={vendorSearch} onChange={(event) => setVendorSearch(event.target.value)} />
+            <Link className="btn-create-lead" to="/vendor-crm/new">Add New Vendor</Link>
+          </div>
+          <p>{filteredVendors.length} of {designers.length} vendors</p>
+          <div className="crm-vendor-table-wrap">
+            <table className="crm-vendor-table">
+              <thead><tr>{["Vendor Id", "Vendor", "Brand", "Email", "Phone", "City / State", "Category", "Stage", "KYC", "GST", "Plan", "Credits", "Sales owner", "Follow-up", "Fulfillment", "Contract ends", "Actions"].map((label) => <th key={label}>{label}</th>)}</tr></thead>
+              <tbody>
+                {loading ? <tr><td colSpan={17}>Loading vendors…</td></tr> : filteredVendors.length === 0 ? <tr><td colSpan={17}>{designers.length ? "No vendors match your search." : "No vendors yet. Click Add New Vendor to add one."}</td></tr> : filteredVendors.map((vendor) => (
+                  <tr key={vendor.id}>
+                    <td>{vendor.vendor_code || vendor.id}</td>
+                    <td>{vendor.vendor_name || vendor.designer_name || "—"}</td>
+                    <td>{vendor.brand_name || "—"}</td><td>{vendor.email || "—"}</td><td>{vendor.phone || "—"}</td>
+                    <td>{[vendor.city, vendor.state].filter(Boolean).join(", ") || "—"}</td>
+                    <td>{vendor.primary_category || "—"}</td>
+                    <td><span className={`tone-badge ${getStageTone(vendor.stage)}`}>{vendor.stage || "LEAD"}</span></td>
+                    <td>{vendor.kyc_status || "PENDING"}</td><td>{vendor.gst_number || "—"}</td>
+                    <td>{vendor.online_membership_plan || "—"}</td><td>{vendor.credit_points ?? 0}</td>
+                    <td>{vendor.sales_owner || "—"}</td><td>{vendor.next_followup_date || "—"}</td><td>{vendor.fulfillment || "—"}</td><td>{vendor.contract_end_date || "—"}</td>
+                    <td><div className="crm-vendor-actions"><Link to={`/vendor-crm/${vendor.id}/edit`} aria-label={`Edit ${vendor.vendor_name || vendor.brand_name}`}>Edit</Link>
+                      <button type="button" disabled={Boolean(freezingVendorId)} onClick={() => freezeVendor(vendor)}>
+                        {freezingVendorId === vendor.id ? (vendor.stage === "INACTIVE" ? "Unfreezing…" : "Freezing…") : vendor.stage === "INACTIVE" ? "Unfreeze vendor" : "Freeze vendor"}
+                      </button></div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          </>}
+          {mode === "edit" && !loading && !designers.some((vendor) => vendor.id === editingVendorId) && <p role="alert">Vendor not found. Return to the vendor list to select a vendor.</p>}
+          {editingVendorId && (loading ? (
             <div className="crm-empty-state">Loading vendor records...</div>
           ) : designers.length === 0 ? (
             <div className="crm-empty-state">
@@ -860,7 +960,7 @@ Team Zippy`;
             </div>
           ) : (
             <div className="designer-cards-list">
-              {designers.map((designer) => {
+              {designers.filter((designer) => designer.id === editingVendorId).map((designer) => {
                 const econ = getDesignerEconomics(designer);
                 const tasks = designer.follow_up_tasks || [];
                 const currentInput = taskInputs[designer.id] || {
@@ -870,6 +970,7 @@ Team Zippy`;
 
                 return (
                   <article className="designer-card" key={designer.id}>
+                    <VendorDetailsEditor vendor={designer} onSaved={(updated) => setDesigners((items) => items.map((item) => item.id === designer.id ? { ...item, ...updated } : item))} />
                     {/* Top Row: Brand, Badges, Stage Actions */}
                     <div className="designer-card-top">
                       <div className="designer-info-left">
@@ -1322,14 +1423,14 @@ Team Zippy`;
                 );
               })}
             </div>
-          )}
+          ))}
         </section>
 
         {/* 3. ADD A DESIGNER LEAD (15 Fields) */}
-        <section className="crm-panel vendor-lead-panel">
+        <section hidden={!showFreshVendor} className="crm-panel vendor-lead-panel">
           <div className="crm-panel-header">
             <div className="crm-panel-title-block">
-              <h2 className="crm-panel-title">Add a vendor lead</h2>
+              <h2 className="crm-panel-title">Add New Vendor</h2>
               <p className="crm-panel-desc">
                 Creates the vendor record used by every other layer.
               </p>
@@ -1647,7 +1748,7 @@ Team Zippy`;
 
             <div style={{ gridColumn: "1 / -1" }}>
               <button type="submit" className="btn-create-lead">
-                Create lead
+                Add vendor
               </button>
             </div>
           </form >

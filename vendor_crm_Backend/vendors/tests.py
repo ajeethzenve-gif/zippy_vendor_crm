@@ -193,6 +193,7 @@ class VendorIntegrationTests(TestCase):
         self.vendor = Vendor.objects.create(user=self.user, vendor_name="Portal Owner", brand_name="Pet Brand", email=self.user.email, credit_points=200000)
 
     def test_portal_and_operational_endpoints(self):
+        self.client.force_authenticate(self.user)
         from products.models import Product
         from orders.models import Order, OrderItem, Settlement
         product = Product.objects.create(designer=self.vendor, sku="VENDOR-TEST", product_name="Pet bowl", mrp=100, selling_price=100, status="APPROVED", inventory_quantity=10)
@@ -226,6 +227,27 @@ class VendorIntegrationTests(TestCase):
         for query in [self.vendor.vendor_name, self.vendor.vendor_code]:
             self.assertEqual(self.client.get("/api/products/", {"designer": query}).status_code, 200)
 
+    def test_portal_and_notifications_require_owner_or_admin(self):
+        from accounts.models import Role, UserRole
+        dashboard = f"/api/vendors/{self.vendor.pk}/portal-dashboard/"
+        notifications = dashboard + "mark-read/"
+        self.assertEqual(self.client.get(dashboard).status_code, 401)
+        self.assertEqual(self.client.post(notifications).status_code, 401)
+        staff = get_user_model().objects.create_user(username="portal-finance", is_staff=True)
+        finance, _ = Role.objects.get_or_create(name="Finance")
+        UserRole.objects.create(user=staff, role=finance)
+        self.client.force_authenticate(staff)
+        self.assertEqual(self.client.get(dashboard).status_code, 403)
+        self.assertEqual(self.client.post(notifications).status_code, 403)
+        self.vendor.refresh_from_db()
+        self.assertIsNone(self.vendor.notifications_read_at)
+        admin = get_user_model().objects.create_user(username="portal-admin")
+        admin_role, _ = Role.objects.get_or_create(name="Admin")
+        UserRole.objects.create(user=admin, role=admin_role)
+        self.client.force_authenticate(admin)
+        self.assertEqual(self.client.get(dashboard).status_code, 200)
+        self.assertEqual(self.client.post(notifications).status_code, 200)
+
     def test_account_ownership_validation_and_persistence(self):
         url = f"/api/vendors/{self.vendor.pk}/account-details/"
         self.assertEqual(self.client.get(url).status_code, 401)
@@ -240,6 +262,21 @@ class VendorIntegrationTests(TestCase):
         stranger = get_user_model().objects.create_user(username="stranger", password="River!Cobalt82Moon")
         self.client.force_authenticate(stranger)
         self.assertEqual(self.client.get(url).status_code, 403)
+
+    def test_portal_bank_capability_matches_account_permissions(self):
+        dashboard = f"/api/vendors/{self.vendor.pk}/portal-dashboard/"
+        account = f"/api/vendors/{self.vendor.pk}/account-details/"
+        self.assertEqual(self.client.get(dashboard).status_code, 401)
+        stranger = get_user_model().objects.create_user(username="bank-stranger")
+        staff = get_user_model().objects.create_user(username="bank-staff", is_staff=True)
+        for user, allowed in [(self.user, True), (stranger, False), (staff, True)]:
+            with self.subTest(user=user.username):
+                self.client.force_authenticate(user)
+                response = self.client.get(dashboard)
+                self.assertEqual(response.status_code, 200 if allowed else 403)
+                if allowed:
+                    self.assertTrue(response.data["can_manage_account"])
+                self.assertEqual(self.client.get(account).status_code, 200 if allowed else 403)
 
     def test_login_uses_real_credentials(self):
         from accounts.models import Role, UserRole

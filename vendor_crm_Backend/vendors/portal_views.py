@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,11 +15,23 @@ from orders.models import OrderItem, ReturnRequest
 from orders.serializers import SettlementSerializer
 
 
+def is_portal_admin(user):
+    assigned_role = getattr(getattr(user, "user_role", None), "role", None)
+    return bool(user.is_superuser or (assigned_role and assigned_role.name == "Admin") or (user.is_staff and assigned_role is None))
+
+
+def portal_vendor(request, pk):
+    vendor = get_object_or_404(Vendor, pk=pk)
+    if not is_portal_admin(request.user) and vendor.user_id != request.user.pk:
+        raise PermissionDenied("You cannot access this vendor's portal.")
+    return vendor
+
+
 class VendorPortalView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        vendor = get_object_or_404(Vendor, pk=pk)
+        vendor = portal_vendor(request, pk)
         products = vendor.products.all().select_related("designer").prefetch_related("size_stocks", "product_images")
         product_ids = [str(p.pk) for p in products]
         items = OrderItem.objects.filter(product_id__in=product_ids).select_related("order")
@@ -49,6 +61,9 @@ class VendorPortalView(APIView):
             pending.append("Your vendor contract is awaiting signature.")
         return Response({
             "vendor": details, "designer": details,
+            "can_manage_account": bool(request.user.is_authenticated and (
+                is_portal_admin(request.user) or vendor.user_id == request.user.pk
+            )),
             "kpis": {
                 "monthlyGmv": sales.filter(order__created_at__year=now.year, order__created_at__month=now.month).aggregate(value=Sum("total"))["value"] or 0,
                 "orders": total_orders, "units": units,
@@ -69,10 +84,10 @@ class VendorPortalView(APIView):
 
 
 class VendorNotificationsReadView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        vendor = get_object_or_404(Vendor, pk=pk)
+        vendor = portal_vendor(request, pk)
         vendor.notifications_read_at = timezone.now()
         vendor.save(update_fields=["notifications_read_at"])
         return Response({"detail": "Notifications marked as read."})
@@ -84,7 +99,7 @@ class VendorAccountView(APIView):
 
     def get_vendor(self, request, pk):
         vendor = get_object_or_404(Vendor, pk=pk)
-        if not request.user.is_staff and vendor.user_id != request.user.pk:
+        if not is_portal_admin(request.user) and vendor.user_id != request.user.pk:
             raise PermissionDenied("You cannot access this vendor's bank account.")
         return vendor
 

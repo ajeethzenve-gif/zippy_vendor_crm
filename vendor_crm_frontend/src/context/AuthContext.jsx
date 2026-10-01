@@ -10,7 +10,7 @@ export const ROLES = [
     user: "Priya Raghavan",
     email: "priya.raghavan@zenve.in",
     department: "Executive & Governance",
-    landingPath: "/command-centre",
+    landingPath: "/",
     description: "Full clearance across all 13 operational layers, approvals, and system controls.",
     badgeClass: "admin",
     clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"],
@@ -35,7 +35,7 @@ export const ROLES = [
     user: "Ananya Roy",
     email: "ananya.roy@zenve.in",
     department: "Supply & Brand Acquisition",
-    landingPath: "/vendor-crm",
+    landingPath: "/",
     description: "Brand lead pipeline, vendor onboarding, KYC review, and contracts.",
     badgeClass: "merchandiser",
     clearance: ["01", "03", "10"],
@@ -47,7 +47,7 @@ export const ROLES = [
     user: "Rohan Varma",
     email: "rohan.varma@zenve.in",
     department: "Quality & Media Standards",
-    landingPath: "/catalogueqa",
+    landingPath: "/",
     description: "SKU specification validation, media quality checks, and approval audit trail.",
     badgeClass: "qa",
     clearance: ["03", "04"],
@@ -59,7 +59,7 @@ export const ROLES = [
     user: "Vikram Singh",
     email: "vikram.singh@zenve.in",
     department: "Warehouse & Fulfillment",
-    landingPath: "/inventory",
+    landingPath: "/",
     description: "Stock receipts, physical vs reserved counts, damage quarantine, and returns.",
     badgeClass: "inventory",
     clearance: ["05", "07", "08", "09"],
@@ -71,12 +71,12 @@ export const ROLES = [
     user: "Neha Kapoor",
     email: "neha.kapoor@zenve.in",
     department: "Settlement & Accounting",
-    landingPath: "/settlement",
+    landingPath: "/",
     description: "Take-rate calculation, vendor payout reconciliation, and escrow management.",
     badgeClass: "finance",
     clearance: ["07", "10", "11"],
   },
-  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/media", description: "Product originals, Figma creative work, and vendor image delivery.", badgeClass: "qa", clearance: ["13"] },
+  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/", description: "Product originals, Figma creative work, and vendor image delivery.", badgeClass: "qa", clearance: ["13"] },
 ];
 
 const AuthContext = createContext(null);
@@ -88,7 +88,7 @@ export function AuthProvider({ children }) {
       if (saved) {
         const user = JSON.parse(saved);
         const role = ROLES.find(r => r.id === user?.id);
-        return role && sessionStorage.getItem("zippy_access_token") ? { ...user, clearance: role.clearance } : null;
+        return role && sessionStorage.getItem("zippy_access_token") ? { ...user, clearance: role.clearance, landingPath: role.landingPath } : null;
       }
     } catch {
       // Fallback

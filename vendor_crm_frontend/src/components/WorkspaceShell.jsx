@@ -41,7 +41,7 @@ export default function WorkspaceShell({ children }) {
           </Link>
         </div>
         <nav id="workspace-navigation" aria-label="Workspace navigation">
-          <NavLink to="/" end onClick={() => setExpanded(false)}><span className="workspace-nav-icon">◫</span><span>Overview</span></NavLink>
+          <NavLink to={currentUser?.id === "designer" ? "/vendor-portal" : "/"} end onClick={() => setExpanded(false)}><span className="workspace-nav-icon">◫</span><span>{currentUser?.shortRole || "Workspace"} dashboard</span></NavLink>
           {visibleLayers.map(layer => <NavLink key={layer.n} to={layer.path} onClick={() => setExpanded(false)}><span className="workspace-nav-icon">{layer.n}</span><span>{layer.name}</span></NavLink>)}
         </nav>
         <div className="workspace-account"><span className="workspace-avatar">{(currentUser?.user || "Z").charAt(0).toUpperCase()}</span><div><strong>{currentUser?.user || "Your workspace"}</strong><small>{currentUser?.shortRole || "Sign in to access your layers"}</small></div></div>
