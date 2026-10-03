@@ -1226,6 +1226,7 @@ export async function getDesignerAccountDetails(designerId) {
     `${API_BASE_URL}/vendors/${designerId}/account-details/`,
     {
       method: "GET",
+      cache: "no-store",
       headers: {
         Accept: "application/json",
       },

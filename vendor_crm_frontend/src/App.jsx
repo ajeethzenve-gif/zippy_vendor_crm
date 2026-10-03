@@ -10,6 +10,7 @@ const MediaStudio = lazy(() => import("./pages/MediaStudio.jsx"));
 const LayerPage = lazy(() => import("./pages/LayerPage.jsx"));
 const DesignerCRM = lazy(() => import("./pages/VendorCrm.jsx"));
 const DesignerPortal = lazy(() => import("./pages/VendorPortal.jsx"));
+const VendorDashboard = lazy(() => import("./pages/VendorDashboard.jsx"));
 const Catalogue = lazy(() => import("./pages/Catalogue.jsx"));
 const Orders = lazy(() => import("./pages/Orders.jsx"));
 const CatalogueQA = lazy(() => import("./pages/CatalogueQa.jsx"));
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/vendor-crm/new" element={<ProtectedRoute layer="01"><DesignerCRM key="new" mode="new" /></ProtectedRoute>} />
         <Route path="/vendor-crm/:vendorId/edit" element={<ProtectedRoute layer="01"><DesignerCRM key="edit" mode="edit" /></ProtectedRoute>} />
         <Route path="/vendor-portal" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><DesignerPortal /></ProtectedRoute>} />
+        <Route path="/vendor-dashboard" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><VendorDashboard /></ProtectedRoute>} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
         <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
         <Route path="/catalogue-qa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />

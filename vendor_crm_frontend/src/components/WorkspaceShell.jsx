@@ -4,6 +4,8 @@ import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
 import zippyLogo from "../assest/logo/zippy_logo.jpeg";
 import "../styles/Workspace.css";
+import Swal from "sweetalert2";
+import { getDesignerAccountDetails } from "../services/api";
 
 export default function WorkspaceShell({ children }) {
   const { currentUser, hasAccess, logout } = useAuth();
@@ -17,6 +19,15 @@ export default function WorkspaceShell({ children }) {
     const loginPath = currentUser?.id === "designer" ? "/vendor-login" : "/login";
     logout();
     navigate(loginPath);
+  };
+
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    if (currentUser?.id === "designer") {
+      navigate("/vendor-dashboard");
+    } else {
+      navigate("/");
+    }
   };
 
   return <div className={`crm-theme ${standalone ? "crm-standalone" : "crm-workspace"}`}>
@@ -41,10 +52,10 @@ export default function WorkspaceShell({ children }) {
           </Link>
         </div>
         <nav id="workspace-navigation" aria-label="Workspace navigation">
-          <NavLink to={currentUser?.id === "designer" ? "/vendor-portal" : "/"} end onClick={() => setExpanded(false)}><span className="workspace-nav-icon">◫</span><span>{currentUser?.shortRole || "Workspace"} dashboard</span></NavLink>
+          <NavLink to={currentUser?.id === "designer" ? "/vendor-dashboard" : "/"} end onClick={() => setExpanded(false)}><span className="workspace-nav-icon">◫</span><span>{currentUser?.shortRole || "Workspace"} dashboard</span></NavLink>
           {visibleLayers.map(layer => <NavLink key={layer.n} to={layer.path} onClick={() => setExpanded(false)}><span className="workspace-nav-icon">{layer.n}</span><span>{layer.name}</span></NavLink>)}
         </nav>
-        <div className="workspace-account"><span className="workspace-avatar">{(currentUser?.user || "Z").charAt(0).toUpperCase()}</span><div><strong>{currentUser?.user || "Your workspace"}</strong><small>{currentUser?.shortRole || "Sign in to access your layers"}</small></div></div>
+        <div className="workspace-account" onClick={handleProfileClick} style={{ cursor: "pointer" }}><span className="workspace-avatar">{(currentUser?.user || "Z").charAt(0).toUpperCase()}</span><div><strong>{currentUser?.user || "Your workspace"}</strong><small>{currentUser?.shortRole || "Sign in to access your layers"}</small></div></div>
         {currentUser ? <button className="workspace-signout" onClick={handleLogout}>Sign out</button> : <Link className="workspace-signout" to="/login">Sign in →</Link>}
       </aside>
     </>}

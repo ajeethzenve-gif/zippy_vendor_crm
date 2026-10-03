@@ -300,7 +300,7 @@ const getErrorMessage = (error, fallback) => {
    MAIN COMPONENT
 ========================================================= */
 
-export default function VendorPortal() {
+export default function VendorDashboard() {
   const { currentUser } = useAuth();
   const location = useLocation();
   const isVendor = currentUser?.id === "designer";
@@ -967,6 +967,7 @@ export default function VendorPortal() {
 
         setAccountForm(normalizedAccount);
         setSavedAccountForm(normalizedAccount);
+        
         const hasCriticalDetails = Boolean(normalizedAccount.accountNumber || normalizedAccount.ifscCode);
         setHasAccountDetails(hasCriticalDetails);
         setIsAccountMasked(true);
@@ -992,14 +993,15 @@ export default function VendorPortal() {
   };
 
   useEffect(() => {
+    // Only reset state if the selected designer changes
     setAccountForm(EMPTY_ACCOUNT_FORM);
     setSavedAccountForm(EMPTY_ACCOUNT_FORM);
     setHasAccountDetails(false);
     setIsEditingAccount(false);
-    if (selectedDesignerId && showProfileAndAccount && canManageAccount) {
+    if (selectedDesignerId && canManageAccount) {
       loadAccountDetails(selectedDesignerId);
     }
-  }, [selectedDesignerId, showProfileAndAccount, canManageAccount]);
+  }, [selectedDesignerId, canManageAccount]);
 
   /* =======================================================
      SKU SUBMIT
@@ -2215,6 +2217,358 @@ export default function VendorPortal() {
             </div>
           )}
           {/* ===================================================
+              DASHBOARD
+          =================================================== */}
+
+          {!showProfileAndAccount && !showMediaContent && (
+            <section className="ZENVE-portal-card">
+              <div className="ZENVE-card-header">
+                <div>
+                  <h2 className="ZENVE-card-title">
+                    My dashboard
+                  </h2>
+
+                  <p className="ZENVE-card-description">
+                    This month at a glance, straight
+                    from the live order and settlement
+                    ledgers.
+                  </p>
+                </div>
+              </div>
+
+              <div className="ZENVE-kpi-grid">
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Sales this month
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : formatInr(
+                        kpis.monthlyGmv
+                      )}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    Delivered GMV
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Orders
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : kpis.orders ?? 0}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    {loadingPortal
+                      ? "..."
+                      : `${kpis.units ?? 0
+                      } units sold`}
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Commission
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : formatInr(
+                        kpis.commission
+                      )}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    Take rate{" "}
+                    {activeDesigner?.takeRate ??
+                      0}
+                    %
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Net payable
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : formatInr(
+                        kpis.netPayable
+                      )}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    {formatInr(kpis.paid)} already
+                    paid
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Conversion
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : `${kpis.conversion ??
+                      0.1
+                      }%`}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    Units per 100 views
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Best seller
+                  </div>
+
+                  <div
+                    className="ZENVE-tile-value ZENVE-truncate"
+                    title={
+                      kpis.bestSeller?.name ||
+                      "—"
+                    }
+                  >
+                    {loadingPortal
+                      ? "—"
+                      : kpis.bestSeller?.name ||
+                      "—"}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    {kpis.bestSeller
+                      ? `${kpis.bestSeller.units} units`
+                      : "No sales yet"}
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Returns
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : kpis.returns ?? 0}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    {kpis.returnRate ?? 0}% of
+                    units
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Live SKUs
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : kpis.liveSkus ?? 0}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    {kpis.totalSkus ?? 0} total
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Inventory alerts
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : kpis.inventoryAlerts ??
+                      0}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    At or below reorder point
+                  </div>
+                </div>
+
+                <div className="ZENVE-kpi-tile">
+                  <div className="ZENVE-tile-label">
+                    Health score
+                  </div>
+
+                  <div className="ZENVE-tile-value">
+                    {loadingPortal
+                      ? "—"
+                      : `${kpis.health ?? "—"
+                      }/100`}
+                  </div>
+
+                  <div className="ZENVE-tile-hint">
+                    Zenve partner score
+                  </div>
+                </div>
+              </div>
+
+              <div className="ZENVE-pending-actions-wrap">
+                <span className="ZENVE-label-caps">
+                  Pending actions
+                </span>
+
+                {pendingActions.length ===
+                  0 ? (
+                  <p className="ZENVE-pending-empty">
+                    Nothing needs your attention.
+                  </p>
+                ) : (
+                  <ul className="ZENVE-pending-list">
+                    {pendingActions.map(
+                      (action, idx) => (
+                        <li key={idx}>
+                          • {action}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* ===================================================
+              CREDIT POINTS SECTION
+          =================================================== */}
+
+          {!showProfileAndAccount && !showMediaContent && (
+            <section
+              className="ZENVE-portal-card ZENVE-credits-section-card"
+              id="zenve-credits-section"
+            >
+              <div className="ZENVE-card-header">
+                <div>
+                  <h2 className="ZENVE-card-title">My credit points</h2>
+                  <p className="ZENVE-card-description">
+                    Online credits come with your joining plan. Every catalogue listing costs 500 points.
+                  </p>
+                </div>
+              </div>
+
+              {/* 4 KPI TILES */}
+              <div className="ZENVE-credits-kpi-grid">
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">ONLINE CREDITS (FREE)</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.online_credits)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    {creditWallet.online_plan} · {creditWallet.online_listings_left} listings left
+                  </div>
+                </div>
+
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">POINTS USED</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.points_used)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    {creditWallet.points_used_subtitle || "5 catalogue listings at 500 pts each"}
+                  </div>
+                </div>
+
+                <div className="ZENVE-credits-kpi-tile">
+                  <div className="ZENVE-credits-tile-label">TOTAL BALANCE</div>
+                  <div className="ZENVE-credits-tile-value">
+                    {formatPoints(creditWallet.online_credits)}{" "}
+                    <span className="ZENVE-pts-unit">pts</span>
+                  </div>
+                  <div className="ZENVE-credits-tile-subtext">
+                    Available online credits
+                  </div>
+                </div>
+              </div>
+
+              {/* DAILY POINT BURN */}
+              <div className="ZENVE-daily-burn-banner">
+                <div className="ZENVE-daily-burn-label">DAILY POINT BURN</div>
+                <div className="ZENVE-daily-burn-calc">
+                  {dailyBurn.online_count} product(s) listed online × {dailyBurn.online_pts_each} pts = {dailyBurn.online_subtotal} pts per day
+                </div>
+                <div className="ZENVE-daily-burn-total">
+                  Total {dailyBurn.online_subtotal} pts per day
+                </div>
+                <div className="ZENVE-daily-burn-rates">
+                  {dailyBurn.rates_text}
+                </div>
+              </div>
+
+              {/* CREDIT STATEMENT */}
+              <div className="ZENVE-credits-section-block" style={{ marginBottom: 0 }}>
+                <div className="ZENVE-credits-block-heading">CREDIT STATEMENT</div>
+                {creditStatements.length === 0 ? (
+                  <div
+                    style={{
+                      padding: "20px",
+                      background: "#ffffff",
+                      borderRadius: "8px",
+                      border: "1px solid var(--ZENVE-line, #e2ddd5)",
+                      fontSize: "13px",
+                      color: "var(--ZENVE-muted, #746a60)",
+                      textAlign: "center",
+                    }}
+                  >
+                    No credit transactions recorded yet for this vendor.
+                  </div>
+                ) : (
+                  <div className="ZENVE-statement-list">
+                    {creditStatements.map((stmt, sIdx) => {
+                      const isPositive = Number(stmt.points) >= 0;
+                      const ptsDisplay = isPositive
+                        ? `+${Number(stmt.points).toLocaleString("en-IN")} pts`
+                        : `-${Number(Math.abs(stmt.points)).toLocaleString("en-IN")} pts`;
+
+                      return (
+                        <div key={stmt.id || sIdx} className="ZENVE-statement-row">
+                          <div className="ZENVE-statement-desc">{stmt.description}</div>
+                          <div className="ZENVE-statement-meta">
+                            <span
+                              className={`ZENVE-channel-tag tag-${(stmt.channel || "ONLINE").toLowerCase()}`}
+                            >
+                              {stmt.channel || "ONLINE"}
+                            </span>
+                            <span
+                              className={`ZENVE-statement-pts ${isPositive ? "positive" : "negative"}`}
+                            >
+                              {ptsDisplay}
+                            </span>
+                            <span className="ZENVE-statement-date">{stmt.date_str || "—"}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* ===================================================
               PROFILE + ACCOUNT
           =================================================== */}
 
@@ -3096,878 +3450,6 @@ export default function VendorPortal() {
             </div>
           )}
 
-          {/* ===================================================
-              SKU + ORDERS
-          =================================================== */}
-
-          {!showProfileAndAccount && !showMediaContent && (
-            <>
-              {/* =================================================
-                  UPLOAD SKU
-              ================================================= */}
-
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      Add products
-                    </h2>
-
-                    <p className="ZENVE-card-description">
-                      Add each product to your list, then submit all products to QA when ready.
-                    </p>
-                  </div>
-                </div>
-
-                <form
-                  onSubmit={handleSkuSubmit}
-                  className="ZENVE-sku-form"
-                >
-                  <div className="ZENVE-form-grid">
-
-                    {/* =====================================================
-        PRODUCT NAME
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Product name
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Ivory Silk Dog Kurta"
-                        value={form.name}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            name: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        CATEGORY
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Category
-                      </label>
-
-                      <select value={form.category} onChange={(e) => changeCategory(e.target.value)} required>
-                        <option value="">Select a category</option>
-                        {["Pet Food", "Treats", "Toys", "Pet Fashion", "Grooming", "Accessories"].map((category) => (
-                          <option key={category} value={category}>{category}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {form.category === "Pet Fashion" && (
-                      <div className="ZENVE-form-group">
-                        <label className="ZENVE-label-caps">Product type</label>
-                        <select value={form.subcategory} required onChange={(e) => setForm((prev) => ({ ...prev, subcategory: e.target.value, colour: "", selectedSizes: [], sizeStocks: createEmptySizeStocks() }))}>
-                          <option value="">Select clothes or dress</option>
-                          <option value="Clothes">Clothes</option>
-                          <option value="Dress">Dress</option>
-                        </select>
-                      </div>
-                    )}
-                    {isClothing && <>
-                    {/* =====================================================
-        COLOUR
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Colour
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Ivory Gold"
-                        value={form.colour}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            colour: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        MULTIPLE SIZE SELECTION
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <label className="ZENVE-label-caps">
-                        Product Sizes
-                      </label>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "10px",
-                          marginTop: "10px",
-                        }}
-                      >
-                        {[
-                          "XS",
-                          "S",
-                          "M",
-                          "L",
-                          "XL",
-                          "XXL",
-                          "FREE",
-                        ].map((size) => {
-                          const selected =
-                            form.selectedSizes?.includes(size);
-
-                          return (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={() =>
-                                toggleProductSize(size)
-                              }
-                              style={{
-                                minWidth: "60px",
-                                padding: "10px 15px",
-
-                                borderRadius: "8px",
-
-                                border: selected
-                                  ? "2px solid #1b4dff"
-                                  : "1px solid #d8dce6",
-
-                                background: selected
-                                  ? "#eef3ff"
-                                  : "#ffffff",
-
-                                color: selected
-                                  ? "#1238c7"
-                                  : "#252b3a",
-
-                                fontWeight: "600",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {size === "FREE"
-                                ? "Free Size"
-                                : size}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: "8px",
-                          fontSize: "12px",
-                          color: "#666",
-                        }}
-                      >
-                        You can select multiple sizes.
-                      </div>
-                    </div>
-
-                    </>}
-
-                    {/* =====================================================
-        ONLINE PRODUCT STOCK
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group ZENVE-product-stock">
-                      <label className="ZENVE-label-caps" htmlFor={!isClothing ? "portal-online-stock-FREE" : undefined}>Product Stock</label>
-                      {isClothing && stockSizes.length === 0 && (
-                        <span className="ZENVE-stock-hint">Select a size to enter stock.</span>
-                      )}
-                      {stockSizes.map((size) => (
-                        <div className="ZENVE-stock-entry" key={size}>
-                          {isClothing && <label htmlFor={"portal-online-stock-" + size}>{size === "FREE" ? "Free Size" : size}</label>}
-                          <input
-                            id={"portal-online-stock-" + size}
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Enter online quantity"
-                            aria-label={isClothing ? "Online quantity for " + size : "Online quantity"}
-                            value={form.sizeStocks[size]?.online_quantity ?? ""}
-                            onChange={(e) => handleSizeQuantityChange(size, "online_quantity", e.target.value)}
-                            required
-                          />
-                        </div>
-                      ))}
-                      {isClothing && stockSizes.length > 0 && (
-                        <span className="ZENVE-stock-hint">Total online stock: <strong>{totalOnlineQuantity}</strong></span>
-                      )}
-                    </div>
-
-                    {/* =====================================================
-        MRP
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        MRP
-                      </label>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="e.g. 4500"
-                        value={form.mrp}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            mrp: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        SELLING PRICE
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Selling price
-                      </label>
-
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="e.g. 3499"
-                        value={form.price}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            price: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    {/* =====================================================
-        FABRIC
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group">
-                      <label className="ZENVE-label-caps">
-                        Fabric / material
-                      </label>
-
-                      <input
-                        type="text"
-                        placeholder="e.g. Pure Raw Silk"
-                        value={form.fabric}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            fabric: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    {/* =====================================================
-        PET SAFETY
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-2 col-span-2">
-                      <label className="ZENVE-label-caps">
-                        Pet safety information
-                      </label>
-
-                      <input
-                        type="text"
-                        value={form.petSafety}
-                        onChange={(e) =>
-                          setForm({
-                            ...form,
-                            petSafety:
-                              e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    {/* =====================================================
-        PRODUCT IMAGES
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <label className="ZENVE-label-caps">
-                        Product images
-                      </label>
-
-                      <div
-                        style={{
-                          border:
-                            "1px dashed #cfcfcf",
-
-                          borderRadius:
-                            "12px",
-
-                          padding:
-                            "16px",
-
-                          background:
-                            "#fafafa",
-                        }}
-                      >
-                        <input
-                          id="zenve-product-images"
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={
-                            handleProductImageChange
-                          }
-                          disabled={
-                            productImages.length >=
-                            MAX_PRODUCT_IMAGES
-                          }
-                        />
-
-                        <div
-                          style={{
-                            marginTop:
-                              "8px",
-
-                            fontSize:
-                              "12px",
-
-                            color:
-                              "#666",
-                          }}
-                        >
-                          Upload 1 to 4 images.{" "}
-
-                          {productImages.length}/4
-                          selected.
-                        </div>
-
-                        {productImages.length >
-                          0 && (
-                            <div
-                              style={{
-                                display:
-                                  "grid",
-
-                                gridTemplateColumns:
-                                  "repeat(auto-fill, minmax(120px, 1fr))",
-
-                                gap:
-                                  "12px",
-
-                                marginTop:
-                                  "14px",
-                              }}
-                            >
-                              {productImages.map(
-                                (
-                                  file,
-                                  index
-                                ) => (
-                                  <div
-                                    key={`${file.name}-${file.lastModified}-${index}`}
-                                    style={{
-                                      position:
-                                        "relative",
-
-                                      border:
-                                        "1px solid #e5e5e5",
-
-                                      borderRadius:
-                                        "10px",
-
-                                      overflow:
-                                        "hidden",
-
-                                      background:
-                                        "#fff",
-                                    }}
-                                  >
-                                    <img
-                                      src={
-                                        URL.createObjectURL(
-                                          file
-                                        )
-                                      }
-                                      alt={`Product ${index + 1
-                                        }`}
-                                      style={{
-                                        width:
-                                          "100%",
-
-                                        height:
-                                          "110px",
-
-                                        objectFit:
-                                          "cover",
-
-                                        display:
-                                          "block",
-                                      }}
-                                    />
-
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        removeProductImage(
-                                          index
-                                        )
-                                      }
-                                      aria-label={`Remove product image ${index + 1
-                                        }`}
-                                      style={{
-                                        position:
-                                          "absolute",
-
-                                        top:
-                                          "6px",
-
-                                        right:
-                                          "6px",
-
-                                        width:
-                                          "26px",
-
-                                        height:
-                                          "26px",
-
-                                        border:
-                                          "none",
-
-                                        borderRadius:
-                                          "50%",
-
-                                        background:
-                                          "rgba(0,0,0,0.7)",
-
-                                        color:
-                                          "#fff",
-
-                                        cursor:
-                                          "pointer",
-
-                                        fontSize:
-                                          "16px",
-
-                                        lineHeight:
-                                          "26px",
-                                      }}
-                                    >
-                                      ×
-                                    </button>
-
-                                    <div
-                                      style={{
-                                        padding:
-                                          "6px 8px",
-
-                                        fontSize:
-                                          "11px",
-
-                                        whiteSpace:
-                                          "nowrap",
-
-                                        overflow:
-                                          "hidden",
-
-                                        textOverflow:
-                                          "ellipsis",
-                                      }}
-                                      title={
-                                        file.name
-                                      }
-                                    >
-                                      {index + 1}.{" "}
-                                      {file.name}
-                                    </div>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          )}
-                      </div>
-                    </div>
-
-                    {/* =====================================================
-        FAST DELIVERY & RETURNABLE TOGGLES
-    ===================================================== */}
-
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <div className="ZENVE-toggles-grid">
-                        <div className="ZENVE-form-toggle-row">
-                          <span className="ZENVE-label-caps">
-                            Fast delivery eligible
-                          </span>
-
-                          <Switch
-                            checked={
-                              form.fastDelivery
-                            }
-                            onChange={(val) =>
-                              setForm({
-                                ...form,
-                                fastDelivery:
-                                  val,
-                              })
-                            }
-                          />
-                        </div>
-
-                        <div className="ZENVE-form-toggle-row">
-                          <span className="ZENVE-label-caps">
-                            Returnable
-                          </span>
-
-                          <Switch
-                            checked={
-                              form.returnable
-                            }
-                            onChange={(val) =>
-                              setForm({
-                                ...form,
-                                returnable:
-                                  val,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* =====================================================
-                        GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
-                    ===================================================== */}
-                    <div className="ZENVE-form-group span-3 full-width">
-                      <div className="ZENVE-growth-addons-container">
-                        <div className="ZENVE-growth-addons-title">
-                          GROWTH ADD-ONS (CHARGED IN CREDIT POINTS)
-                        </div>
-                        <div className="ZENVE-growth-addons-row">
-                          <div className="ZENVE-growth-addon-card">
-                            <div className="ZENVE-growth-addon-info">
-                              <span className="ZENVE-growth-addon-name">
-                                Exclusive video &amp; photo shoot
-                              </span>
-                              <span className="ZENVE-growth-addon-subtext">
-                                Our team visits you · 5,000 pts
-                              </span>
-                            </div>
-                            <Switch
-                              checked={form.growthVideoShoot}
-                              onChange={(val) =>
-                                setForm({
-                                  ...form,
-                                  growthVideoShoot: val,
-                                })
-                              }
-                            />
-                          </div>
-
-                          <div className="ZENVE-growth-addon-card">
-                            <div className="ZENVE-growth-addon-info">
-                              <span className="ZENVE-growth-addon-name">
-                                Exclusive social media promotion
-                              </span>
-                              <span className="ZENVE-growth-addon-subtext">
-                                Boosts product sales · 5,000 pts
-                              </span>
-                            </div>
-                            <Switch
-                              checked={form.growthSocialPromotion}
-                              onChange={(val) =>
-                                setForm({
-                                  ...form,
-                                  growthSocialPromotion: val,
-                                })
-                              }
-                            />
-                          </div>
-
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* =====================================================
-      SKU PREVIEW
-  ===================================================== */}
-
-                  <div className="ZENVE-sku-preview-row">
-                    <span className="ZENVE-preview-text">
-                      SKU ID preview:
-                    </span>
-
-                    <span className="ZENVE-sku-mono">
-                      {skuPreview}
-                    </span>
-                  </div>
-
-                  {/* =====================================================
-      SUBMIT
-  ===================================================== */}
-
-                  <div className="ZENVE-form-actions">
-                    <button
-                      type="submit"
-                      className="ZENVE-btn-primary"
-                      disabled={
-                        submittingSku ||
-                        !activeDesigner ||
-                        (isClothing && !form.selectedSizes.length) ||
-                        !form.category ||
-                        (form.category === "Pet Fashion" && !form.subcategory) ||
-                        totalInventoryQuantity <= 0
-                      }
-                    >
-                      {submittingSku
-                        ? "Submitting..."
-                        : "Add product"}
-                    </button>
-                  </div>
-                </form>
-                <div className="ZENVE-product-queue" aria-live="polite">
-                  <h3>Products ready to submit ({vendorPendingProducts.length})</h3>
-                  <p>Products in this list are unsaved until submitted. Keep this page open.</p>
-                  {vendorPendingProducts.map((item) => (
-                    <div className="ZENVE-product-queue-row" key={item.sku}>
-                      <div>
-                        <strong>{item.name}</strong>
-                        <p>{item.quantity} units · {formatInr(item.price)} · {item.imageCount} image(s)</p>
-                      </div>
-                      <button type="button" className="ZENVE-btn-outline-sm" disabled={submittingSku}
-                        aria-label={`Remove ${item.name}`}
-                        onClick={() => setPendingProducts((items) => items.filter((pending) => pending !== item))}>
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                  <button type="button" className="ZENVE-btn-primary"
-                    disabled={submittingSku || !vendorPendingProducts.length}
-                    onClick={handleSubmitAllProducts}>
-                    {submittingSku ? "Submitting products..." : `Submit all products (${vendorPendingProducts.length})`}
-                  </button>
-                </div>
-              </section>
-
-              {/* =================================================
-                  SKUS
-              ================================================= */}
-
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      My SKUs &amp; stock
-                    </h2>
-
-                    <p className="ZENVE-card-description">
-                      Live availability the
-                      storefront can sell, with
-                      cover in days.
-                    </p>
-                  </div>
-                </div>
-
-                {skus.length === 0 ? (
-                  <div className="ZENVE-item-empty">
-                    No SKUs uploaded yet.
-                  </div>
-                ) : (
-                  <div className="ZENVE-table-responsive">
-                    <table className="ZENVE-table">
-                      <thead>
-                        <tr>
-                          <th className="ZENVE-label-caps">
-                            SKU
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Price
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            QA
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Available
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Reserved
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Sold
-                          </th>
-                          <th className="ZENVE-label-caps">
-                            Days of cover
-                          </th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {skus.map((skuItem) => {
-                          const qaStatus = skuItem.status || "PENDING_QA";
-                          const qaClass = qaStatus.toLowerCase();
-                          return (
-                            <tr key={skuItem.id}>
-                              <td>
-                                <div className="ZENVE-sku-name">{skuItem.product_name}</div>
-                                <div className="ZENVE-sku-id-mono">{skuItem.sku}</div>
-                              </td>
-                              <td>{formatInr(skuItem.selling_price)}</td>
-                              <td>
-                                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                                  <span className={`ZENVE-qa-badge tone-${qaClass}`}>
-                                    {qaStatus}
-                                  </span>
-                                  {skuItem.qa_score !== undefined && skuItem.qa_score !== null && (
-                                    <span
-                                      style={{ fontSize: "11px", color: "var(--text-muted, #8e8e93)" }}
-                                      title={skuItem.qa_note ? `Note: ${skuItem.qa_note}` : "QA Reference Score"}
-                                    >
-                                      Ref: {skuItem.qa_score}/100
-                                    </span>
-                                  )}
-                                </div>
-                              </td>
-                              <td>{skuItem.inventory_quantity ?? 0}</td>
-                              <td>{skuItem.reserved_quantity ?? 0}</td>
-                              <td>{skuItem.units_sold ?? 0}</td>
-                              <td>
-                                {skuItem.days_of_stock ? `${skuItem.days_of_stock} d` : "—"}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-
-              {/* =================================================
-                  ORDERS
-              ================================================= */}
-
-
-              <section className="ZENVE-portal-card">
-                <div className="ZENVE-card-header">
-                  <div>
-                    <h2 className="ZENVE-card-title">
-                      My orders &amp; settlements
-                    </h2>
-                  </div>
-                </div>
-
-                <div className="ZENVE-orders-block">
-                  {orders.length ===
-                    0 ? (
-                    <div className="ZENVE-item-empty">
-                      No orders yet — sell something
-                      from the Storefront layer.
-                    </div>
-                  ) : (
-                    <div className="ZENVE-orders-list">
-                      {orders.map(
-                        (ord) => (
-                          <div
-                            key={ord.id}
-                            className="ZENVE-order-row"
-                          >
-                            <span className="ZENVE-order-id">
-                              {ord.id}
-                            </span>
-
-                            <span className="ZENVE-order-customer">
-                              {
-                                ord.customer
-                              }
-                            </span>
-
-                            <span className="ZENVE-order-amt">
-                              {formatInr(
-                                ord.amount
-                              )}
-                            </span>
-
-                            <span
-                              className={`ZENVE-order-badge tone-${String(
-                                ord.status ||
-                                ""
-                              ).toLowerCase()}`}
-                            >
-                              {
-                                ord.status
-                              }
-                            </span>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {settlements.length >
-                  0 && (
-                    <div className="ZENVE-settlements-block">
-                      <div className="ZENVE-settlements-list">
-                        {settlements.map(
-                          (stl) => (
-                            <div
-                              key={stl.id}
-                              className="ZENVE-settlement-row"
-                            >
-                              <span className="ZENVE-stl-id">
-                                {stl.id}
-                              </span>
-
-                              <span className="ZENVE-stl-breakdown">
-                                GMV{" "}
-                                {formatInr(
-                                  stl.gmv
-                                )}{" "}
-                                − commission{" "}
-                                {formatInr(
-                                  stl.commission
-                                )}
-                              </span>
-
-                              <span className="ZENVE-stl-net">
-                                {formatInr(
-                                  stl.net
-                                )}
-                              </span>
-
-                              <span
-                                className={`ZENVE-order-badge tone-${String(
-                                  stl.status ||
-                                  ""
-                                ).toLowerCase()}`}
-                              >
-                                {
-                                  stl.status
-                                }
-                              </span>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )}
-              </section>
-            </>
-          )}
         </main>
       )}
 

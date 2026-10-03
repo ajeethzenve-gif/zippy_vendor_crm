@@ -61,7 +61,7 @@ function StaffPortal() {
     });
     return () => { active = false; };
   }, [portal, revision]);
-  if (role === "designer") return <Navigate to="/vendor-portal" replace />;
+  if (role === "designer") return <Navigate to="/vendor-dashboard" replace />;
   if (!portal) return <Navigate to="/login" replace />;
   return <main className={`role-portal role-portal-${role}`}>
     <header className="role-portal-header"><div><span className="role-portal-eyebrow">ZIPPY · {currentUser.shortRole.toUpperCase()}</span><h1>{portal.title}</h1><p>Welcome, {currentUser.user}. {portal.description}</p></div><Link className="role-portal-primary" to={portal.action[1]}>{portal.action[0]} →</Link></header>

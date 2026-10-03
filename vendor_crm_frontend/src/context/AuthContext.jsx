@@ -23,7 +23,7 @@ export const ROLES = [
     brand: "Aarav Pet Atelier",
     email: "aarav@petatelier.in",
     department: "External Supply Partner",
-    landingPath: "/vendor-portal",
+    landingPath: "/vendor-dashboard",
     description: "Supply layer partner portal, SKU uploads, live inventory, and settlements.",
     badgeClass: "designer",
     clearance: ["02", "03", "06"],
@@ -149,6 +149,7 @@ export function AuthProvider({ children }) {
     if (path === "/employees") return currentUser.id === "admin";
     const layerPathMap = {
       "/vendor-crm": "01",
+      "/vendor-dashboard": "02",
       "/vendor-portal": "02",
       "/catalogue": "03",
       "/catalogueqa": "04",
