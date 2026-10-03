@@ -38,6 +38,7 @@ class MediaWorkflowTests(TestCase):
     def test_delivery_revision_and_approval(self):
         queue = self.client.get("/api/products/media/")
         self.assertEqual(queue.status_code, 200)
+
         self.assertEqual(queue.data[0]["status"], "QUEUED")
         self.assertEqual(len(queue.data[0]["originals"]), 4)
         self.assertEqual(self.client.post(self.url, {"action": "send"}).status_code, 400)
@@ -59,6 +60,19 @@ class MediaWorkflowTests(TestCase):
         self.assertEqual(self.client.post(self.url, {"action": "approve"}).data["status"], "APPROVED")
         self.assertEqual(self.client.post(self.url, {"action": "send"}).status_code, 400)
         self.assertEqual(self.product.product_images.count(), 4)
+
+    def test_product_card_images_use_readable_private_image_endpoint(self):
+        from urllib.parse import urlsplit
+        response = self.client.get(f"/api/products/{self.product.pk}/")
+        self.assertEqual(response.status_code, 200)
+        images = response.data["product_images"]
+        self.assertEqual(len(images), 4)
+        for image in images:
+            path = urlsplit(image["image"]).path
+            self.assertEqual(path, f"/api/products/media-files/original/{image['id']}/")
+            file_response = self.client.get(path)
+            self.assertEqual(file_response.status_code, 200)
+            self.assertTrue(b"".join(file_response.streaming_content).startswith(b"\x89PNG"))
 
     def test_drafts_filters_and_invalid_uploads(self):
         self.assertEqual(self.client.post(self.url, {"action": "save", "images": [image_file()]}, format="multipart").status_code, 200)

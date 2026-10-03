@@ -1,14 +1,20 @@
+import { SESSION_EXPIRED_EVENT } from "../utils/sessionExpiry";
+
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   "http://127.0.0.1:8000/api";
 
 export { API_BASE_URL };
 
-async function apiFetch(url, options = {}) {
+export async function apiFetch(url, options = {}) {
   const token = sessionStorage.getItem("zippy_access_token");
   const headers = new Headers(options.headers || {});
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  return globalThis.fetch(url, { ...options, headers });
+  const response = await globalThis.fetch(url, { ...options, headers });
+  if (response.status === 401 && token && sessionStorage.getItem("zippy_access_token") === token) {
+    window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT, { detail: { token } }));
+  }
+  return response;
 }
 
 

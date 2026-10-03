@@ -168,9 +168,9 @@ export default function Storefront() {
         (designers.find((d) => d.id === p.designer)?.brand_name) ||
         "Independent Studio";
 
-      const isLive = Boolean(
-        p.live ?? p.is_live ?? (p.status === "APPROVED" || p.status === "LIVE")
-      );
+      const isLive = p.status
+        ? ["APPROVED", "LIVE"].includes(String(p.status).toUpperCase())
+        : Boolean(p.live ?? p.is_live);
       const returnable = Boolean(
         p.returnable ?? (p.return_policy !== "FINAL_SALE")
       );
@@ -183,6 +183,7 @@ export default function Storefront() {
         id: p.id,
         name: p.product_name || p.name || "Untitled SKU",
         sku: p.sku || `SKU-${p.id}`,
+        image: p.product_images?.find(image => image.image)?.image || p.primary_image || p.image || p.images?.[0]?.image || "",
         brand,
         colour: p.colour || "Standard",
         size: p.size || "Free",
@@ -527,6 +528,7 @@ export default function Storefront() {
 
                 return (
                   <div key={sku.id} className="ZENVE-product-card">
+                    <div className="ZENVE-product-image">{sku.image ? <img src={sku.image} alt={sku.name} loading="lazy" onError={event => { event.currentTarget.hidden = true; event.currentTarget.nextElementSibling.hidden = false; }} /> : null}<span hidden={Boolean(sku.image)}>Image unavailable</span></div>
                     {/* TITLE ROW */}
                     <div className="ZENVE-prod-top-row">
                       <h3 className="ZENVE-prod-title">{sku.name}</h3>
@@ -568,15 +570,6 @@ export default function Storefront() {
                         : "Final sale — no returns"}
                     </p>
 
-                    {/* ADD TO BAG */}
-                    <button
-                      type="button"
-                      className="ZENVE-add-bag-btn"
-                      disabled={sku.available < 1 || isCheckingOut}
-                      onClick={() => addToBag(sku.id)}
-                    >
-                      {sku.available < 1 ? "Sold out" : "Add to bag"}
-                    </button>
                   </div>
                 );
               })}

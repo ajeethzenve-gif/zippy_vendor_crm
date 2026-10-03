@@ -16,6 +16,7 @@ from .models import (
 )
 
 from .serializers import ProductSerializer
+from .ownership import vendor_products
 
 
 # =========================================================
@@ -94,6 +95,8 @@ class ProductListCreateAPIView(APIView):
         # -------------------------------------------------
         # DESIGNER FILTER
         # -------------------------------------------------
+
+        products = vendor_products(products, request)
 
         if designer:
 
@@ -481,7 +484,7 @@ class ProductDetailAPIView(APIView):
         try:
 
             return (
-                Product.objects
+                vendor_products(Product.objects.all(), self.request)
                 .select_related(
                     "designer"
                 )
@@ -727,7 +730,7 @@ class ProductStockAdjustmentAPIView(APIView):
         try:
 
             product = (
-                Product.objects
+                vendor_products(Product.objects.all(), request)
                 .select_related(
                     "designer"
                 )

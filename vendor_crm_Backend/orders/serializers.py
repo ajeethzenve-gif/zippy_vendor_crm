@@ -605,6 +605,19 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
 
 
 class SettlementSerializer(serializers.ModelSerializer):
+    mrp = serializers.SerializerMethodField()
+    unit_price = serializers.DecimalField(source="order_item.price", max_digits=12, decimal_places=2, read_only=True, default=None)
+
+    def get_mrp(self, instance):
+        item = instance.order_item
+        if not item:
+            return None
+        snapshot = item.product_data if isinstance(item.product_data, dict) else {}
+        if snapshot.get("mrp") is not None:
+            return str(snapshot["mrp"])
+        product = item.product
+        return str(product.mrp) if product else None
+
     order_number = serializers.CharField(source="order.order_number", read_only=True)
     brand_name = serializers.CharField(source="designer.brand_name", read_only=True)
     designer_code = serializers.CharField(source="designer.designer_code", read_only=True)
@@ -627,6 +640,8 @@ class SettlementSerializer(serializers.ModelSerializer):
             "product_name",
             "sku",
             "quantity",
+            "mrp",
+            "unit_price",
             "return_request",
             "return_number",
             "is_reversal",

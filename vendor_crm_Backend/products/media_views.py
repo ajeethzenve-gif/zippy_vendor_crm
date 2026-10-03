@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Product, ProductImage, MediaJob, MediaAsset
+from .ownership import vendor_products, request_vendor_id
 
 
 class MediaInput(serializers.Serializer):
@@ -54,7 +55,8 @@ class MediaQueueView(APIView):
 
     def get(self, request):
         products = Product.objects.annotate(image_count=Count("product_images")).filter(image_count__gte=1, image_count__lte=4).select_related("designer", "media_job").prefetch_related("product_images", "media_job__assets")
-        designer = request.query_params.get("designer")
+        products = vendor_products(products, request)
+        designer = request.query_params.get("vendor") or request.query_params.get("designer")
         if designer:
             if not designer.isdigit():
                 return Response({"detail": "Invalid designer ID."}, status=400)
@@ -67,11 +69,13 @@ class MediaDetailView(APIView):
 
     @transaction.atomic
     def post(self, request, pk):
-        product = get_object_or_404(Product.objects.select_for_update(), pk=pk)
+        product = get_object_or_404(vendor_products(Product.objects.select_for_update(), request), pk=pk)
         data = MediaInput(data=request.data)
         data.is_valid(raise_exception=True)
         values = data.validated_data
         action = values["action"]
+        if request_vendor_id(request) is not None and action not in {"approve", "changes"}:
+            return Response({"detail": "Vendors can only review media deliveries."}, status=403)
         if not 1 <= product.product_images.count() <= 4:
             return Response({"detail": "Between 1 and 4 original product images are required."}, status=400)
         job, _ = MediaJob.objects.get_or_create(product=product)

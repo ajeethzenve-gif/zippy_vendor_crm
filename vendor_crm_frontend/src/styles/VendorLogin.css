@@ -687,3 +687,4 @@
     height: 20px;
   }
 }
+.vl-otp-actions{display:flex;justify-content:space-between;gap:12px;margin-top:12px}.vl-otp-actions button{border:0;background:transparent;padding:6px 0;color:#435bd4;font:inherit;font-size:13px;cursor:pointer}.vl-otp-actions button:disabled{color:#7b8494;cursor:default}

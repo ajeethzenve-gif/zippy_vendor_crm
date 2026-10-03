@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { API_BASE_URL } from "../services/api";
+import { API_BASE_URL, apiFetch } from "../services/api";
 import "../styles/MediaStudio.css";
 
 const labels = { QUEUED: "Ready for media", IN_PROGRESS: "In progress", IN_REVIEW: "Vendor review", CHANGES_REQUESTED: "Changes requested", APPROVED: "Approved" };
 
 async function requestMedia(path, options) {
-  const response = await fetch(`${API_BASE_URL}/products/${path}`, options);
+  const response = await apiFetch(`${API_BASE_URL}/products/${path}`, options);
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || Object.values(data).flat().join(" "));
   return data;

@@ -69,48 +69,6 @@ const ACTION_LABELS = {
   PAID: "Reconcile",
 };
 
-const DEFAULT_SETTLEMENTS = [
-  {
-    id: "demo-stl-2001",
-    settlement_number: "STL-2001",
-    order_number: "ZO-1001",
-    designer: "Aarav Pet Atelier",
-    brand_name: "Aarav Pet Atelier",
-    gmv: 6998,
-    take_rate: 28,
-    commission_amount: 1959,
-    payout_amount: 5039,
-    status: "PAID",
-    is_reversal: false,
-  },
-  {
-    id: "demo-stl-2002",
-    settlement_number: "STL-2002",
-    order_number: "ZO-1002",
-    designer: "Studio Ira Pets",
-    brand_name: "Studio Ira Pets",
-    gmv: 1299,
-    take_rate: 32,
-    commission_amount: 416,
-    payout_amount: 883,
-    status: "RECONCILED",
-    is_reversal: false,
-  },
-  {
-    id: "demo-stl-2003",
-    settlement_number: "STL-2003",
-    order_number: "ZO-1003",
-    designer: "Studio Ira Pets",
-    brand_name: "Studio Ira Pets",
-    gmv: 1299,
-    take_rate: 32,
-    commission_amount: 416,
-    payout_amount: 883,
-    status: "REVERSED",
-    is_reversal: true,
-  },
-];
-
 const INCLUDED_POINTS = [
   "GMV — customer realised merchandise value",
   "Take rate — vendor/category specific",
@@ -153,6 +111,7 @@ export default function Settlement() {
       const [settlementsData, designersData] = await Promise.all([
         getSettlements().catch((err) => {
           console.error("Failed to load settlements:", err);
+          setError("Failed to load settlements. Please try again.");
           return null;
         }),
         getDesigners().catch((err) => {
@@ -164,15 +123,15 @@ export default function Settlement() {
       if (Array.isArray(settlementsData) && settlementsData.length > 0) {
         setSettlements(settlementsData);
       } else {
-        // Use default ZENVE reference settlements if backend has none yet
-        setSettlements(DEFAULT_SETTLEMENTS);
+        // Empty or unavailable settlement data.
+        setSettlements([]);
       }
 
       setDesigners(Array.isArray(designersData) ? designersData : []);
     } catch (err) {
       console.error("Failed to load settlement data:", err);
-      setError("Failed to connect to backend server. Showing demo data.");
-      setSettlements(DEFAULT_SETTLEMENTS);
+      setError("Failed to load settlements. Please try again.");
+      setSettlements([]);
     } finally {
       setLoading(false);
     }
@@ -186,7 +145,7 @@ export default function Settlement() {
      NORMALIZED SETTLEMENT ITEMS
   ------------------------------------------------------- */
   const normalizedSettlements = useMemo(() => {
-    const sourceList = settlements.length > 0 ? settlements : DEFAULT_SETTLEMENTS;
+    const sourceList = settlements;
     return sourceList.map((item) => {
       const id = item.settlement_number || `STL-${2000 + Number(item.id || 0)}`;
       const orderId =
@@ -198,10 +157,10 @@ export default function Settlement() {
       );
       const designerName =
         item.brand_name ||
-        item.designer ||
+        (typeof item.designer === "string" ? item.designer : null) ||
         designerObj?.brand_name ||
         designerObj?.designer_name ||
-        "Aarav Pet Atelier";
+        "—";
 
       const gmv = Math.abs(Number(item.gmv) || 0);
       const takeRate = Number(item.takeRate ?? item.take_rate) || 15;
@@ -413,14 +372,13 @@ export default function Settlement() {
               <table className="ZENVE-settlement-table">
                 <thead>
                   <tr>
-                    <th>Settlement</th>
                     <th>Vendor</th>
-                    <th>GMV</th>
-                    <th>Take rate</th>
+                    <th>MRP</th>
+                    <th>Price</th>
                     <th>Commission</th>
-                    <th>Net payable</th>
+                    <th>Sold Product</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -437,20 +395,22 @@ export default function Settlement() {
                       <tr key={item.id}>
                         <td>
                           <div>
+                            <p>{item.designerName}</p>
                             <p className="settlement-cell-id">{item.displayId}</p>
                             <p className="settlement-cell-order">{item.displayOrderId}</p>
                           </div>
                         </td>
 
-                        <td>{item.designerName}</td>
+                        <td>{item.mrp == null ? "—" : formatInr(item.mrp)}</td>
 
-                        <td>{formatInr(item.gmv)}</td>
-
-                        <td>{item.takeRate}%</td>
+                        <td>{item.unit_price == null ? "—" : formatInr(item.unit_price)}</td>
 
                         <td>{formatInr(item.commission)}</td>
 
-                        <td className="net-payable-text">{formatInr(item.net)}</td>
+                        <td>
+                          <p className="settlement-cell-id">{item.product_name || "—"}</p>
+                          <p className="settlement-cell-order">{item.sku || "—"} · {item.quantity ?? "—"} sold</p>
+                        </td>
 
                         <td>
                           <span className={`ZENVE-tone-badge ${getStatusTone(item.status)}`}>

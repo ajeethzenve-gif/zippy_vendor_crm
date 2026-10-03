@@ -363,21 +363,22 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # =====================================================
 # EMAIL CONFIGURATION
 # =====================================================
+SMS_PROVIDER = os.getenv("SMS_PROVIDER", "APITXT")
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+SMS_API_KEY = os.getenv("SMS_API_KEY", "")
+SMS_AUTH_KEY = os.getenv("SMS_AUTH_KEY", "")
 
-EMAIL_HOST = "smtp.gmail.com"
+SMS_SENDER_ID = os.getenv(
+    "SMS_SENDER_ID",
+    "Zenve Zippy Vendor CRM"
+)
 
-EMAIL_PORT = 587
+SMS_API_URL = os.getenv(
+    "SMS_API_URL",
+    "https://apitxt.com/api/sendOTP"
+)
 
-EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+SMS_ROUTE = os.getenv("SMS_ROUTE", "otp")
 
 # =====================================================
 # RAZORPAY

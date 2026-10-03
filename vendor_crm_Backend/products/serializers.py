@@ -380,7 +380,7 @@ class ProductSerializer(serializers.ModelSerializer):
             image_url = None
 
             try:
-                image_url = image.image.url
+                image_url = f"/api/products/media-files/original/{image.pk}/" if image.image else None
             except Exception:
                 image_url = None
 
@@ -643,6 +643,13 @@ class ProductSerializer(serializers.ModelSerializer):
     # =====================================================
 
     def validate(self, attrs):
+        from .ownership import request_vendor_id
+        request = self.context.get("request")
+        vendor_id = request_vendor_id(request) if request else None
+        if vendor_id is not None:
+            designer = attrs.get("designer", getattr(self.instance, "designer", None))
+            if designer is None or designer.pk != vendor_id:
+                raise serializers.ValidationError({"designer": "You can only manage products belonging to your vendor account."})
 
         mrp = attrs.get(
             "mrp",

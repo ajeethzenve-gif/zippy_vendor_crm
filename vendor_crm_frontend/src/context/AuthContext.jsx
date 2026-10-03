@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { tokenExpiresAt, loginPathForRole, SESSION_EXPIRED_EVENT } from "../utils/sessionExpiry";
+import "../styles/SessionTimeout.css";
 
 import { API_BASE_URL } from "../services/api";
 
@@ -82,6 +85,8 @@ export const ROLES = [
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
+  const [sessionExpired, setSessionExpired] = useState(null);
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem("zenve_auth_user");
@@ -104,6 +109,51 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    if (!currentUser || sessionExpired) return;
+    const token = sessionStorage.getItem("zippy_access_token");
+    const expiresAt = tokenExpiresAt(token);
+    let expired = false;
+    const expireSession = () => {
+      if (expired) return;
+      expired = true;
+      sessionStorage.removeItem("zippy_access_token");
+      localStorage.removeItem("zenve_auth_user");
+      setSessionExpired({ loginPath: loginPathForRole(currentUser.id) });
+    };
+    const checkExpiry = () => {
+      if (!expiresAt || Date.now() >= expiresAt) expireSession();
+    };
+    const handleUnauthorized = event => {
+      // A response from an older login must not expire a newer session.
+      if (event.detail?.token === token) expireSession();
+    };
+    const timer = window.setTimeout(checkExpiry, Math.max(0, Math.min(expiresAt - Date.now(), 2147483647)));
+    window.addEventListener("focus", checkExpiry);
+    document.addEventListener("visibilitychange", checkExpiry);
+    window.addEventListener(SESSION_EXPIRED_EVENT, handleUnauthorized);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("focus", checkExpiry);
+      document.removeEventListener("visibilitychange", checkExpiry);
+      window.removeEventListener(SESSION_EXPIRED_EVENT, handleUnauthorized);
+    };
+  }, [currentUser, sessionExpired]);
+
+  const continueToLogin = useCallback(() => {
+    if (!sessionExpired) return;
+    const loginPath = sessionExpired.loginPath;
+    setCurrentUser(null);
+    setSessionExpired(null);
+    navigate(loginPath, { replace: true });
+  }, [sessionExpired, navigate]);
+
+  useEffect(() => {
+    if (!sessionExpired) return;
+    const timer = window.setTimeout(continueToLogin, 5000);
+    return () => window.clearTimeout(timer);
+  }, [sessionExpired, continueToLogin]);
+
 
   const loginCustom = async (email, password, { staffOnly = false, vendorOnly = false } = {}) => {
     const response = await fetch(`${API_BASE_URL}/login/`, {
@@ -112,6 +162,10 @@ export function AuthProvider({ children }) {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Sign in failed.");
+    return acceptSession(data, { staffOnly, vendorOnly });
+  };
+
+  const acceptSession = (data, { staffOnly = false, vendorOnly = false } = {}) => {
     const roleMap = { Admin: "admin", Vendor: "designer", Merchandiser: "merchandiser", "Catalogue QA": "qa", Operations: "inventory", Finance: "finance", Media: "media" };
     const roleId = data.is_superuser ? "admin" : (roleMap[data.role] || (data.is_staff ? "admin" : null));
     const role = ROLES.find(r => r.id === roleId);
@@ -128,9 +182,24 @@ export function AuthProvider({ children }) {
     return updated;
   };
 
+  const sendVendorOtp = async phone => {
+    const response = await fetch(`${API_BASE_URL}/vendor-otp/send/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.detail || "Unable to send OTP.");
+    return data;
+  };
+
+  const loginVendorOtp = async (challenge, otp) => {
+    const response = await fetch(`${API_BASE_URL}/vendor-otp/verify/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ challenge, otp }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.detail || "OTP verification failed.");
+    return acceptSession(data, { vendorOnly: true });
+  };
+
   const logout = () => {
     sessionStorage.removeItem("zippy_access_token");
     setCurrentUser(null);
+    setSessionExpired(null);
     try {
       localStorage.removeItem("zenve_auth_user");
     } catch {
@@ -174,12 +243,22 @@ export function AuthProvider({ children }) {
         currentUser,
         ROLES,
         loginCustom,
+        sendVendorOtp,
+        loginVendorOtp,
         logout,
         hasAccess,
         canAccessPath,
       }}
     >
-      {children}
+      {sessionExpired ? <main className="session-timeout">
+        <section className="session-timeout-card" role="alert" aria-labelledby="session-timeout-title">
+          <span className="session-timeout-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>
+          <h1 id="session-timeout-title">Session timed out</h1>
+          <p>Your login session has expired. Please sign in again to continue.</p>
+          <p>You’ll be redirected to the login page in 5 seconds.</p>
+          <button type="button" onClick={continueToLogin} autoFocus>Go to login</button>
+        </section>
+      </main> : children}
     </AuthContext.Provider>
   );
 }
