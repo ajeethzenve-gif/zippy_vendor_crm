@@ -74,6 +74,7 @@ export default function Inventory() {
 
   // Search filter for stock ledger
   const [searchQuery, setSearchQuery] = useState("");
+  const [ledgerFilters, setLedgerFilters] = useState({ vendor: "", location: "", category: "", status: "", stock: "" });
 
   // Alert notification banner
   const [alert, setAlert] = useState(null);
@@ -303,16 +304,20 @@ export default function Inventory() {
      FILTERED PRODUCTS FOR STOCK LEDGER
   ------------------------------------------------------- */
   const filteredLedgerProducts = useMemo(() => {
-    if (!searchQuery.trim()) return normalizedProducts;
-    const q = searchQuery.toLowerCase();
-    return normalizedProducts.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        p.brand.toLowerCase().includes(q) ||
-        p.location.toLowerCase().includes(q)
-    );
-  }, [normalizedProducts, searchQuery]);
+    const q = searchQuery.trim().toLowerCase();
+    return normalizedProducts.filter(p => {
+      if (q && ![p.sku, p.name, p.brand, p.location, p.category].filter(Boolean).join(" ").toLowerCase().includes(q)) return false;
+      if (ledgerFilters.vendor && String(p.designerId) !== ledgerFilters.vendor) return false;
+      if (["location", "category", "status"].some(field => ledgerFilters[field] && p[field] !== ledgerFilters[field])) return false;
+      const threshold = Number(p.low_stock_threshold ?? 5);
+      return !ledgerFilters.stock || ({ available: p.available > 0, low: p.available > 0 && p.available <= threshold, out: p.available <= 0, reserved: p.reserved > 0, blocked: p.damaged + p.quarantined > 0, transit: p.transit > 0, returned: p.returned > 0 })[ledgerFilters.stock];
+    });
+  }, [normalizedProducts, searchQuery, ledgerFilters]);
+
+  const ledgerFilterOptions = useMemo(() => ({
+    vendors: [...new Map(normalizedProducts.filter(p => p.designerId != null).map(p => [String(p.designerId), p.brand])).entries()].sort((a, b) => a[1].localeCompare(b[1])),
+    ...Object.fromEntries(["location", "category", "status"].map(field => [field, [...new Set(normalizedProducts.map(p => p[field]).filter(Boolean))].sort()])),
+  }), [normalizedProducts]);
 
   /* -------------------------------------------------------
      OPERATIONAL ACTION HANDLERS
@@ -596,7 +601,7 @@ export default function Inventory() {
           {/* STOCK BY HUB */}
           <div className="ZENVE-panel-card">
             <div className="ZENVE-panel-header">
-              <h2 className="ZENVE-panel-title">Stock by hub</h2>
+              <h2 className="ZENVE-panel-title">Stock by Inventory</h2>
               <p className="ZENVE-panel-desc">Where sellable units physically sit.</p>
             </div>
 
@@ -653,11 +658,19 @@ export default function Inventory() {
                 type="text"
                 className="ZENVE-ledger-search-box"
                 placeholder="Filter ledger SKUs..."
+                aria-label="Search stock ledger"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
+
+          <div className="ZENVE-inventory-filters" aria-label="Stock ledger filters">
+            <label>Vendor<select value={ledgerFilters.vendor} onChange={event => setLedgerFilters(previous => ({ ...previous, vendor: event.target.value }))}><option value="">All vendors</option>{ledgerFilterOptions.vendors.map(([id, brand]) => <option key={id} value={id}>{brand}</option>)}</select></label>
+            {[["location", "Location"], ["category", "Category"], ["status", "Product status"]].map(([field, label]) => <label key={field}>{label}<select value={ledgerFilters[field]} onChange={event => setLedgerFilters(previous => ({ ...previous, [field]: event.target.value }))}><option value="">All {label.toLowerCase()}</option>{ledgerFilterOptions[field].map(value => <option key={value} value={value}>{String(value).replace(/_/g, " ")}</option>)}</select></label>)}
+            <label>Stock condition<select value={ledgerFilters.stock} onChange={event => setLedgerFilters(previous => ({ ...previous, stock: event.target.value }))}><option value="">All stock</option>{[["available", "In stock"], ["low", "Low stock"], ["out", "Out of stock"], ["reserved", "Reserved"], ["blocked", "Damaged / quarantined"], ["transit", "In transit"], ["returned", "Returned"]].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+          </div>
+          <div className="ZENVE-inventory-filter-summary"><span aria-live="polite">{loading ? "Loading…" : `${filteredLedgerProducts.length} of ${normalizedProducts.length} SKUs shown`} · Filters apply to the stock ledger</span><button type="button" className="ZENVE-btn ZENVE-btn-outline" onClick={() => { setSearchQuery(""); setLedgerFilters({ vendor: "", location: "", category: "", status: "", stock: "" }); }} disabled={!searchQuery && !Object.values(ledgerFilters).some(Boolean)}>Clear filters</button></div>
 
           {loading ? (
             <div className="ZENVE-empty-state">
@@ -680,8 +693,8 @@ export default function Inventory() {
             </div>
           ) : filteredLedgerProducts.length === 0 ? (
             <div className="ZENVE-empty-state">
-              <strong>No SKUs in the catalogue yet.</strong>
-              <p>Products uploaded in Layer 02 or 03 will automatically populate the live ledger.</p>
+              <strong>{normalizedProducts.length ? "No products match your filters." : "No SKUs in the catalogue yet."}</strong>
+              <p>{normalizedProducts.length ? "Try another search or clear the filters." : "Products uploaded in Layer 02 or 03 will automatically populate the live ledger."}</p>
             </div>
           ) : (
             <div className="ZENVE-ledger-stack">

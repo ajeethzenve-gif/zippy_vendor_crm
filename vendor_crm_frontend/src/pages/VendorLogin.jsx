@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/VendorLogin.css";
@@ -131,7 +131,7 @@ function Icon({ name, ...props }) {
 }
 
 export default function VendorLogin() {
-  const { loginCustom } = useAuth();
+  const { loginCustom, sendVendorOtp, loginVendorOtp } = useAuth();
   const navigate = useNavigate();
 
   const [loginMethod, setLoginMethod] = useState("credentials"); // "credentials" | "otp"
@@ -140,10 +140,30 @@ export default function VendorLogin() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [otpChallenge, setOtpChallenge] = useState("");
+  const [resendAfter, setResendAfter] = useState(0);
+  useEffect(() => {
+    if (!resendAfter) return;
+    const timer = setTimeout(() => setResendAfter(previous => Math.max(0, previous - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [resendAfter]);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [forgotPasswordMsg, setForgotPasswordMsg] = useState("");
+
+  const requestOtp = async () => {
+    if (isSubmitting || resendAfter) return;
+    setIsSubmitting(true); setErrorMessage(""); setForgotPasswordMsg("");
+    try {
+      const result = await sendVendorOtp(phoneNumber.trim());
+      setOtpChallenge(result.challenge); setOtpCode(""); setOtpSent(true);
+      setResendAfter(result.retry_after || 60);
+      setForgotPasswordMsg(result.message);
+    } catch (error) {
+      setErrorMessage(error.message || "Unable to send OTP.");
+    } finally { setIsSubmitting(false); }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -172,12 +192,7 @@ export default function VendorLogin() {
           setErrorMessage("Please enter a valid 10-digit registered mobile number.");
           return;
         }
-        setIsSubmitting(true);
-        setTimeout(() => {
-          setIsSubmitting(false);
-          setOtpSent(true);
-          setErrorMessage("");
-        }, 600);
+        await requestOtp();
       } else {
         if (!otpCode.trim() || otpCode.trim().length < 4) {
           setErrorMessage("Please enter the 4 or 6-digit OTP sent to your phone.");
@@ -185,12 +200,10 @@ export default function VendorLogin() {
         }
         setIsSubmitting(true);
         try {
-          // Attempt vendor sign-in or demo sign-in
-          await loginCustom(phoneNumber.trim(), otpCode.trim(), { vendorOnly: true });
-          navigate("/", { replace: true });
-        } catch {
-          setErrorMessage("Mobile OTP verification is currently linked to registered account credentials. Please sign in using User Name & Password.");
-          setLoginMethod("credentials");
+          const user = await loginVendorOtp(otpChallenge, otpCode.trim());
+          navigate(user.landingPath, { replace: true });
+        } catch (error) {
+          setErrorMessage(error.message || "OTP verification failed.");
         } finally {
           setIsSubmitting(false);
         }
@@ -438,15 +451,19 @@ export default function VendorLogin() {
                           type="text"
                           pattern="[0-9]*"
                           inputMode="numeric"
-                          maxLength={6}
+                          maxLength={10}
                           required
                           value={otpCode}
-                          onChange={(e) => setOtpCode(e.target.value)}
+                          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
                           placeholder="Enter OTP code"
                           className="vl-input"
                           disabled={isSubmitting}
                           autoFocus
                         />
+                      </div>
+                      <div className="vl-otp-actions">
+                        <button type="button" disabled={isSubmitting || resendAfter > 0} onClick={requestOtp}>{resendAfter ? `Resend OTP in ${resendAfter}s` : "Resend OTP"}</button>
+                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>Change number</button>
                       </div>
                     </div>
                   )}

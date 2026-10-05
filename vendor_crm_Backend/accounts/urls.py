@@ -9,8 +9,11 @@ from .views import (RegisterAPIView,
                     )
 
 from .employee_api import EmployeeListCreateView, EmployeeRolesView
+from .vendor_otp import VendorOTPSendView, VendorOTPVerifyView
 
 urlpatterns = [
+    path("vendor-otp/send/", VendorOTPSendView.as_view(), name="vendor-otp-send"),
+    path("vendor-otp/verify/", VendorOTPVerifyView.as_view(), name="vendor-otp-verify"),
     path("employees/", EmployeeListCreateView.as_view(), name="employee-list-create"),
     path("employee-roles/", EmployeeRolesView.as_view(), name="employee-roles"),
 

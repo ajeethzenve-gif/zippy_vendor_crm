@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { layers } from "../data/layers";
-import { getDesigners, getProducts, getOrders, getReturns, getSettlements, API_BASE_URL } from "../services/api";
+import { getDesigners, getProducts, getOrders, getReturns, getSettlements, API_BASE_URL, apiFetch } from "../services/api";
 import "../styles/RolePortal.css";
 import Home from "./Home";
 
@@ -17,7 +17,7 @@ const portals = {
 const collection = value => Array.isArray(value) ? value : value?.results || value?.data?.results || value?.data || [];
 const status = row => String(row.status || row.order_status || "").toUpperCase();
 const loaders = { vendors: getDesigners, products: getProducts, orders: getOrders, returns: getReturns, settlements: getSettlements, media: async () => {
-  const response = await fetch(`${API_BASE_URL}/products/media/`, { headers: { Authorization: `Bearer ${sessionStorage.getItem("zippy_access_token")}` } });
+  const response = await apiFetch(`${API_BASE_URL}/products/media/`);
   if (!response.ok) throw new Error("Unable to load media work.");
   return response.json();
 } };

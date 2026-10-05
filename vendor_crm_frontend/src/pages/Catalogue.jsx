@@ -155,7 +155,12 @@ export default function Catalogue() {
     try {
       setLoading(true);
       setError("");
-      const data = await getProducts();
+      if (isVendor && !currentUser?.vendorId) {
+        setProducts([]);
+        setError("Your vendor account is not linked to a business. Please contact support.");
+        return;
+      }
+      const data = await getProducts(isVendor ? { designer: currentUser.vendorId } : {});
       const list = Array.isArray(data) ? data : data.results || [];
       setProducts(list);
     } catch (err) {
@@ -168,7 +173,7 @@ export default function Catalogue() {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+  }, [currentUser?.id, currentUser?.vendorId]);
 
   /* =======================================================
      UPDATE SINGLE PRICE
@@ -355,24 +360,24 @@ export default function Catalogue() {
             TOP 4 KPI CARDS
         =================================================== */}
         <div className="ZENVE-catalogue-kpis">
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">SKUs</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.totalSkus}</div>
+          <div className="ZENVE-kpi-card">
+            <div className="ZENVE-label-caps">SKUs</div>
+            <div className="ZENVE-kpi-val">{loading ? "—" : kpis.totalSkus}</div>
           </div>
 
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">Live</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.liveSkus}</div>
+          <div className="ZENVE-kpi-card">
+            <div className="ZENVE-label-caps">Live</div>
+            <div className="ZENVE-kpi-val">{loading ? "—" : kpis.liveSkus}</div>
           </div>
 
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">In QA</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.inQa}</div>
+          <div className="ZENVE-kpi-card">
+            <div className="ZENVE-label-caps">In QA</div>
+            <div className="ZENVE-kpi-val">{loading ? "—" : kpis.inQa}</div>
           </div>
 
-          <div className="ZENVE-kpi-tile">
-            <div className="ZENVE-tile-label">Final sale</div>
-            <div className="ZENVE-tile-value">{loading ? "—" : kpis.finalSale}</div>
+          <div className="ZENVE-kpi-card">
+            <div className="ZENVE-label-caps">Final sale</div>
+            <div className="ZENVE-kpi-val">{loading ? "—" : kpis.finalSale}</div>
           </div>
         </div>
 
