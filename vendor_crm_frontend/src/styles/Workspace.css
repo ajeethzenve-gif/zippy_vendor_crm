@@ -313,7 +313,8 @@
   border-color: #fecaca;
 }
 
-.crm-theme .workspace-mobile-icons {
+.crm-theme .workspace-mobile-icons,
+.crm-theme .workspace-sidebar-close {
   display: none !important;
 }
 
@@ -850,20 +851,88 @@
   }
 
   .crm-theme .workspace-sidebar {
-    display: none !important;
-    position: relative !important;
-    top: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: -100% !important;
+    bottom: 0 !important;
     left: auto !important;
-    bottom: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    max-height: 70vh !important;
-    border-bottom: 1px solid var(--line) !important;
-    border-right: 0 !important;
+    width: 85% !important;
+    max-width: 320px !important;
+    height: 100vh !important;
+    max-height: none !important;
+    background: #ffffff !important;
+    z-index: 9999 !important;
+    transition: right 0.3s ease !important;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.1) !important;
+    border: none !important;
+    padding: 0 !important;
   }
 
   .crm-theme .workspace-sidebar.is-expanded {
+    right: 0 !important;
+  }
+
+  .crm-theme .workspace-sidebar > nav {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding-top: 10px !important;
+  }
+
+  .crm-theme .workspace-sidebar > nav a {
+    font-size: 15px !important;
+    padding: 12px 20px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .crm-theme .workspace-account {
+    order: -1 !important;
+    background: var(--ZENVE-card) !important;
+    color: var(--ZENVE-ink) !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    padding: 24px 16px !important;
     display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .crm-theme .workspace-account strong {
+    color: var(--ZENVE-ink) !important;
+    font-size: 16px !important;
+  }
+  
+  .crm-theme .workspace-account small {
+    color: var(--ZENVE-muted) !important;
+  }
+
+  .crm-theme .workspace-avatar {
+    background: var(--ZENVE-gold-light) !important;
+    color: var(--ZENVE-gold) !important;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .crm-theme .workspace-sidebar-close {
+    display: flex !important;
+    margin-left: auto !important;
+    background: var(--ZENVE-paper) !important;
+    color: var(--ZENVE-muted) !important;
+    border: 1px solid var(--ZENVE-border) !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
   }
 
   .crm-theme .workspace-mobile-bar {
