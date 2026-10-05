@@ -69,6 +69,18 @@ class VendorRegistrationSerializer(serializers.ModelSerializer):
 
 
 class VendorSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        try:
+            return super().create(validated_data)
+        except ValidationError as error:
+            raise serializers.ValidationError(error.message_dict if hasattr(error, "message_dict") else error.messages)
+
+    def update(self, instance, validated_data):
+        try:
+            return super().update(instance, validated_data)
+        except ValidationError as error:
+            raise serializers.ValidationError(error.message_dict if hasattr(error, "message_dict") else error.messages)
+
     plan_type = serializers.PrimaryKeyRelatedField(queryset=OnlineVendorCredit.objects.filter(is_active=True), required=False, allow_null=True)
     plan_details = OnlineVendorCreditSerializer(source="plan_type", read_only=True)
     legacy_designer_id = serializers.IntegerField(read_only=True)

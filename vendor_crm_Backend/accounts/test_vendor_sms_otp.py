@@ -18,7 +18,7 @@ class GeneratedVendorOTPTests(TestCase):
         self.user = get_user_model().objects.create_user(username="generated-otp-owner")
         role, _ = Role.objects.get_or_create(name="Vendor")
         UserRole.objects.create(user=self.user, role=role)
-        self.vendor = Vendor.objects.create(user=self.user, vendor_name="Owner", phone="9876543210")
+        self.vendor = Vendor.objects.create(user=self.user, vendor_name="Owner", phone="9876543210", stage="APPROVED", kyc_status="VERIFIED")
         self.sender = patch("accounts.services.sms_service.requests.post").start()
         self.addCleanup(patch.stopall)
         self.sender.return_value = Mock(json=Mock(return_value={"status": "success", "data": {"request_id": "SMS-OTP-test"}}))
@@ -45,6 +45,8 @@ class GeneratedVendorOTPTests(TestCase):
         self.assertEqual(login.status_code, 200)
         self.assertEqual(login.data["vendor_id"], self.vendor.pk)
         self.assertIn("access", login.data)
+        self.vendor.refresh_from_db()
+        self.assertEqual(self.vendor.stage, "LIVE")
         self.assertEqual(self.verify(challenge, code).status_code, 400)
         self.assertEqual(self.sender.call_count, 1)
 
@@ -89,3 +91,29 @@ class GeneratedVendorOTPTests(TestCase):
         response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
         self.assertEqual(response.status_code, 503)
         self.assertNotIn("challenge", response.data)
+
+    def test_unapproved_or_unverified_vendor_cannot_request_otp(self):
+        for stage, kyc in [("LEAD", "VERIFIED"), ("APPROVED", "PENDING"), ("LIVE", "REJECTED"), ("INACTIVE", "VERIFIED")]:
+            Vendor.objects.filter(pk=self.vendor.pk).update(stage=stage, kyc_status=kyc)
+            self.assertEqual(self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone}).status_code, 400)
+        self.sender.assert_not_called()
+
+    def test_existing_approved_record_is_provisioned_before_otp(self):
+        Vendor.objects.filter(pk=self.vendor.pk).update(user=None)
+        self.user.delete()
+        self.send()
+        self.vendor.refresh_from_db()
+        self.assertIsNotNone(self.vendor.user_id)
+        self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
+
+    def test_kyc_revoked_after_send_blocks_verification(self):
+        challenge, code = self.send()
+        Vendor.objects.filter(pk=self.vendor.pk).update(kyc_status="REJECTED")
+        self.assertEqual(self.verify(challenge, code).status_code, 403)
+        self.vendor.refresh_from_db()
+        self.assertEqual(self.vendor.stage, "APPROVED")
+
+    def test_live_vendor_can_login_again(self):
+        Vendor.objects.filter(pk=self.vendor.pk).update(stage="LIVE")
+        challenge, code = self.send()
+        self.assertEqual(self.verify(challenge, code).status_code, 200)

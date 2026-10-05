@@ -5,6 +5,9 @@ import time
 
 import requests
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from vendors.account_service import ensure_approved_vendor_account
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
@@ -27,9 +30,30 @@ def normalize_phone(value):
 
 
 def matching_vendor(phone):
-    vendors = Vendor.objects.select_related("user").filter(user__is_active=True, user__is_superuser=False, user__user_role__role__name="Vendor").exclude(phone__isnull=True)
+    # LIVE remains eligible after the first successful approved login.
+    vendors = Vendor.objects.filter(kyc_status="VERIFIED", stage__in=["APPROVED", "LIVE"]).exclude(phone__isnull=True)
     matches = [vendor for vendor in vendors if normalize_phone(vendor.phone) == phone]
-    return matches[0] if len(matches) == 1 else None
+    if len(matches) != 1:
+        return None
+    with transaction.atomic():
+        vendor = Vendor.objects.select_for_update().get(pk=matches[0].pk)
+        if vendor.kyc_status != "VERIFIED" or vendor.stage not in {"APPROVED", "LIVE"}:
+            return None
+        # Repair records approved before automatic account provisioning existed.
+        if vendor.stage == "APPROVED":
+            try:
+                with transaction.atomic():
+                    ensure_approved_vendor_account(vendor)
+            except ValidationError:
+                return None
+        if not vendor.user_id:
+            return None
+        user = vendor.user
+        if not user.is_active or user.is_staff or user.is_superuser:
+            return None
+        if not hasattr(user, "user_role") or user.user_role.role.name != "Vendor":
+            return None
+        return vendor
 
 
 class OTPThrottle(AnonRateThrottle):
@@ -47,7 +71,7 @@ class VendorOTPSendView(APIView):
             return Response({"message": "Enter a valid mobile number with country code, or a 10-digit Indian number."}, status=400)
         vendor = matching_vendor(phone)
         if not vendor:
-            return Response({"message": "This number is not linked to an active vendor account. Contact support."}, status=400)
+            return Response({"message": "Mobile login requires verified KYC and an approved vendor account. Contact support."}, status=400)
         cooldown = "vendor-otp-send:" + hashlib.sha256(phone.encode()).hexdigest()
         if not cache.add(cooldown, True, timeout=60):
             return Response({"message": "Please wait 60 seconds before requesting another OTP."}, status=429)
@@ -107,8 +131,16 @@ class VendorOTPVerifyView(APIView):
             if not approved:
                 return Response({"message": "Incorrect OTP. Please try again."}, status=400)
             cache.delete(key)
-            user = vendor.user
-            refresh = RefreshToken.for_user(user)
+            with transaction.atomic():
+                vendor = Vendor.objects.select_for_update().select_related("user", "user__user_role__role").get(pk=vendor.pk)
+                user = vendor.user
+                if (vendor.kyc_status != "VERIFIED" or vendor.stage not in {"APPROVED", "LIVE"}
+                        or not user or user.pk != pending["user"] or not user.is_active or user.is_staff or user.is_superuser
+                        or not hasattr(user, "user_role") or user.user_role.role.name != "Vendor"):
+                    return Response({"message": "Vendor account is unavailable. Contact support."}, status=403)
+                refresh = RefreshToken.for_user(user)
+                vendor.stage = "LIVE"
+                vendor.save(update_fields=["stage"])
             return Response({"message": "Login successful", "access": str(refresh.access_token), "refresh": str(refresh), "username": user.username, "email": user.email, "first_name": user.first_name, "last_name": user.last_name, "role": "Vendor", "vendor_id": vendor.pk, "is_staff": user.is_staff, "is_superuser": False})
         finally:
             cache.delete(lock)

@@ -9,6 +9,14 @@ def vendor_code():
 
 
 class Vendor(models.Model):
+    def save(self, *args, **kwargs):
+        from django.db import transaction
+        from .account_service import ensure_approved_vendor_account
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            if self.stage == "APPROVED":
+                ensure_approved_vendor_account(self)
+
     class Stage(models.TextChoices):
         SIGNED = "SIGNED", "Signed"
         LIVE = "LIVE", "Live"

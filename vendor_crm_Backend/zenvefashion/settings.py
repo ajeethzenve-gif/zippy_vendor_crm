@@ -370,7 +370,7 @@ SMS_AUTH_KEY = os.getenv("SMS_AUTH_KEY", "")
 
 SMS_SENDER_ID = os.getenv(
     "SMS_SENDER_ID",
-    "Zenve Zippy Vendor CRM"
+    "Zenve Fashion CRM"
 )
 
 SMS_API_URL = os.getenv(
