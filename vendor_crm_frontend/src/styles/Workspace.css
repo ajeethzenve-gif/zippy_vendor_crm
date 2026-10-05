@@ -313,6 +313,10 @@
   border-color: #fecaca;
 }
 
+.crm-theme .workspace-mobile-icons {
+  display: none !important;
+}
+
 /* =========================================================
    PAGE WRAPPERS & SHELL DEFAULTS
 ========================================================= */
@@ -893,6 +897,21 @@
 
   .crm-theme .layers-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  .crm-theme .ZENVE-header-actions-group {
+    display: none !important;
+  }
+  
+  .crm-theme .workspace-mobile-icons {
+    display: flex !important;
+    margin-top: auto !important;
+    border-top: 1px solid var(--line) !important;
+  }
+  
+  .crm-theme .workspace-account {
+    margin-top: 0 !important;
+    border-top: none !important;
   }
 }
 

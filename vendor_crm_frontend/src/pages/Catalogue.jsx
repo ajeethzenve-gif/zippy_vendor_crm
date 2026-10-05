@@ -127,6 +127,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function Catalogue() {
+  const { getLayerDisplayNum } = useAuth();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const isVendor = currentUser?.id === "designer";
@@ -305,7 +306,7 @@ export default function Catalogue() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">03</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("03")}</span>
               Product / SKU
             </h1>
 

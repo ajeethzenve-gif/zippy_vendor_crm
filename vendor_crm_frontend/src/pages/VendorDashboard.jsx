@@ -301,6 +301,7 @@ const getErrorMessage = (error, fallback) => {
 ========================================================= */
 
 export default function VendorDashboard() {
+  const { getLayerDisplayNum } = useAuth();
   const { currentUser } = useAuth();
   const location = useLocation();
   const isVendor = currentUser?.id === "designer";
@@ -2018,9 +2019,7 @@ export default function VendorDashboard() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">
-                02
-              </span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("02")}</span>
               Vendor Portal
             </h1>
 

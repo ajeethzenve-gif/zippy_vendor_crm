@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Delivery.css";
 import SearchBar from "../components/SearchBar";
@@ -95,6 +96,7 @@ function computeDeliveryPromise(pincode, sku, available) {
 ========================================================= */
 
 export default function DeliveryEngine() {
+  const { getLayerDisplayNum } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -235,7 +237,7 @@ export default function DeliveryEngine() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">08</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("08")}</span>
               <span>Delivery Engine</span>
             </h1>
 

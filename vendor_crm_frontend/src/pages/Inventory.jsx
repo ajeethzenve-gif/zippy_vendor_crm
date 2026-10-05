@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Inventory.css";
 import SearchBar from "../components/SearchBar";
@@ -60,6 +61,7 @@ function normalizeHub(raw) {
 ========================================================= */
 
 export default function Inventory() {
+  const { getLayerDisplayNum } = useAuth();
   const [products, setProducts] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -443,7 +445,7 @@ export default function Inventory() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">05</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("05")}</span>
               <span>Inventory Engine</span>
             </h1>
 

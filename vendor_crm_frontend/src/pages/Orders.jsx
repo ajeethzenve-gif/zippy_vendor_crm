@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Orders.css";
 import SearchBar from "../components/SearchBar";
@@ -59,6 +60,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function Orders() {
+  const { getLayerDisplayNum } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -295,7 +297,7 @@ export default function Orders() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">07</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("07")}</span>
               <span>OMS</span>
             </h1>
 

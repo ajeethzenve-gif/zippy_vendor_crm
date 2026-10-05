@@ -89,6 +89,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function Storefront() {
+  const { getLayerDisplayNum } = useAuth();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const isVendor = currentUser?.id === "designer";
@@ -391,7 +392,7 @@ export default function Storefront() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">06</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("06")}</span>
               <span>Storefront</span>
             </h1>
 

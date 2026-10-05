@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/CatalogueQa.css";
 import SearchBar from "../components/SearchBar";
@@ -57,6 +58,7 @@ function formatInr(val) {
 ========================================================= */
 
 export default function CatalogueQa() {
+  const { getLayerDisplayNum } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -232,7 +234,7 @@ export default function CatalogueQa() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">04</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("04")}</span>
               Catalogue QA
             </h1>
 

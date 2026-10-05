@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../styles/VendorCrm.css";
 import SearchBar from "../components/SearchBar";
@@ -155,6 +156,7 @@ function VendorDetailsEditor({ vendor, onSaved }) {
 }
 
 export default function DesignerCRM({ mode = "list" }) {
+  const { getLayerDisplayNum } = useAuth();
   const navigate = useNavigate();
   const { vendorId } = useParams();
   const [vendorPlans, setVendorPlans] = useState(DEFAULT_VENDOR_PLANS);
@@ -844,7 +846,7 @@ Team Zippy`;
           <div className="ZENVE-header-left">
             <div className="ZENVE-header-title-block">
               <h1 className="ZENVE-portal-title">
-                <span className="ZENVE-layer-num">01</span>
+                <span className="ZENVE-layer-num">{getLayerDisplayNum("01")}</span>
                 <span>{mode === "new" ? "Add New Vendor" : mode === "edit" ? "Edit Vendor" : "Vendor CRM"}</span>
               </h1>
 

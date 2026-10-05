@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Settlement.css";
 import SearchBar from "../components/SearchBar";
@@ -128,6 +129,7 @@ const INCLUDED_POINTS = [
 ========================================================= */
 
 export default function Settlement() {
+  const { getLayerDisplayNum } = useAuth();
   const [settlements, setSettlements] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -310,7 +312,7 @@ export default function Settlement() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">10</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("10")}</span>
               <span>Settlement</span>
             </h1>
 

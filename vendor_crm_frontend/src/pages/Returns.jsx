@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Returns.css";
 import SearchBar from "../components/SearchBar";
@@ -108,6 +109,7 @@ function getNextActionLabel(status) {
 ========================================================= */
 
 export default function Returns() {
+  const { getLayerDisplayNum } = useAuth();
   const [returns, setReturns] = useState([]);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -390,7 +392,7 @@ export default function Returns() {
         <div className="ZENVE-header-left">
           <div className="ZENVE-header-title-block">
             <h1 className="ZENVE-portal-title">
-              <span className="ZENVE-layer-num">09</span>
+              <span className="ZENVE-layer-num">{getLayerDisplayNum("09")}</span>
               <span>Returns Engine</span>
             </h1>
 

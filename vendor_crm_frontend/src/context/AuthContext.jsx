@@ -168,6 +168,14 @@ export function AuthProvider({ children }) {
     return hasAccess(layerNum);
   };
 
+  const getLayerDisplayNum = (layerN) => {
+    if (currentUser?.id !== "designer") return layerN;
+    // For vendors, find the index of this layer among their accessible layers
+    const visibleLayers = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"].filter(hasAccess);
+    const index = visibleLayers.indexOf(layerN);
+    return index !== -1 ? String(index + 1).padStart(2, '0') : layerN;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -177,6 +185,7 @@ export function AuthProvider({ children }) {
         logout,
         hasAccess,
         canAccessPath,
+        getLayerDisplayNum,
       }}
     >
       {children}

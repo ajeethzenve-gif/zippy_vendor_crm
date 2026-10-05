@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/CommandCentre.css";
 import SearchBar from "../components/SearchBar";
@@ -451,6 +452,7 @@ const ALL_12_LAYERS = [
 ========================================================= */
 
 export default function CommandCentre() {
+  const { getLayerDisplayNum } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -842,7 +844,7 @@ export default function CommandCentre() {
           <div className="ZENVE-header-left">
             <div className="ZENVE-header-title-block">
               <h1 className="ZENVE-portal-title">
-                <span className="ZENVE-layer-num">12</span>
+                <span className="ZENVE-layer-num">{getLayerDisplayNum("12")}</span>
                 <span>Command Centre</span>
               </h1>
 

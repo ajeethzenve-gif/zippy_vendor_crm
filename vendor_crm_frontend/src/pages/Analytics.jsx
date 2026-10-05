@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import "../styles/Analytics.css";
 import SearchBar from "../components/SearchBar";
@@ -654,6 +655,7 @@ function InventoryDonutChart({ split = {} }) {
 ========================================================= */
 
 export default function Analytics() {
+  const { getLayerDisplayNum } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
@@ -1067,7 +1069,7 @@ export default function Analytics() {
           <div className="ZENVE-header-left">
             <div className="ZENVE-header-title-block">
               <h1 className="ZENVE-portal-title">
-                <span className="ZENVE-layer-num">11</span>
+                <span className="ZENVE-layer-num">{getLayerDisplayNum("11")}</span>
                 <span>BI Dashboards</span>
               </h1>
 
