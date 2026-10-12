@@ -27,7 +27,7 @@ def get_or_create_designer_wallet(designer):
     from products.models import Product
 
     # Calculate actual catalogue listings count & statement deductions
-    designer_skus = Product.objects.filter(designer=designer)
+    designer_skus = Product.objects.filter(vendor=designer)
     actual_listings_count = designer_skus.filter(status__in=["APPROVED", "LIVE", "PENDING_QA"]).count()
     statement_deductions = abs(sum(
         s.points for s in DesignerCreditStatement.objects.filter(designer=designer, channel="ONLINE", points__lt=0)
@@ -88,7 +88,7 @@ def get_designer_credits_data(designer):
     statements = wallet.statements.filter(channel="ONLINE").order_by("-id")
 
     # Compute daily point burn dynamically based strictly on designer products
-    designer_skus = Product.objects.filter(designer=designer)
+    designer_skus = Product.objects.filter(vendor=designer)
     online_count = designer_skus.filter(is_live=True).count()
     store_count = designer_skus.filter(
         models.Q(fulfilment_location__icontains="STORE") |

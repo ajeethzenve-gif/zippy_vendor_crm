@@ -24,7 +24,7 @@ class MediaWorkflowTests(TestCase):
         self.addCleanup(self.restore_storage)
         self.client = APIClient()
         self.designer = Vendor.objects.create(vendor_code="MEDIA-1", vendor_name="Vendor", brand_name="Brand")
-        self.product = Product.objects.create(designer=self.designer, sku="MEDIA-SKU", product_name="Dress", mrp=100, selling_price=100)
+        self.product = Product.objects.create(vendor=self.designer, sku="MEDIA-SKU", product_name="Dress", mrp=100, selling_price=100)
         for position in range(1, 5):
             ProductImage.objects.create(product=self.product, position=position, image=image_file())
         self.url = f"/api/products/{self.product.pk}/media/"

@@ -17,7 +17,7 @@ class VendorProductOwnershipTests(TestCase):
         self.other = Vendor.objects.create(vendor_name="Other", brand_name="Other Brand")
         self.products = []
         for vendor in [self.vendor, self.other]:
-            product = Product.objects.create(designer=vendor, sku=f"OWN-{vendor.pk}", product_name=vendor.brand_name, mrp=100, selling_price=90)
+            product = Product.objects.create(vendor=vendor, sku=f"OWN-{vendor.pk}", product_name=vendor.brand_name, mrp=100, selling_price=90)
             ProductImage.objects.create(product=product, image="test/original.png", position=1)
             MediaJob.objects.create(product=product, status="IN_REVIEW", sent_at=timezone.now())
             self.products.append(product)
@@ -40,7 +40,7 @@ class VendorProductOwnershipTests(TestCase):
         response = self.client.patch(f"/api/products/{self.products[0].pk}/", {"designer": self.other.pk}, format="json")
         self.assertEqual(response.status_code, 400)
         self.products[0].refresh_from_db()
-        self.assertEqual(self.products[0].designer_id, self.vendor.pk)
+        self.assertEqual(self.products[0].vendor_id, self.vendor.pk)
 
     def test_media_queue_and_review_are_scoped_to_vendor(self):
         for params in [{}, {"vendor": self.vendor.pk}, {"designer": self.vendor.pk}]:
@@ -60,3 +60,16 @@ class VendorProductOwnershipTests(TestCase):
         UserRole.objects.create(user=unlinked, role=self.owner.user_role.role)
         self.client.force_authenticate(unlinked)
         self.assertEqual(self.client.get("/api/products/").data, [])
+
+    def test_vendor_field_and_legacy_api_alias_use_same_owner(self):
+        from products.serializers import ProductSerializer
+        product = self.products[0]
+        self.assertEqual(Product._meta.get_field("vendor").column, "vendor_id")
+        data = ProductSerializer(product).data
+        self.assertEqual(data["vendor"], self.vendor.pk)
+        self.assertEqual(data["designer"], self.vendor.pk)
+        for field in ["vendor", "designer", "designerId"]:
+            response = self.client.patch(f"/api/products/{product.pk}/", {field: self.other.pk}, format="json")
+            self.assertEqual(response.status_code, 400)
+        product.refresh_from_db()
+        self.assertEqual(product.vendor_id, self.vendor.pk)

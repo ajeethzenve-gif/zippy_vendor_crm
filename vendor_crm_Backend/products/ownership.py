@@ -11,4 +11,4 @@ def request_vendor_id(request):
 
 def vendor_products(queryset, request):
     vendor_id = request_vendor_id(request)
-    return queryset.filter(designer_id=vendor_id) if vendor_id is not None else queryset
+    return queryset.filter(vendor_id=vendor_id) if vendor_id is not None else queryset

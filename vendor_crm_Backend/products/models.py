@@ -71,11 +71,11 @@ class Product(models.Model):
     # PRODUCT CLASSIFICATION
     # =========================================================
 
-    designer = models.ForeignKey(
+    vendor = models.ForeignKey(
         "vendors.Vendor",
         on_delete=models.CASCADE,
         related_name="products",
-        verbose_name="Designer",
+        verbose_name="Vendor",
     )
 
     category = models.CharField(
@@ -471,7 +471,7 @@ class Product(models.Model):
             models.Index(fields=["sku"]),
             models.Index(fields=["status"]),
             models.Index(fields=["category"]),
-            models.Index(fields=["designer"]),
+            models.Index(fields=["vendor"], name="product_vendor_idx"),
             models.Index(fields=["is_live"]),
             models.Index(fields=["is_active"]),
         ]
@@ -604,19 +604,19 @@ class Product(models.Model):
 
     @property
     def designer_name(self):
-        return self.designer.designer_name if self.designer else ""
+        return self.vendor.designer_name if self.vendor else ""
 
     @property
     def designer_brand(self):
-        return self.designer.brand_name if self.designer else ""
+        return self.vendor.brand_name if self.vendor else ""
 
     @property
     def designer_code(self):
-        return self.designer.designer_code if self.designer else ""
+        return self.vendor.designer_code if self.vendor else ""
 
     @property
     def designer_take_rate(self):
-        return self.designer.take_rate if self.designer else 0
+        return self.vendor.take_rate if self.vendor else 0
 
     @property
     def units_sold(self):

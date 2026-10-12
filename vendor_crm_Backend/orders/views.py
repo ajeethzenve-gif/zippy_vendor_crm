@@ -588,7 +588,7 @@ class SettlementGenerateAPIView(APIView):
         for order in delivered_orders:
             for item in order.items.all():
                 if not item.settlements.filter(is_reversal=False).exists():
-                    designer = item.product.designer if (item.product and item.product.designer) else None
+                    designer = item.product.vendor if (item.product and item.product.vendor) else None
                     if designer:
                         take_rate = designer.take_rate
                         gmv = item.total
@@ -610,7 +610,7 @@ class SettlementGenerateAPIView(APIView):
         for rtn in refunded_returns:
             if not rtn.reversal_settlements.exists():
                 product = rtn.order_item.product if rtn.order_item else None
-                designer = (product.designer if (product and product.designer) else None)
+                designer = (product.vendor if (product and product.vendor) else None)
                 if designer:
                     take_rate = designer.take_rate
                     refund_gmv = rtn.refund_amount

@@ -30,7 +30,7 @@ class CommandCentreOverviewAPIView(APIView):
         gmv_float = float(gmv_decimal)
 
         # 2. Inventory & Products
-        products = Product.objects.select_related("designer").all()
+        products = Product.objects.select_related("vendor").all()
         products_count = products.count()
         sellable_units = sum(p.available_quantity for p in products)
 

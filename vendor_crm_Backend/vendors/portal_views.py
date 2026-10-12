@@ -32,7 +32,7 @@ class VendorPortalView(APIView):
 
     def get(self, request, pk):
         vendor = portal_vendor(request, pk)
-        products = vendor.products.all().select_related("designer").prefetch_related("size_stocks", "product_images")
+        products = vendor.products.all().select_related("vendor").prefetch_related("size_stocks", "product_images")
         product_ids = [str(p.pk) for p in products]
         items = OrderItem.objects.filter(product_id__in=product_ids).select_related("order")
         sales = items.exclude(order__order_status__in=["Cancelled", "Returned"])

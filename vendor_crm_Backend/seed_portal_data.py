@@ -28,7 +28,7 @@ sku1, _ = Product.objects.get_or_create(
     sku="ZNV-AAR-POC-DOGKURTA-IVORY-M",
     defaults={
         "product_name": "Ivory Silk Dog Kurta",
-        "designer": designer,
+        "vendor": designer,
         "category": "Pet Occasion Wear",
         "colour": "Ivory",
         "size": Product.Size.M,
@@ -53,7 +53,7 @@ sku2, _ = Product.objects.get_or_create(
     sku="ZNV-AAR-POC-DOGLEHENGA-ROSE-S",
     defaults={
         "product_name": "Rose Zari Dog Lehenga",
-        "designer": designer,
+        "vendor": designer,
         "category": "Pet Occasion Wear",
         "colour": "Rose Gold",
         "size": Product.Size.S,

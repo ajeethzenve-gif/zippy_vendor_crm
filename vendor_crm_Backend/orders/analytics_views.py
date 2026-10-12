@@ -139,8 +139,8 @@ class AnalyticsOverviewAPIView(APIView):
 
             # Designer attribution
             brand = item.brand_name
-            if not brand and item.product and item.product.designer:
-                brand = item.product.designer.brand_name
+            if not brand and item.product and item.product.vendor:
+                brand = item.product.vendor.brand_name
             if not brand:
                 brand = "Independent"
 
@@ -250,7 +250,7 @@ class AnalyticsOverviewAPIView(APIView):
                 "id": p.id,
                 "name": p.product_name,
                 "sku": p.sku,
-                "brand": p.designer.brand_name if p.designer else "",
+                "brand": p.vendor.brand_name if p.vendor else "",
                 "views": str(s_views),
                 "units": str(s_units),
                 "revenue": f"₹{int(s_rev):,}",
@@ -393,12 +393,12 @@ class AnalyticsExportAPIView(APIView):
                 "MRP (INR)", "Selling Price (INR)", "Physical Inventory", "Reserved", 
                 "Damaged/Quarantine", "Available Stock", "Stock Status"
             ])
-            for p in Product.objects.select_related("designer").all():
+            for p in Product.objects.select_related("vendor").all():
                 writer.writerow([
                     p.id,
                     p.product_name,
                     p.sku,
-                    p.designer.brand_name if p.designer else "",
+                    p.vendor.brand_name if p.vendor else "",
                     p.category,
                     p.mrp,
                     p.selling_price,

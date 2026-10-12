@@ -8,7 +8,7 @@ from vendors.models import Vendor
 class SettlementProductFieldsTests(TestCase):
     def setUp(self):
         self.vendor = Vendor.objects.create(vendor_name="Seller", brand_name="Pet Brand")
-        self.product = Product.objects.create(designer=self.vendor, sku="SETTLEMENT-FIELDS", product_name="Bowl", mrp=150, selling_price=120)
+        self.product = Product.objects.create(vendor=self.vendor, sku="SETTLEMENT-FIELDS", product_name="Bowl", mrp=150, selling_price=120)
         order = Order.objects.create(order_status="Delivered")
         self.item = OrderItem.objects.create(order=order, product_id=str(self.product.pk), product_name="Bowl", quantity=2, price=110)
         self.settlement = Settlement.objects.create(order=order, order_item=self.item, designer=self.vendor, gmv=220, commission_amount=22, payout_amount=198)

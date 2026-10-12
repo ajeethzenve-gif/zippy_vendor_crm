@@ -3158,7 +3158,7 @@ export default function VendorPortal() {
 
                       <select value={form.category} onChange={(e) => changeCategory(e.target.value)} required>
                         <option value="">Select a category</option>
-                        {["Pet Food", "Treats", "Toys", "Pet Fashion", "Grooming", "Accessories"].map((category) => (
+                        {["Pet Food", "Treats", "Toys", "Pet Fashion", "Grooming", "Accessories", "Vet Equipments"].map((category) => (
                           <option key={category} value={category}>{category}</option>
                         ))}
                       </select>

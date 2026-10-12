@@ -439,8 +439,8 @@ class OrderItem(models.Model):
     def brand_name(self):
         if self.product_data and isinstance(self.product_data, dict) and self.product_data.get("brand_name"):
             return self.product_data["brand_name"]
-        if self.product and self.product.designer:
-            return self.product.designer.brand_name
+        if self.product and self.product.vendor:
+            return self.product.vendor.brand_name
         return ""
 
 

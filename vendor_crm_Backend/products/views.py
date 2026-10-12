@@ -42,9 +42,7 @@ class ProductListCreateAPIView(APIView):
     def get(self, request):
 
         designer = (
-            request.query_params.get(
-                "designer"
-            )
+            request.query_params.get("vendor") or request.query_params.get("designer")
         )
 
         category = (
@@ -80,7 +78,7 @@ class ProductListCreateAPIView(APIView):
         products = (
             Product.objects
             .select_related(
-                "designer"
+                "vendor"
             )
             .prefetch_related(
                 "product_images",
@@ -107,7 +105,7 @@ class ProductListCreateAPIView(APIView):
             if designer_value.isdigit():
 
                 products = products.filter(
-                    designer_id=int(
+                    vendor_id=int(
                         designer_value
                     )
                 )
@@ -116,17 +114,17 @@ class ProductListCreateAPIView(APIView):
 
                 products = products.filter(
                     models.Q(
-                        designer__brand_name__iexact=
+                        vendor__brand_name__iexact=
                         designer_value
                     )
                     |
                     models.Q(
-                        designer__vendor_name__iexact=
+                        vendor__vendor_name__iexact=
                         designer_value
                     )
                     |
                     models.Q(
-                        designer__vendor_code__iexact=
+                        vendor__vendor_code__iexact=
                         designer_value
                     )
                 )
@@ -370,7 +368,7 @@ class ProductListCreateAPIView(APIView):
             from django.utils import timezone
 
             today_str = timezone.now().strftime("%d/%m/%Y")
-            designer = product.designer
+            designer = product.vendor
             wallet = get_or_create_designer_wallet(designer)
 
             # 1. Catalogue listing deduction (-500 pts)
@@ -432,7 +430,7 @@ class ProductListCreateAPIView(APIView):
         product = (
             Product.objects
             .select_related(
-                "designer"
+                "vendor"
             )
             .prefetch_related(
                 "product_images",
@@ -486,7 +484,7 @@ class ProductDetailAPIView(APIView):
             return (
                 vendor_products(Product.objects.all(), self.request)
                 .select_related(
-                    "designer"
+                    "vendor"
                 )
                 .prefetch_related(
                     "product_images",
@@ -732,7 +730,7 @@ class ProductStockAdjustmentAPIView(APIView):
             product = (
                 vendor_products(Product.objects.all(), request)
                 .select_related(
-                    "designer"
+                    "vendor"
                 )
                 .prefetch_related(
                     "product_images",
@@ -1162,7 +1160,7 @@ class ProductStockAdjustmentAPIView(APIView):
         product = (
             Product.objects
             .select_related(
-                "designer"
+                "vendor"
             )
             .prefetch_related(
                 "product_images",

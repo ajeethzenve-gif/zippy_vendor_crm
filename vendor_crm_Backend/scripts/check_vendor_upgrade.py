@@ -39,7 +39,7 @@ with tempfile.TemporaryDirectory() as directory:
     from products.models import Product
     from credits.models import DesignerCreditWallet, DesignerCreditStatement
     for old_id, new_id in [(41, 42), (42, 41)]:
-        assert Product.objects.get(sku=f'UPGRADE-{old_id}').designer_id == new_id
+        assert Product.objects.get(sku=f'UPGRADE-{old_id}').vendor_id == new_id
         assert DesignerCreditWallet.objects.get(designer_id=new_id).online_credits == 12345
         assert DesignerCreditStatement.objects.get(designer_id=new_id).points == -500
         assert VendorAccountDetails.objects.get(vendor_id=new_id).account_number == '123456789'

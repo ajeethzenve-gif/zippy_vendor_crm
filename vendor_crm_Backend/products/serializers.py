@@ -279,20 +279,22 @@ class ProductSerializer(serializers.ModelSerializer):
     # Designer
     # -----------------------------------------------------
 
-    designer = FlexibleDesignerField(
+    vendor = FlexibleDesignerField(
         queryset=Vendor.objects.all()
     )
 
+    designer = serializers.PrimaryKeyRelatedField(source="vendor", read_only=True)
+
     designer_name = serializers.ReadOnlyField(
-        source="designer.designer_name"
+        source="vendor.designer_name"
     )
 
     designer_brand = serializers.ReadOnlyField(
-        source="designer.brand_name"
+        source="vendor.brand_name"
     )
 
     designer_code = serializers.ReadOnlyField(
-        source="designer.designer_code"
+        source="vendor.designer_code"
     )
 
     # -----------------------------------------------------
@@ -634,6 +636,12 @@ class ProductSerializer(serializers.ModelSerializer):
             None,
         )
 
+        if "vendor" not in data_copy:
+            for alias in ("vendorId", "designer", "designerId"):
+                if alias in data_copy:
+                    data_copy["vendor"] = data_copy[alias]
+                    break
+
         return super().to_internal_value(
             data_copy
         )
@@ -647,7 +655,7 @@ class ProductSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         vendor_id = request_vendor_id(request) if request else None
         if vendor_id is not None:
-            designer = attrs.get("designer", getattr(self.instance, "designer", None))
+            designer = attrs.get("vendor", getattr(self.instance, "vendor", None))
             if designer is None or designer.pk != vendor_id:
                 raise serializers.ValidationError({"designer": "You can only manage products belonging to your vendor account."})
 
@@ -1247,6 +1255,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
 
             # Designer
+            "vendor",
             "designer",
             "designer_name",
             "designer_brand",

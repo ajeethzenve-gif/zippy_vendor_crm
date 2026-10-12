@@ -183,7 +183,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 if product else ""
             )
             p_sku = item_data.get("sku") or (product.sku if product else f"SKU-{order.id}")
-            brand = item_data.get("brand_name") or (getattr(product.designer, "brand_name", "") if (product and product.designer) else "")
+            brand = item_data.get("brand_name") or (getattr(product.vendor, "brand_name", "") if (product and product.vendor) else "")
             color = item_data.get("color") or item_data.get("colour") or (product.colour if product else "")
             size = item_data.get("size") or (product.size if product else "")
             qty = int(item_data.get("quantity") or item_data.get("qty") or 1)
@@ -282,7 +282,7 @@ class OrderSerializer(serializers.ModelSerializer):
             if new_status == "Delivered":
                 for item in instance.items.all():
                     if not item.settlements.filter(is_reversal=False).exists():
-                        designer = (item.product.designer if (item.product and item.product.designer) else None)
+                        designer = (item.product.vendor if (item.product and item.product.vendor) else None)
 
                         if designer:
                             take_rate = designer.take_rate
@@ -579,7 +579,7 @@ class ReturnRequestSerializer(serializers.ModelSerializer):
         if new_status == ReturnRequest.ReturnStatus.REFUNDED and old_status != ReturnRequest.ReturnStatus.REFUNDED:
             if not instance.reversal_settlements.exists():
                 product = instance.order_item.product if instance.order_item else None
-                designer = (product.designer if (product and product.designer) else None)
+                designer = (product.vendor if (product and product.vendor) else None)
 
                 if designer:
                     take_rate = designer.take_rate

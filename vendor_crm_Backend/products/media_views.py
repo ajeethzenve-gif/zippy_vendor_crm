@@ -39,8 +39,8 @@ def media_data(product, request):
         return request.build_absolute_uri(f"/api/products/media-files/{kind}/{pk}/")
     return {
         "id": product.pk, "product_name": product.product_name, "sku": product.sku,
-        "designer_id": product.designer_id, "designer_name": product.designer.designer_name,
-        "brand": product.designer.brand_name,
+        "designer_id": product.vendor_id, "designer_name": product.vendor.designer_name,
+        "brand": product.vendor.brand_name,
         "originals": [{"id": i.pk, "image": image_url("original", i.pk), "position": i.position} for i in product.product_images.all()],
         "status": job.status if job else "QUEUED",
         "figma_url": job.figma_url if job else "", "notes": job.notes if job else "",
@@ -54,13 +54,13 @@ class MediaQueueView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        products = Product.objects.annotate(image_count=Count("product_images")).filter(image_count__gte=1, image_count__lte=4).select_related("designer", "media_job").prefetch_related("product_images", "media_job__assets")
+        products = Product.objects.annotate(image_count=Count("product_images")).filter(image_count__gte=1, image_count__lte=4).select_related("vendor", "media_job").prefetch_related("product_images", "media_job__assets")
         products = vendor_products(products, request)
         designer = request.query_params.get("vendor") or request.query_params.get("designer")
         if designer:
             if not designer.isdigit():
                 return Response({"detail": "Invalid designer ID."}, status=400)
-            products = products.filter(designer_id=designer, media_job__sent_at__isnull=False)
+            products = products.filter(vendor_id=designer, media_job__sent_at__isnull=False)
         return Response([media_data(p, request) for p in products])
 
 

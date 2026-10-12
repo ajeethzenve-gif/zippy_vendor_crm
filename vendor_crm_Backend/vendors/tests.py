@@ -196,12 +196,12 @@ class VendorIntegrationTests(TestCase):
         self.client.force_authenticate(self.user)
         from products.models import Product
         from orders.models import Order, OrderItem, Settlement
-        product = Product.objects.create(designer=self.vendor, sku="VENDOR-TEST", product_name="Pet bowl", mrp=100, selling_price=100, status="APPROVED", inventory_quantity=10)
+        product = Product.objects.create(vendor=self.vendor, sku="VENDOR-TEST", product_name="Pet bowl", mrp=100, selling_price=100, status="APPROVED", inventory_quantity=10)
         order = Order.objects.create(order_status="Delivered")
         item = OrderItem.objects.create(order=order, product_id=str(product.pk), product_name=product.product_name, quantity=2, price=100)
         Settlement.objects.create(order=order, order_item=item, designer=self.vendor, gmv=200, payout_amount=180, commission_amount=20)
         other = Vendor.objects.create(vendor_name="Other", brand_name="Other", email="other@example.com")
-        Product.objects.create(designer=other, sku="OTHER", product_name="Other product", mrp=100, selling_price=100)
+        Product.objects.create(vendor=other, sku="OTHER", product_name="Other product", mrp=100, selling_price=100)
         response = self.client.get(f"/api/vendors/{self.vendor.pk}/portal-dashboard/")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(len(response.data["skus"]), 1)
@@ -312,7 +312,7 @@ class VendorIntegrationTests(TestCase):
     def test_zero_commission_is_preserved(self):
         from products.models import Product
         from orders.models import Order, OrderItem, Settlement
-        product = Product.objects.create(designer=self.vendor, sku='ZERO-RATE', product_name='Bowl', mrp=100, selling_price=100)
+        product = Product.objects.create(vendor=self.vendor, sku='ZERO-RATE', product_name='Bowl', mrp=100, selling_price=100)
         order = Order.objects.create(order_status='Delivered')
         OrderItem.objects.create(order=order, product_id=str(product.pk), product_name='Bowl', quantity=1, price=100)
         self.client.post('/api/settlements/generate/')
