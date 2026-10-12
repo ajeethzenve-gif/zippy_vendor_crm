@@ -66,33 +66,35 @@ class VendorOTPSendView(APIView):
     throttle_classes = [OTPThrottle]
 
     def post(self, request):
-        phone = normalize_phone(request.data.get("phone"))
-        if not phone:
-            return Response({"message": "Enter a valid mobile number with country code, or a 10-digit Indian number."}, status=400)
-        vendor = matching_vendor(phone)
-        if not vendor:
-            return Response({"message": "Mobile login requires verified KYC and an approved vendor account. Contact support."}, status=400)
-        cooldown = "vendor-otp-send:" + hashlib.sha256(phone.encode()).hexdigest()
-        if not cache.add(cooldown, True, timeout=60):
-            return Response({"message": "Please wait 60 seconds before requesting another OTP."}, status=429)
-        try:
-            verification = send_login_otp(phone)
-        except (SMSConfigurationError, SMSDeliveryError) as error:
-            cache.delete(cooldown)
-            return Response({"message": str(error)}, status=503)
-        except (requests.RequestException, RuntimeError, ValueError):
-            cache.delete(cooldown)
-            return Response({"message": "Unable to send OTP. Check the SMS service configuration or try again later."}, status=503)
-        challenge = secrets.token_urlsafe(32)
-        lifetime = 300
-        cache.set("vendor-otp:" + challenge, {"vendor": vendor.pk, "user": vendor.user_id, "phone": phone, **verification, "attempts": 0, "expires": time.time() + lifetime}, timeout=lifetime)
-        active_key = "vendor-otp-active:" + hashlib.sha256(phone.encode()).hexdigest()
-        previous = cache.get(active_key)
-        cache.set(active_key, challenge, timeout=lifetime)
-        if previous:
-            cache.delete("vendor-otp:" + previous)
-        return Response({"message": "OTP sent to your registered mobile number.", "challenge": challenge, "retry_after": 60})
+        from .views import LoginAPIView
+        data = request.data.copy()
+        data["audience"] = "vendor"
+        request._full_data = data
+        return LoginAPIView().post(request)
 
+
+def start_vendor_otp(vendor):
+    phone = normalize_phone(vendor.phone)
+    cooldown = "vendor-otp-send:" + hashlib.sha256(phone.encode()).hexdigest()
+    if not cache.add(cooldown, True, timeout=60):
+        return Response({"message": "Please wait 60 seconds before requesting another OTP."}, status=429)
+    try:
+        verification = send_login_otp(phone)
+    except (SMSConfigurationError, SMSDeliveryError) as error:
+        cache.delete(cooldown)
+        return Response({"message": str(error)}, status=503)
+    except (requests.RequestException, RuntimeError, ValueError):
+        cache.delete(cooldown)
+        return Response({"message": "Unable to send OTP. Check the SMS service configuration or try again later."}, status=503)
+    challenge = secrets.token_urlsafe(32)
+    lifetime = 300
+    cache.set("vendor-otp:" + challenge, {"vendor": vendor.pk, "user": vendor.user_id, "credentials": hashlib.sha256(vendor.user.password.encode()).hexdigest(), "phone": phone, **verification, "attempts": 0, "expires": time.time() + lifetime}, timeout=lifetime)
+    active_key = "vendor-otp-active:" + hashlib.sha256(phone.encode()).hexdigest()
+    previous = cache.get(active_key)
+    cache.set(active_key, challenge, timeout=lifetime)
+    if previous:
+        cache.delete("vendor-otp:" + previous)
+    return Response({"message": "OTP sent to your registered mobile number.", "challenge": challenge, "retry_after": 60, "otp_required": True, "phone_hint": "******" + phone[-4:]})
 
 class VendorOTPVerifyView(APIView):
     authentication_classes = []
@@ -135,7 +137,8 @@ class VendorOTPVerifyView(APIView):
                 vendor = Vendor.objects.select_for_update().select_related("user", "user__user_role__role").get(pk=vendor.pk)
                 user = vendor.user
                 if (vendor.kyc_status != "VERIFIED" or vendor.stage not in {"APPROVED", "LIVE"}
-                        or not user or user.pk != pending["user"] or not user.is_active or user.is_staff or user.is_superuser
+                        or not user or user.pk != pending["user"]
+                        or pending.get("credentials") != hashlib.sha256(user.password.encode()).hexdigest() or not user.is_active or user.is_staff or user.is_superuser
                         or not hasattr(user, "user_role") or user.user_role.role.name != "Vendor"):
                     return Response({"message": "Vendor account is unavailable. Contact support."}, status=403)
                 refresh = RefreshToken.for_user(user)

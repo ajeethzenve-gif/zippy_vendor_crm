@@ -22,7 +22,9 @@ class VendorApprovalAccountTests(TestCase):
         self.assertEqual(self.vendor.user.email, "approved@example.com")
         self.assertEqual(self.vendor.user.first_name, "Approved Owner")
         self.assertTrue(self.vendor.user.is_active)
-        self.assertFalse(self.vendor.user.has_usable_password())
+        self.assertEqual(self.vendor.user.username, "approvedowner@zenvefashion")
+        self.assertTrue(self.vendor.user.check_password("approvedowner@zf543210"))
+        self.assertNotEqual(self.vendor.user.password, "approvedowner@zf543210")
         self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
         self.assertEqual(self.approve().status_code, 200)
         self.assertEqual(get_user_model().objects.count(), 1)
@@ -70,3 +72,39 @@ class VendorApprovalAccountTests(TestCase):
         self.vendor.kyc_status = "VERIFIED"
         self.vendor.save(update_fields=["kyc_status"])
         self.assertIsNotNone(self.vendor.user_id)
+
+    def test_existing_otp_only_account_gains_generated_credentials(self):
+        user = get_user_model().objects.create_user(username="old-otp-only", password=None)
+        self.vendor.user = user
+        self.vendor.save()
+        self.assertEqual(self.approve().status_code, 200)
+        user.refresh_from_db()
+        self.assertEqual(user.username, "approvedowner@zenvefashion")
+        self.assertTrue(user.check_password("approvedowner@zf543210"))
+
+    def test_username_conflict_does_not_overwrite_existing_account(self):
+        user = get_user_model().objects.create_user(username="approvedowner@zenvefashion", password="Existing!52")
+        self.assertEqual(self.approve().status_code, 400)
+        self.vendor.refresh_from_db()
+        self.assertEqual(self.vendor.stage, "LEAD")
+        self.assertIsNone(self.vendor.user_id)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("Existing!52"))
+
+    def test_mobile_required_for_generated_password(self):
+        self.vendor.phone = None
+        self.vendor.save()
+        self.assertEqual(self.approve().status_code, 400)
+        self.assertFalse(get_user_model().objects.exists())
+
+    def test_generated_credentials_support_password_login(self):
+        self.assertEqual(self.approve().status_code, 200)
+        with patch("accounts.vendor_otp.start_vendor_otp") as start_otp:
+            from rest_framework.response import Response
+            start_otp.return_value = Response({"otp_required": True}, status=200)
+            response = self.client.post("/api/login/", {
+                "username": "approvedowner@zenvefashion", "password": "approvedowner@zf543210", "audience": "vendor",
+            }, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertTrue(response.data["otp_required"])
+        self.assertNotIn("access", response.data)

@@ -116,6 +116,8 @@ class RegisterAPIView(APIView):
 # ==========================
 
 class LoginAPIView(APIView):
+    from .vendor_otp import OTPThrottle
+    throttle_classes = [OTPThrottle]
 
     authentication_classes = []
     permission_classes = []
@@ -190,6 +192,15 @@ class LoginAPIView(APIView):
                 {"message": "This login is for CRM staff. Vendors should use the vendor login."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        if role == "Vendor":
+            from .vendor_otp import matching_vendor, normalize_phone, start_vendor_otp
+            if not vendor_id:
+                return Response({"message": "Vendor account is unavailable."}, status=403)
+            vendor = matching_vendor(normalize_phone(user.vendor.phone))
+            if not vendor or vendor.user_id != user.pk:
+                return Response({"message": "Login requires verified KYC and an approved vendor account."}, status=403)
+            return start_vendor_otp(vendor)
 
         refresh = RefreshToken.for_user(user)
 

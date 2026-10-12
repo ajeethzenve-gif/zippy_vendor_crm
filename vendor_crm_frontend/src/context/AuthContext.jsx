@@ -162,6 +162,7 @@ export function AuthProvider({ children }) {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Sign in failed.");
+    if (data.otp_required) return data;
     return acceptSession(data, { staffOnly, vendorOnly });
   };
 
@@ -180,13 +181,6 @@ export function AuthProvider({ children }) {
     const updated = { ...role, email: data.email, user: [data.first_name, data.last_name].filter(Boolean).join(" ") || data.username, vendorId: data.vendor_id };
     setCurrentUser(updated);
     return updated;
-  };
-
-  const sendVendorOtp = async phone => {
-    const response = await fetch(`${API_BASE_URL}/vendor-otp/send/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone }) });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || data.detail || "Unable to send OTP.");
-    return data;
   };
 
   const loginVendorOtp = async (challenge, otp) => {
@@ -251,7 +245,6 @@ export function AuthProvider({ children }) {
         currentUser,
         ROLES,
         loginCustom,
-        sendVendorOtp,
         loginVendorOtp,
         logout,
         hasAccess,

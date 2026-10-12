@@ -1,3 +1,4 @@
+import { VENDOR_CATEGORIES } from "../utils/vendorCategories";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assest/logo/zippy_logo.jpeg";
@@ -9,7 +10,7 @@ const fields = [
   ["email", "Business email", "email", "you@company.com", 254],
   ["phone", "Phone number", "tel", "+919876543210", 16],
   ["city", "City", "text", "Where you operate", 100],
-  ["primary_category", "Primary category", "text", "e.g. Pet accessories", 150],
+  ["primary_category", "Primary category", "category", "Select primary category", 150],
   ["legal_business_name", "Legal business name", "text", "Registered business name", 255, true],
   ["business_type", "Business type", "select", "Choose business type", 30, true],
   ["alternate_phone", "Alternate phone", "tel", "+919876543210", 16, true],
@@ -54,7 +55,7 @@ export default function VendorRegistration() {
             const props = { id: name, name, placeholder, maxLength, required: !optional, value: form[name] || "", onChange: e => setForm({ ...form, [name]: e.target.value }), "aria-invalid": !!errors[name], "aria-describedby": errors[name] ? name + "-error" : undefined };
             return <div className={["password", "business_description"].includes(name) ? "zippy-field zippy-wide" : "zippy-field"} key={name}>
               <label htmlFor={name}>{label}{optional ? " (optional)" : " *"}</label>
-              {type === "select" ? <select {...props}><option value="">Choose business type</option><option value="SOLE_PROPRIETOR">Sole proprietor</option><option value="PARTNERSHIP">Partnership</option><option value="LLP">Limited liability partnership</option><option value="COMPANY">Company</option><option value="OTHER">Other</option></select> : type === "textarea" ? <textarea {...props} rows={4} /> : <input {...props} type={type} minLength={name === "password" ? 8 : undefined} pattern={type === "tel" ? "[+]?[0-9]{10,15}" : undefined} autoComplete={name === "password" ? "new-password" : name === "email" ? "email" : type === "tel" ? "tel" : name === "owner_name" ? "name" : undefined} />}
+              {type === "category" ? <select {...props}><option value="">Select primary category</option>{VENDOR_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}</select> : type === "select" ? <select {...props}><option value="">Choose business type</option><option value="SOLE_PROPRIETOR">Sole proprietor</option><option value="PARTNERSHIP">Partnership</option><option value="LLP">Limited liability partnership</option><option value="COMPANY">Company</option><option value="OTHER">Other</option></select> : type === "textarea" ? <textarea {...props} rows={4} /> : <input {...props} type={type} minLength={name === "password" ? 8 : undefined} pattern={type === "tel" ? "[+]?[0-9]{10,15}" : undefined} autoComplete={name === "password" ? "new-password" : name === "email" ? "email" : type === "tel" ? "tel" : name === "owner_name" ? "name" : undefined} />}
               {errors[name] && <small id={name + "-error"} className="zippy-error" role="alert">{[].concat(errors[name]).join(" ")}</small>}
             </div>;
           })}

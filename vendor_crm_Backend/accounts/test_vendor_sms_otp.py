@@ -15,7 +15,7 @@ class GeneratedVendorOTPTests(TestCase):
         cache.clear()
         self.addCleanup(cache.clear)
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(username="generated-otp-owner")
+        self.user = get_user_model().objects.create_user(username="generated-otp-owner", password="Owner!Test52")
         role, _ = Role.objects.get_or_create(name="Vendor")
         UserRole.objects.create(user=self.user, role=role)
         self.vendor = Vendor.objects.create(user=self.user, vendor_name="Owner", phone="9876543210", stage="APPROVED", kyc_status="VERIFIED")
@@ -24,8 +24,10 @@ class GeneratedVendorOTPTests(TestCase):
         self.sender.return_value = Mock(json=Mock(return_value={"status": "success", "data": {"request_id": "SMS-OTP-test"}}))
 
     def send(self):
-        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
+        response = self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52", "phone": "+911111111111"})
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["otp_required"])
+        self.assertNotIn("access", response.data)
         return response.data["challenge"], self.sender.call_args.kwargs["json"]["otp"]
 
     def verify(self, challenge, code):
@@ -53,7 +55,7 @@ class GeneratedVendorOTPTests(TestCase):
     def test_unknown_phone_never_generates_or_sends_code(self):
         with patch("accounts.services.sms_service.secrets.randbelow") as generator:
             response = self.client.post("/api/vendor-otp/send/", {"phone": "9999999999"})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 401)
         generator.assert_not_called()
         self.sender.assert_not_called()
 
@@ -81,30 +83,38 @@ class GeneratedVendorOTPTests(TestCase):
 
     @override_settings(SMS_API_KEY="", SMS_AUTH_KEY="")
     def test_missing_api_key_never_sends_sms(self):
-        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
+        response = self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52", "phone": "+911111111111"})
         self.assertEqual(response.status_code, 503)
         self.assertIn("SMS_API_KEY", response.data["message"])
         self.sender.assert_not_called()
 
     def test_provider_rejection_does_not_issue_challenge(self):
         self.sender.return_value.json.return_value = {"status": "error", "message": "bad credentials"}
-        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
+        response = self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52", "phone": "+911111111111"})
         self.assertEqual(response.status_code, 503)
         self.assertNotIn("challenge", response.data)
 
     def test_unapproved_or_unverified_vendor_cannot_request_otp(self):
         for stage, kyc in [("LEAD", "VERIFIED"), ("APPROVED", "PENDING"), ("LIVE", "REJECTED"), ("INACTIVE", "VERIFIED")]:
             Vendor.objects.filter(pk=self.vendor.pk).update(stage=stage, kyc_status=kyc)
-            self.assertEqual(self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone}).status_code, 400)
+            self.assertEqual(self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52"}).status_code, 403)
         self.sender.assert_not_called()
 
-    def test_existing_approved_record_is_provisioned_before_otp(self):
-        Vendor.objects.filter(pk=self.vendor.pk).update(user=None)
-        self.user.delete()
-        self.send()
-        self.vendor.refresh_from_db()
-        self.assertIsNotNone(self.vendor.user_id)
-        self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
+    def test_phone_only_cannot_bypass_credentials(self):
+        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
+        self.assertEqual(response.status_code, 401)
+        self.sender.assert_not_called()
+
+    def test_wrong_password_does_not_send_otp_or_tokens(self):
+        response = self.client.post("/api/login/", {"username": self.user.username, "password": "wrong", "audience": "vendor"})
+        self.assertEqual(response.status_code, 401)
+        self.sender.assert_not_called()
+
+    def test_password_change_invalidates_pending_otp(self):
+        challenge, code = self.send()
+        self.user.set_password("Changed!Test52")
+        self.user.save()
+        self.assertEqual(self.verify(challenge, code).status_code, 403)
 
     def test_kyc_revoked_after_send_blocks_verification(self):
         challenge, code = self.send()

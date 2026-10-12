@@ -131,13 +131,11 @@ function Icon({ name, ...props }) {
 }
 
 export default function VendorLogin() {
-  const { loginCustom, sendVendorOtp, loginVendorOtp } = useAuth();
+  const { loginCustom, loginVendorOtp } = useAuth();
   const navigate = useNavigate();
 
-  const [loginMethod, setLoginMethod] = useState("credentials"); // "credentials" | "otp"
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otpChallenge, setOtpChallenge] = useState("");
@@ -156,7 +154,7 @@ export default function VendorLogin() {
     if (isSubmitting || resendAfter) return;
     setIsSubmitting(true); setErrorMessage(""); setForgotPasswordMsg("");
     try {
-      const result = await sendVendorOtp(phoneNumber.trim());
+      const result = await loginCustom(username.trim(), password, { vendorOnly: true });
       setOtpChallenge(result.challenge); setOtpCode(""); setOtpSent(true);
       setResendAfter(result.retry_after || 60);
       setForgotPasswordMsg(result.message);
@@ -171,43 +169,27 @@ export default function VendorLogin() {
     setErrorMessage("");
     setForgotPasswordMsg("");
 
-    if (loginMethod === "credentials") {
+    if (!otpSent) {
       if (!username.trim() || !password) {
-        setErrorMessage("Please enter both user name and password.");
+        setErrorMessage("Please enter your username and password.");
         return;
       }
-      setIsSubmitting(true);
-      try {
-        await loginCustom(username.trim(), password, { vendorOnly: true });
-        navigate("/", { replace: true });
-      } catch (err) {
-        setErrorMessage(err.message || "Invalid credentials. Please verify and try again.");
-      } finally {
-        setIsSubmitting(false);
-      }
-    } else {
-      // Mobile OTP flow
-      if (!otpSent) {
-        if (!phoneNumber.trim() || phoneNumber.trim().length < 10) {
-          setErrorMessage("Please enter a valid 10-digit registered mobile number.");
-          return;
-        }
-        await requestOtp();
-      } else {
-        if (!otpCode.trim() || otpCode.trim().length < 4) {
-          setErrorMessage("Please enter the 4 or 6-digit OTP sent to your phone.");
-          return;
-        }
-        setIsSubmitting(true);
-        try {
-          const user = await loginVendorOtp(otpChallenge, otpCode.trim());
-          navigate(user.landingPath, { replace: true });
-        } catch (error) {
-          setErrorMessage(error.message || "OTP verification failed.");
-        } finally {
-          setIsSubmitting(false);
-        }
-      }
+      await requestOtp();
+      return;
+    }
+    if (!/^\d{4,10}$/.test(otpCode.trim())) {
+      setErrorMessage("Enter the OTP sent to your registered mobile number.");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const user = await loginVendorOtp(otpChallenge, otpCode.trim());
+      setPassword("");
+      navigate(user.landingPath, { replace: true });
+    } catch (error) {
+      setErrorMessage(error.message || "OTP verification failed.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -323,42 +305,12 @@ export default function VendorLogin() {
                 <Icon name="user" />
               </div>
               <h2 className="vl-card-title">Vendor Login</h2>
-              <p className="vl-card-subtitle">Choose your preferred method to sign in</p>
+              <p className="vl-card-subtitle">Sign in with your credentials, then verify your mobile OTP</p>
             </header>
-
-            {/* Segmented Tab Selector */}
-            <div className="vl-tabs-container" role="tablist" aria-label="Sign-in method">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={loginMethod === "credentials"}
-                className={`vl-tab-btn ${loginMethod === "credentials" ? "active" : ""}`}
-                onClick={() => {
-                  setLoginMethod("credentials");
-                  setErrorMessage("");
-                }}
-              >
-                <Icon name="user" />
-                <span>User Name & Password</span>
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={loginMethod === "otp"}
-                className={`vl-tab-btn ${loginMethod === "otp" ? "active" : ""}`}
-                onClick={() => {
-                  setLoginMethod("otp");
-                  setErrorMessage("");
-                }}
-              >
-                <Icon name="phone" />
-                <span>Mobile OTP</span>
-              </button>
-            </div>
 
             {/* Form */}
             <form className="vl-form" onSubmit={handleSubmit} noValidate>
-              {loginMethod === "credentials" ? (
+              {!otpSent ? (
                 <>
                   {/* User Name Field */}
                   <div className="vl-field">
@@ -416,28 +368,7 @@ export default function VendorLogin() {
                 </>
               ) : (
                 <>
-                  {/* Mobile OTP Fields */}
-                  <div className="vl-field">
-                    <label className="vl-label" htmlFor="vl-phone">
-                      Mobile Number
-                    </label>
-                    <div className="vl-input-box">
-                      <Icon name="phone" className="vl-input-icon" />
-                      <input
-                        id="vl-phone"
-                        name="phone"
-                        type="tel"
-                        autoComplete="tel"
-                        required
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="Enter your 10-digit mobile number"
-                        className="vl-input"
-                        disabled={isSubmitting || otpSent}
-                      />
-                    </div>
-                  </div>
-
+                  <p>Enter the OTP sent to your registered mobile number.</p>
                   {otpSent && (
                     <div className="vl-field">
                       <label className="vl-label" htmlFor="vl-otp">
@@ -463,7 +394,7 @@ export default function VendorLogin() {
                       </div>
                       <div className="vl-otp-actions">
                         <button type="button" disabled={isSubmitting || resendAfter > 0} onClick={requestOtp}>{resendAfter ? `Resend OTP in ${resendAfter}s` : "Resend OTP"}</button>
-                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>Change number</button>
+                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>Change credentials</button>
                       </div>
                     </div>
                   )}
@@ -488,9 +419,9 @@ export default function VendorLogin() {
                 <span>
                   {isSubmitting
                     ? "Signing in…"
-                    : loginMethod === "otp" && !otpSent
+                    : !otpSent
                     ? "Send OTP"
-                    : "Login"}
+                    : "Verify OTP & login"}
                 </span>
                 {!isSubmitting && <Icon name="arrowRight" />}
               </button>

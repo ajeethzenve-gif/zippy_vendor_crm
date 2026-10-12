@@ -1,3 +1,5 @@
+import { defaultContractEndDate } from "../utils/contractDate";
+import { VENDOR_CATEGORIES } from "../utils/vendorCategories";
 import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -117,7 +119,7 @@ const DEFAULT_VENDOR_PLANS = CREDIT_PLANS;
 
 function VendorDetailsEditor({ vendor, onSaved }) {
   const fields = [["vendor_name", "Vendor name"], ["brand_name", "Brand"], ["email", "Email"], ["phone", "Phone"], ["city", "City"], ["state", "State"], ["primary_category", "Category"], ["gst_number", "GST number"], ["take_rate", "Take rate (%)"], ["renewal_likelihood", "Renewal likelihood (%)"], ["next_followup_date", "Next follow-up"], ["contract_end_date", "Contract end date"]];
-  const [values, setValues] = useState(() => Object.fromEntries(fields.map(([key]) => [key, vendor[key] || ""])));
+  const [values, setValues] = useState(() => Object.fromEntries(fields.map(([key]) => [key, vendor[key] || (key === "contract_end_date" ? defaultContractEndDate() : "")])));
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const save = async (event) => {
@@ -143,12 +145,16 @@ function VendorDetailsEditor({ vendor, onSaved }) {
   };
   return <form className="lead-form-grid crm-vendor-details-editor" onSubmit={save}>
     {fields.map(([key, label]) => <label className="lead-form-field" key={key}>{label}
-      <input className="lead-input" type={key === "email" ? "email" : key.endsWith("_date") ? "date" : ["take_rate", "renewal_likelihood"].includes(key) ? "number" : "text"} disabled={saving}
+      {key === "primary_category" ? <select className="lead-select" disabled={saving} value={values[key]} onChange={(event) => setValues((previous) => ({ ...previous, [key]: event.target.value }))}>
+        <option value="">Select primary category</option>
+        {values[key] && !VENDOR_CATEGORIES.includes(values[key]) && <option value={values[key]}>{values[key]}</option>}
+        {VENDOR_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+      </select> : <input className="lead-input" type={key === "email" ? "email" : key.endsWith("_date") ? "date" : ["take_rate", "renewal_likelihood"].includes(key) ? "number" : "text"} disabled={saving}
         min={["take_rate", "renewal_likelihood"].includes(key) ? 0 : undefined}
         max={["take_rate", "renewal_likelihood"].includes(key) ? 100 : undefined}
         step={key === "take_rate" ? "0.01" : undefined}
         required={["vendor_name", "brand_name"].includes(key)}
-        value={values[key]} onChange={(event) => setValues((previous) => ({ ...previous, [key]: event.target.value }))} />
+        value={values[key]} onChange={(event) => setValues((previous) => ({ ...previous, [key]: event.target.value }))} />}
     </label>)}
     {saveError && <p role="alert">{saveError}</p>}
     <button type="submit" className="btn-create-lead" disabled={saving}>{saving ? "Saving…" : "Save details"}</button>
@@ -210,7 +216,7 @@ export default function DesignerCRM({ mode = "list" }) {
     creditPoints: 0,
     takeRate: "",
     gst: "",
-    contractEnds: "",
+    contractEnds: defaultContractEndDate(),
     source: "Referral",
     owner: "Nisha Kapoor",
     nextFollowUp: "",
@@ -357,7 +363,12 @@ Hello *${designerName}*,
 Sign in to your vendor account using this link:
 ${portalUrl}
 
-Use your registered username or email and password to open your vendor portal.
+Your initial login details follow this format:
+Username: vendorname@zenvefashion
+Password: vendorname@zf followed by the last six digits of your registered mobile number.
+Use your vendor name in lowercase without spaces. If your password was changed, use your current password.
+
+Enter your username and password, then verify the OTP sent to your registered mobile number to complete login.
 
 If you need help accessing your account, please contact our team.
 
@@ -824,7 +835,7 @@ Team Zippy`;
         creditPoints: 0,
         takeRate: "",
         gst: "",
-        contractEnds: "",
+        contractEnds: defaultContractEndDate(),
         source: "Referral",
         owner: "Nisha Kapoor",
         nextFollowUp: "",
@@ -1553,15 +1564,12 @@ Team Zippy`;
             </div>
 
             <div className="lead-form-field">
-              <label className="label-caps">Primary category</label>
-              <input
-                type="text"
-                className="lead-input"
-                value={newLead.category}
-                onChange={(e) =>
-                  setNewLead({ ...newLead, category: e.target.value })
-                }
-              />
+              <label className="label-caps" htmlFor="lead-primary-category">Primary category</label>
+              <select id="lead-primary-category" className="lead-select" value={newLead.category}
+                onChange={(e) => setNewLead({ ...newLead, category: e.target.value })}>
+                <option value="">Select primary category</option>
+                {VENDOR_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+              </select>
             </div>
 
             <div className="lead-form-field">

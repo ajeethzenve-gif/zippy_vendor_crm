@@ -1,7 +1,8 @@
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.core.cache import cache
+from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
 from vendors.models import Vendor
@@ -17,7 +18,7 @@ class LoginAudienceTests(TestCase):
         )
         role, _ = Role.objects.get_or_create(name="Vendor")
         UserRole.objects.create(user=cls.vendor_user, role=role)
-        cls.vendor = Vendor.objects.create(user=cls.vendor_user, vendor_name="Test Vendor")
+        cls.vendor = Vendor.objects.create(user=cls.vendor_user, vendor_name="Test Vendor", phone="9876543210", stage="APPROVED", kyc_status="VERIFIED")
         cls.staff_users = []
         for index, name in enumerate(["Admin", "Merchandiser", "Catalogue QA", "Operations", "Finance", "Media"]):
             user = get_user_model().objects.create_user(f"staff{index}", password=cls.password)
@@ -29,6 +30,10 @@ class LoginAudienceTests(TestCase):
         )
 
     def setUp(self):
+        cache.clear()
+        self.addCleanup(cache.clear)
+        self.sender = patch("accounts.vendor_otp.send_login_otp", return_value={"mode": "sms"}).start()
+        self.addCleanup(patch.stopall)
         self.client = APIClient()
 
     def login(self, user, audience, **changes):
@@ -42,9 +47,9 @@ class LoginAudienceTests(TestCase):
             with self.subTest(identifier=identifier):
                 response = self.login(self.vendor_user, "vendor", username=identifier)
                 self.assertEqual(response.status_code, 200, response.data)
-                self.assertEqual(response.data["vendor_id"], self.vendor.pk)
-                self.assertEqual(response.data["role"], "Vendor")
-                self.assertIn("access", response.data)
+                self.assertTrue(response.data["otp_required"])
+                self.assertNotIn("access", response.data)
+                cache.clear()
 
     def test_staff_roles_and_superuser_use_staff_login_only(self):
         for user in [*self.staff_users, self.superuser]:
