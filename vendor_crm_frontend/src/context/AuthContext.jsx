@@ -183,6 +183,15 @@ export function AuthProvider({ children }) {
     return updated;
   };
 
+  const sendVendorOtp = async (phone) => {
+    const response = await fetch(`${API_BASE_URL}/vendor-otp/send/`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || data.detail || "Unable to send OTP.");
+    return data;
+  };
+
   const loginVendorOtp = async (challenge, otp) => {
     const response = await fetch(`${API_BASE_URL}/vendor-otp/verify/`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ challenge, otp }) });
     const data = await response.json();
@@ -246,6 +255,7 @@ export function AuthProvider({ children }) {
         ROLES,
         loginCustom,
         loginVendorOtp,
+        sendVendorOtp,
         logout,
         hasAccess,
         canAccessPath,

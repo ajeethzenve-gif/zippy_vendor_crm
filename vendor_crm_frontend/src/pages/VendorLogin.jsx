@@ -1,29 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../styles/VendorLogin.css";
-
-// Geometric folded diamond / ribbon logo for VendorHub
-function VendorHubLogo() {
-  return (
-    <svg className="vl-brand-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="vhTealGrad" x1="12" y1="12" x2="38" y2="38" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#00d2aa" />
-          <stop offset="1" stopColor="#059669" />
-        </linearGradient>
-        <linearGradient id="vhBlueGrad" x1="26" y1="26" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#1e90ff" />
-          <stop offset="1" stopColor="#0052cc" />
-        </linearGradient>
-      </defs>
-      {/* Top-left rounded folded quadrilateral / petal */}
-      <rect x="15" y="8" width="22" height="32" rx="9" transform="rotate(-30 15 8)" fill="url(#vhTealGrad)" />
-      {/* Bottom-right rounded folded quadrilateral / petal */}
-      <rect x="30" y="16" width="22" height="32" rx="9" transform="rotate(-30 30 16)" fill="url(#vhBlueGrad)" />
-    </svg>
-  );
-}
+import LoginLanding from "../components/LoginLanding";
 
 function Icon({ name, ...props }) {
   const icons = {
@@ -131,9 +109,11 @@ function Icon({ name, ...props }) {
 }
 
 export default function VendorLogin() {
-  const { loginCustom, loginVendorOtp } = useAuth();
+  const { loginCustom, loginVendorOtp, sendVendorOtp } = useAuth();
   const navigate = useNavigate();
 
+  const [loginMethod, setLoginMethod] = useState("credentials");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [otpCode, setOtpCode] = useState("");
@@ -154,7 +134,9 @@ export default function VendorLogin() {
     if (isSubmitting || resendAfter) return;
     setIsSubmitting(true); setErrorMessage(""); setForgotPasswordMsg("");
     try {
-      const result = await loginCustom(username.trim(), password, { vendorOnly: true });
+      const result = loginMethod === "mobile"
+        ? await sendVendorOtp(phoneNumber.trim())
+        : await loginCustom(username.trim(), password, { vendorOnly: true });
       setOtpChallenge(result.challenge); setOtpCode(""); setOtpSent(true);
       setResendAfter(result.retry_after || 60);
       setForgotPasswordMsg(result.message);
@@ -170,7 +152,11 @@ export default function VendorLogin() {
     setForgotPasswordMsg("");
 
     if (!otpSent) {
-      if (!username.trim() || !password) {
+      if (loginMethod === "mobile" && !/^\+?[\d ()-]{10,20}$/.test(phoneNumber.trim())) {
+        setErrorMessage("Enter your registered mobile number.");
+        return;
+      }
+      if (loginMethod === "credentials" && (!username.trim() || !password)) {
         setErrorMessage("Please enter your username and password.");
         return;
       }
@@ -196,121 +182,34 @@ export default function VendorLogin() {
   const handleForgotPassword = (e) => {
     e.preventDefault();
     setForgotPasswordMsg(
-      "Password reset instructions have been dispatched to the account manager, or you can contact support at support@vendorhub.com."
+      "Contact your account manager to reset your password."
     );
   };
 
-  return (
-    <div className="vl-container">
-      <div className="vl-layout">
-        {/* LEFT SIDE: Branding, Headline, and Value Proposition */}
-        <section className="vl-story">
-          <div>
-            <div className="vl-brand">
-              <VendorHubLogo />
-              <div className="vl-brand-text">
-                <span className="vl-brand-title">VendorHub</span>
-                <span className="vl-brand-tagline">Connect · Collaborate · Grow</span>
-              </div>
+  return <LoginLanding audience="vendor">
+            <div className="vl-tabs-container" role="tablist" aria-label="Sign-in method">
+              {[["credentials", "user", "User Name & Password"], ["mobile", "phone", "Mobile OTP"]].map(([method, icon, label]) => (
+                <button key={method} type="button" role="tab" aria-selected={loginMethod === method}
+                  className={`vl-tab-btn ${loginMethod === method ? "active" : ""}`} disabled={isSubmitting}
+                  onClick={() => { setLoginMethod(method); setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setErrorMessage(""); setForgotPasswordMsg(""); }}>
+                  <Icon name={icon} /><span>{label}</span>
+                </button>
+              ))}
             </div>
-
-            <div className="vl-intro">
-              <h1 className="vl-headline">
-                Your Partner
-                <span className="vl-headline-accent">in Progress</span>
-              </h1>
-              <p className="vl-description">
-                Easily access your vendor account, manage orders, and stay connected with us — all in one place.
-              </p>
-
-              <ul className="vl-features">
-                <li className="vl-feature-item">
-                  <div className="vl-feature-icon-badge">
-                    <Icon name="box" />
-                  </div>
-                  <span className="vl-feature-label">
-                    Manage<br />Orders
-                  </span>
-                </li>
-                <li className="vl-feature-item">
-                  <div className="vl-feature-icon-badge">
-                    <Icon name="users" />
-                  </div>
-                  <span className="vl-feature-label">
-                    Connect<br />with Buyers
-                  </span>
-                </li>
-                <li className="vl-feature-item">
-                  <div className="vl-feature-icon-badge">
-                    <Icon name="clipboardChart" />
-                  </div>
-                  <span className="vl-feature-label">
-                    Grow<br />Your Business
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* FLOATING 3D GLASS LOGISTICS TILES (Matching the scene in mockup) */}
-        <div className="vl-scene-elements" aria-hidden="true">
-          <svg className="vl-glowing-path" viewBox="0 0 320 380" fill="none">
-            <defs>
-              <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <path
-              d="M 94 32 C 30 70, 0 120, 125 185 C 190 220, 80 250, 44 280"
-              stroke="#38bdf8"
-              strokeWidth="2.5"
-              strokeDasharray="6 6"
-              filter="url(#glowEffect)"
-              opacity="0.85"
-            />
-          </svg>
-
-          {/* 📍 Floating Location Pin */}
-          <div className="vl-glass-card pin" title="Warehouse Location">
-            <Icon name="pin" />
-          </div>
-
-          {/* 🚚 Floating Truck Glass Tile */}
-          <div className="vl-glass-card truck" title="Order Dispatch">
-            <Icon name="truck" />
-          </div>
-
-          {/* 📊 Floating Analytics Chart Glass Tile */}
-          <div className="vl-glass-card chart" title="Business Growth">
-            <Icon name="chartBars" />
-          </div>
-
-          {/* 📋 Floating Checklist Glass Tile */}
-          <div className="vl-glass-card checklist" title="Inventory Checklist">
-            <Icon name="checklist" />
-          </div>
-        </div>
-
-        {/* RIGHT SIDE: Vendor Login Card */}
-        <div className="vl-card-wrap">
-          <main className="vl-login-card">
-            {/* Header with Circular Avatar Icon */}
-            <header className="vl-card-header">
-              <div className="vl-avatar-badge" aria-hidden="true">
-                <Icon name="user" />
-              </div>
-              <h2 className="vl-card-title">Vendor Login</h2>
-              <p className="vl-card-subtitle">Sign in with your credentials, then verify your mobile OTP</p>
-            </header>
-
             {/* Form */}
             <form className="vl-form" onSubmit={handleSubmit} noValidate>
-              {!otpSent ? (
+              {!otpSent && loginMethod === "mobile" && (
+                <div className="vl-field">
+                  <label className="vl-label" htmlFor="vl-phone">Registered mobile number</label>
+                  <div className="vl-input-box">
+                    <Icon name="phone" className="vl-input-icon" />
+                    <input id="vl-phone" name="phone" type="tel" autoComplete="tel" required
+                      value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)}
+                      placeholder="Enter your registered mobile number" className="vl-input" disabled={isSubmitting} />
+                  </div>
+                </div>
+              )}
+              {!otpSent && loginMethod === "credentials" ? (
                 <>
                   {/* User Name Field */}
                   <div className="vl-field">
@@ -368,7 +267,7 @@ export default function VendorLogin() {
                 </>
               ) : (
                 <>
-                  <p>Enter the OTP sent to your registered mobile number.</p>
+                  {otpSent && <p>Enter the OTP sent to your registered mobile number.</p>}
                   {otpSent && (
                     <div className="vl-field">
                       <label className="vl-label" htmlFor="vl-otp">
@@ -394,7 +293,7 @@ export default function VendorLogin() {
                       </div>
                       <div className="vl-otp-actions">
                         <button type="button" disabled={isSubmitting || resendAfter > 0} onClick={requestOtp}>{resendAfter ? `Resend OTP in ${resendAfter}s` : "Resend OTP"}</button>
-                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>Change credentials</button>
+                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>{loginMethod === "mobile" ? "Change number" : "Change credentials"}</button>
                       </div>
                     </div>
                   )}
@@ -431,20 +330,6 @@ export default function VendorLogin() {
                 Forgot Password?
               </button>
 
-              {/* OR Divider */}
-              <div className="vl-divider" aria-hidden="true">
-                OR
-              </div>
-
-              {/* Security trust badge footer */}
-              <footer className="vl-security-footer">
-                <Icon name="secureLock" />
-                <span>Your information is secure with us</span>
-              </footer>
             </form>
-          </main>
-        </div>
-      </div>
-    </div>
-  );
+  </LoginLanding>;
 }

@@ -66,6 +66,14 @@ class VendorOTPSendView(APIView):
     throttle_classes = [OTPThrottle]
 
     def post(self, request):
+        if not request.data.get("username") and not request.data.get("password"):
+            phone = normalize_phone(request.data.get("phone"))
+            if not phone:
+                return Response({"message": "Enter a valid registered mobile number."}, status=400)
+            vendor = matching_vendor(phone)
+            if not vendor:
+                return Response({"message": "Mobile login requires verified KYC and an approved vendor account."}, status=400)
+            return start_vendor_otp(vendor)
         from .views import LoginAPIView
         data = request.data.copy()
         data["audience"] = "vendor"

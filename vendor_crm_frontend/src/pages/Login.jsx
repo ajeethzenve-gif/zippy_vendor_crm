@@ -1,8 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import zippyLogo from "../assest/logo/zippy_logo.jpeg";
-import "../styles/Login.css";
+import LoginLanding from "../components/LoginLanding";
 
 function Icon({ name, ...props }) {
   const paths = {
@@ -27,24 +26,6 @@ export default function Login({ audience = "staff" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState("");
-  const viewportRef = useRef(null);
-  const layoutRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const viewport = viewportRef.current;
-    const layout = layoutRef.current;
-    const fitLayout = () => {
-      // Scale the original design together, including any sign-in error.
-      const scale = Math.min(1, viewport.clientHeight / layout.scrollHeight, viewport.clientWidth / layout.scrollWidth);
-      layout.style.setProperty("--login-scale", String(scale));
-    };
-    fitLayout();
-    const observer = new ResizeObserver(fitLayout);
-    observer.observe(viewport);
-    observer.observe(layout);
-    return () => observer.disconnect();
-  }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSubmitting) return;
@@ -60,44 +41,20 @@ export default function Login({ audience = "staff" }) {
     }
   };
 
-  return (
-    <main className="crm-login" ref={viewportRef}>
-      <div className="crm-login-layout" ref={layoutRef}>
-        <section className="crm-login-story" aria-labelledby="crm-welcome-title">
-          <div className="crm-login-brand">
-            <img src={zippyLogo} alt="Zippy" width="54" height="68" />
-            <div><span>{isVendor ? "Zippy VendorHub" : "Zippy CRM"}</span><p>{isVendor ? "Connect · Collaborate · Grow" : "Your team. Connected."}</p></div>
-          </div>
-          <div className="crm-login-intro">
-            <h1 id="crm-welcome-title">{isVendor ? "Your Partner" : "Your Team."}<br /><span>{isVendor ? "in Progress" : "One Workspace."}</span></h1>
-            {isVendor ? <p>Easily access your vendor account,<br className="crm-desktop-break" /> manage orders, and stay connected<br className="crm-desktop-break" /> with us — all in one place.</p> : <p>Manage vendors, coordinate operations,<br className="crm-desktop-break" /> and keep your team moving.<br className="crm-desktop-break" /> Sign in to the tools assigned to your role.</p>}
-            <ul className="crm-login-benefits" aria-label={isVendor ? "Your vendor workspace" : "Your CRM workspace"}>
-              <li><span><Icon name={isVendor ? "box" : "people"} /></span><p>{isVendor ? <>Manage<br />Orders</> : <>Vendor<br />Management</>}</p></li>
-              <li><span><Icon name={isVendor ? "people" : "box"} /></span><p>{isVendor ? <>Connect<br />with Buyers</> : <>Order<br />Operations</>}</p></li>
-              <li><span><Icon name="growth" /></span><p>{isVendor ? <>Grow<br />Your Business</> : <>Business<br />Insights</>}</p></li>
-            </ul>
-          </div>
-        </section>
-
-        <section className="crm-login-card" aria-labelledby="crm-login-title">
-          <header className="crm-login-card-header">
-            <div className="crm-login-avatar"><Icon name="user" /></div>
-            <h2 id="crm-login-title">{isVendor ? "Vendor Login" : "CRM Login"}</h2>
-            <p>{isVendor ? <>Welcome back! Sign in to your vendor account.</> : <>Sign in with your staff account.<br />Your role determines your workspace.</>}</p>
-          </header>
+  return <LoginLanding audience="staff">
           <form className="crm-login-form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
             <div className="crm-login-field">
               <label htmlFor="login-username">{isVendor ? "Username or email" : "Username"}</label>
               <div className="crm-login-input-wrap">
                 <Icon name="user" />
-                <input id="login-username" name="username" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} required value={username} onChange={(event) => setUsername(event.target.value)} placeholder={isVendor ? "Enter your username or email" : "Enter your username"} disabled={isSubmitting} aria-describedby={loginError ? "login-error" : undefined} />
+                <input className="vl-input" id="login-username" name="username" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} required value={username} onChange={(event) => setUsername(event.target.value)} placeholder={isVendor ? "Enter your username or email" : "Enter your username"} disabled={isSubmitting} aria-describedby={loginError ? "login-error" : undefined} />
               </div>
             </div>
             <div className="crm-login-field">
               <label htmlFor="login-password">Password</label>
               <div className="crm-login-input-wrap">
                 <Icon name="lock" />
-                <input id="login-password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" disabled={isSubmitting} aria-describedby={loginError ? "login-error" : undefined} />
+                <input className="vl-input" id="login-password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" disabled={isSubmitting} aria-describedby={loginError ? "login-error" : undefined} />
                 <button className="crm-login-eye" type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword}><Icon name={showPassword ? "hidden" : "eye"} /></button>
               </div>
             </div>
@@ -108,9 +65,5 @@ export default function Login({ audience = "staff" }) {
             </button>
             <span className="crm-login-status" role="status">{isSubmitting ? "Signing in. Please wait." : ""}</span>
           </form>
-          <footer className="crm-login-card-footer"><Icon name="lock" /><span>{isVendor ? "Your vendor account. One simple sign-in." : "CRM staff access · Assigned role permissions"}</span></footer>
-        </section>
-      </div>
-    </main>
-  );
+  </LoginLanding>;
 }

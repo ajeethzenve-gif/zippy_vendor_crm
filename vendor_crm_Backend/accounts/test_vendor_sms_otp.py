@@ -55,7 +55,7 @@ class GeneratedVendorOTPTests(TestCase):
     def test_unknown_phone_never_generates_or_sends_code(self):
         with patch("accounts.services.sms_service.secrets.randbelow") as generator:
             response = self.client.post("/api/vendor-otp/send/", {"phone": "9999999999"})
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         generator.assert_not_called()
         self.sender.assert_not_called()
 
@@ -100,9 +100,17 @@ class GeneratedVendorOTPTests(TestCase):
             self.assertEqual(self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52"}).status_code, 403)
         self.sender.assert_not_called()
 
-    def test_phone_only_cannot_bypass_credentials(self):
+    def test_mobile_login_sends_otp_and_requires_verification(self):
         response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("access", response.data)
+        code = self.sender.call_args.kwargs["json"]["otp"]
+        self.assertEqual(self.verify(response.data["challenge"], code).status_code, 200)
+
+    def test_mobile_login_rejects_unverified_vendor(self):
+        Vendor.objects.filter(pk=self.vendor.pk).update(kyc_status="PENDING")
+        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
+        self.assertEqual(response.status_code, 400)
         self.sender.assert_not_called()
 
     def test_wrong_password_does_not_send_otp_or_tokens(self):
