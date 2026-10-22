@@ -140,3 +140,17 @@ class VendorAccountSerializer(serializers.ModelSerializer):
         if any(getattr(instance, key) != value for key, value in validated_data.items()):
             validated_data["is_verified"] = False
         return super().update(instance, validated_data)
+
+
+class VendorProfileSerializer(VendorSerializer):
+    """Self-service fields; onboarding and verification remain staff-managed."""
+    class Meta:
+        model = Vendor
+        fields = ["vendor_name", "brand_name", "city", "email", "phone", "gst_number", "profile_image", "logo"]
+        extra_kwargs = {"vendor_name": {"allow_blank": False}, "brand_name": {"allow_blank": False}}
+
+    def validate(self, attrs):
+        unsupported = set(self.initial_data) - set(self.fields)
+        if unsupported:
+            raise serializers.ValidationError({field: "This field cannot be changed through profile settings." for field in unsupported})
+        return super().validate(attrs)

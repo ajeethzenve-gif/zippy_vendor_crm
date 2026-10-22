@@ -13,3 +13,15 @@
 @media(max-width:1100px){.zl-layout{grid-template-columns:1fr 430px;gap:35px;padding:24px}.zl-intro{max-width:350px}.zl-intro h1{font-size:40px}.zl-intro>p{font-size:17px;max-width:300px}.zl-features{width:310px;gap:8px}.zl-card{padding:25px}.zl-brand strong{font-size:30px}.zl-curve{right:-25%;width:65%}}
 @media(max-width:760px){.zl-page{background-position:42% top;background-size:auto 900px;background-color:#e6f0ff}.zl-page::before{background:linear-gradient(#ffffffab,#edf5ffcc)}.zl-curve{display:none}.zl-layout{display:flex;flex-direction:column;gap:26px;padding:22px 18px 32px}.zl-brand img{width:45px;height:66px}.zl-brand strong{font-size:28px}.zl-brand p{font-size:12px}.zl-intro{margin-top:26px;max-width:none}.zl-intro h1{font-size:36px}.zl-intro>p{font-size:16px;max-width:390px;margin:16px 0}.zl-features{display:none}.zl-card-column{width:100%;max-width:520px;align-self:center}.zl-topnav{margin-bottom:15px;font-size:12px}.zl-topnav a{padding:8px 12px}.zl-card{padding:25px 22px;border-radius:24px}.zl-brand-card img{width:42px;height:63px}.zl-brand-card strong{font-size:26px}.zl-card-heading h2{font-size:28px}.zl-card-heading{margin:20px 0}.zl-page .vl-tab-btn{font-size:12px;gap:6px;padding:12px 6px}.vl-tab-btn svg{width:18px;height:18px}}
 @media(prefers-reduced-motion:reduce){.zl-page *{animation:none!important;transition:none!important}}
+
+/* Background artwork includes the headline, branding, and feature tiles. */
+.zl-page{background-color:#e5f1ff;background-position:center;background-size:cover;background-repeat:no-repeat}
+.zl-page::before{display:none}
+.zl-layout{display:flex;justify-content:flex-end;align-items:center;gap:0}
+.zl-card-column{width:clamp(420px,36vw,550px);flex-shrink:0;align-self:center}
+.zl-card{background:#fffffff5}
+@media(max-width:760px){
+  .zl-page{background-position:left center;background-size:cover}
+  .zl-layout{justify-content:center;padding:20px 16px;gap:0}
+  .zl-card-column{width:100%;max-width:520px}
+}

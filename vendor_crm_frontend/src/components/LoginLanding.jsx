@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import zippyLogo from "../assest/logo/zippy_logo.jpeg";
-import courierBackground from "../assest/courier-login-background.png";
+import zenveLogo from "../assest/logo/zenve_logo.png";
+const backgroundImages = Object.entries(import.meta.glob(
+  "../assest/vendorbg/*.{png,jpg,jpeg,webp,avif}",
+  { eager: true, query: "?url", import: "default" },
+)).sort(([first], [second]) => first.localeCompare(second)).map(([, url]) => url);
 import "../styles/LoginLanding.css";
 
 function FeatureIcon({ type }) {
@@ -16,25 +20,28 @@ function FeatureIcon({ type }) {
 }
 function Brand({ compact = false }) {
   return <div className={`zl-brand ${compact ? "zl-brand-card" : ""}`}>
-    <img src={zippyLogo} alt="Zenve Zippy" />
-    <div><strong>Zippy<span>Vendor CRM</span></strong><p>Connect · Collaborate · Grow</p></div>
+    <img src={zenveLogo} alt="Zenve" />
+    <div><strong><span>Vendor CRM</span></strong><p>Connect · Collaborate · Grow</p></div>
   </div>;
 }
 export default function LoginLanding({ audience = "vendor", children }) {
   const vendor = audience === "vendor";
-  const features = vendor
-    ? [["box", "Manage Orders"], ["truck", "Track Deliveries"], ["users", "Connect with Buyers"], ["chart", "Grow Your Business"], ["shield", "Secure Access"], ["headset", "Stay Connected"]]
-    : [["users", "Manage Vendors"], ["box", "Order Operations"], ["truck", "Track Deliveries"], ["chart", "Business Insights"], ["shield", "Role Permissions"], ["headset", "Team Collaboration"]];
-  return <main className="zl-page" style={{ backgroundImage: `url(${courierBackground})` }}>
-    <div className="zl-curve" aria-hidden="true" />
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
+  useEffect(() => {
+    if (backgroundImages.length < 2) return;
+    const timer = setInterval(() => {
+      setBackgroundIndex((index) => (index + 1) % backgroundImages.length);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    if (backgroundImages.length < 2) return;
+    // Preload only the next slide, keeping initial loading light.
+    const nextImage = new Image();
+    nextImage.src = backgroundImages[(backgroundIndex + 1) % backgroundImages.length];
+  }, [backgroundIndex]);
+  return <main className="zl-page" style={{ backgroundImage: `url("${backgroundImages[backgroundIndex]}")` }}>
     <div className="zl-layout">
-      <section className="zl-story" aria-labelledby="zl-heading">
-        <Brand />
-        <div className="zl-intro"><h1 id="zl-heading">{vendor ? <>Empowering<br />Vendors for a</> : <>Connecting<br />Your Team for a</>}<br /><span>Smarter Tomorrow</span></h1>
-          <p>{vendor ? "Manage orders, track deliveries, connect with buyers, and grow your business — all in one place." : "Manage vendors, coordinate deliveries, and keep your operations moving — together in one workspace."}</p>
-          <ul className="zl-features">{features.map(([icon, label]) => <li key={icon}><span className={`zl-feature-icon zl-${icon}`}><FeatureIcon type={icon} /></span><span>{label}</span></li>)}</ul>
-        </div>
-      </section>
       <div className="zl-card-column">
 
         <section className="zl-card" aria-labelledby="zl-login-title">

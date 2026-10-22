@@ -25,7 +25,7 @@ import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/zen
 ========================================================= */
 
 export const COMPANY_GST_INFO = {
-  name: "ZENVE FASHION PRIVATE LIMITED",
+  name: "Zenve Pets Healthcare Privated Ltd",
   gstNumber: "29AABCZ1234F1Z8",
   state: "Karnataka (All-India E-Commerce Coverage)",
   type: "E-Commerce Marketplace Operator & Master Platform GSTIN",

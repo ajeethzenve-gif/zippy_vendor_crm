@@ -109,7 +109,8 @@ export async function getDesigner(id) {
 
 
 export async function createDesigner(
-  designerData
+  designerData,
+  { profileOnly = false } = {}
 ) {
   if (!designerData) {
     throw new Error(
@@ -161,7 +162,8 @@ export async function createDesigner(
 
 export async function updateDesigner(
   id,
-  designerData
+  designerData,
+  { profileOnly = false } = {}
 ) {
   if (!id) {
     throw new Error(
@@ -201,7 +203,7 @@ export async function updateDesigner(
   }
 
   const response = await apiFetch(
-    `${API_BASE_URL}/vendors/${id}/`,
+    `${API_BASE_URL}/vendors/${id}/${profileOnly ? "profile/" : ""}`,
     options
   );
 
@@ -1330,7 +1332,8 @@ export async function getVendor(id) {
 
 
 export async function createVendor(
-  designerData
+  designerData,
+  { profileOnly = false } = {}
 ) {
   if (!designerData) {
     throw new Error(
@@ -1382,7 +1385,8 @@ export async function createVendor(
 
 export async function updateVendor(
   id,
-  designerData
+  designerData,
+  { profileOnly = false } = {}
 ) {
   if (!id) {
     throw new Error(
@@ -1473,4 +1477,8 @@ export async function createEmployee(payload) {
     throw error;
   }
   return data;
+}
+
+export function updateVendorProfile(id, profileData) {
+  return updateDesigner(id, profileData, { profileOnly: true });
 }

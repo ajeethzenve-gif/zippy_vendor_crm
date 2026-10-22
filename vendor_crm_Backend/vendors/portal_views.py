@@ -8,7 +8,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Vendor, VendorAccountDetails
-from .serializers import VendorSerializer, VendorAccountSerializer
+from .serializers import VendorSerializer, VendorAccountSerializer, VendorProfileSerializer
 from credits.views import get_designer_credits_data
 from products.serializers import ProductSerializer
 from orders.models import OrderItem, ReturnRequest
@@ -117,3 +117,14 @@ class VendorAccountView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(vendor=vendor)
         return Response({"exists": True, "data": serializer.data}, status=200 if account else 201)
+
+
+class VendorProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        vendor = portal_vendor(request, pk)
+        serializer = VendorProfileSerializer(vendor, data=request.data, partial=True, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(VendorSerializer(vendor, context={"request": request}).data)

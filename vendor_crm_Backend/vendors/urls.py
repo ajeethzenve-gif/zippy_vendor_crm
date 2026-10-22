@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import VendorRegistrationAPIView, VendorListAPIView, VendorDetailAPIView
 
-from .portal_views import VendorPortalView, VendorNotificationsReadView, VendorAccountView
+from .portal_views import VendorPortalView, VendorNotificationsReadView, VendorAccountView, VendorProfileView
 
 urlpatterns = [
+    path("<int:pk>/profile/", VendorProfileView.as_view(), name="vendor-profile"),
     path("<int:pk>/portal-dashboard/", VendorPortalView.as_view()),
     path("<int:pk>/portal-dashboard/mark-read/", VendorNotificationsReadView.as_view()),
     path("<int:pk>/account-details/", VendorAccountView.as_view()),

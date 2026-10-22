@@ -12,7 +12,7 @@ import {
   getDesignerPortalDashboard,
   markDesignerNotificationsRead,
   createProduct,
-  updateDesigner,
+  updateVendorProfile,
   getDesignerAccountDetails,
   saveDesignerAccountDetails,
   getDesignerCredits,
@@ -1630,10 +1630,6 @@ export default function VendorPortal() {
         profileForm.name.trim()
       );
       payload.append(
-        "owner_name",
-        profileForm.name.trim()
-      );
-      payload.append(
         "city",
         profileForm.city.trim()
       );
@@ -1665,7 +1661,7 @@ export default function VendorPortal() {
         );
       }
 
-      await updateDesigner(
+      await updateVendorProfile(
         selectedDesignerId,
         payload
       );
@@ -1685,7 +1681,7 @@ export default function VendorPortal() {
       await loadDashboard(
         selectedDesignerId
       );
-      await fetchDesigners();
+      if (!isVendor) await fetchDesigners();
 
       setIsEditingProfile(false);
 
