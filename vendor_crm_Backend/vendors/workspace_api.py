@@ -201,7 +201,7 @@ class VendorPANSubmissionSerializer(serializers.Serializer):
         if attrs["pan_dob"] > timezone.localdate():
             raise serializers.ValidationError({"pan_dob": "Date of birth cannot be in the future."})
         vendor = self.context["vendor"]
-        gst = attrs.get("gst_number", vendor.gst_number).strip().upper()
+        gst = (attrs.get("gst_number") or "").strip().upper()
         if gst and (not re.fullmatch(r"[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]", gst) or gst[2:12] != attrs["pan_number"]):
             raise serializers.ValidationError({"gst_number": "GSTIN must be valid and match this PAN."})
         attrs["gst_number"] = gst

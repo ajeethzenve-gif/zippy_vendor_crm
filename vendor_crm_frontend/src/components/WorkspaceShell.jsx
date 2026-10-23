@@ -12,7 +12,7 @@ export default function WorkspaceShell({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
-  const standalone = !currentUser || pathname === "/login" || pathname === "/vendor-login" || pathname === "/register";
+  const standalone = !currentUser || pathname === "/login" || pathname === "/vendor-login" || pathname === "/register" || pathname === "/vendor-kyc-details";
   const visibleLayers = layers.filter(layer => hasAccess(layer.n));
 
   const handleLogout = () => {
