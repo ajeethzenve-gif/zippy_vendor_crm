@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoginLanding from "../components/LoginLanding";
@@ -116,7 +116,10 @@ export default function VendorLogin() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const OTP_LENGTH = 6;
   const [otpCode, setOtpCode] = useState("");
+  const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
+  const otpInputRefs = useRef([]);
   const [otpSent, setOtpSent] = useState(false);
   const [otpChallenge, setOtpChallenge] = useState("");
   const [resendAfter, setResendAfter] = useState(0);
@@ -125,6 +128,83 @@ export default function VendorLogin() {
     const timer = setTimeout(() => setResendAfter(previous => Math.max(0, previous - 1)), 1000);
     return () => clearTimeout(timer);
   }, [resendAfter]);
+
+  useEffect(() => {
+    if (otpSent && otpInputRefs.current[0]) {
+      setTimeout(() => {
+        otpInputRefs.current[0]?.focus();
+      }, 60);
+    }
+  }, [otpSent]);
+
+  const handleOtpChange = (index, value) => {
+    const cleaned = value.replace(/\D/g, "");
+    if (!cleaned) {
+      const newDigits = [...otpDigits];
+      newDigits[index] = "";
+      setOtpDigits(newDigits);
+      setOtpCode(newDigits.join(""));
+      return;
+    }
+
+    if (cleaned.length > 1) {
+      const newDigits = [...otpDigits];
+      for (let i = 0; i < cleaned.length && index + i < OTP_LENGTH; i++) {
+        newDigits[index + i] = cleaned[i];
+      }
+      setOtpDigits(newDigits);
+      setOtpCode(newDigits.join(""));
+      const nextFocus = Math.min(index + cleaned.length, OTP_LENGTH - 1);
+      otpInputRefs.current[nextFocus]?.focus();
+      return;
+    }
+
+    const newDigits = [...otpDigits];
+    newDigits[index] = cleaned[cleaned.length - 1];
+    setOtpDigits(newDigits);
+    setOtpCode(newDigits.join(""));
+
+    if (index < OTP_LENGTH - 1) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace") {
+      if (!otpDigits[index] && index > 0) {
+        const newDigits = [...otpDigits];
+        newDigits[index - 1] = "";
+        setOtpDigits(newDigits);
+        setOtpCode(newDigits.join(""));
+        otpInputRefs.current[index - 1]?.focus();
+        e.preventDefault();
+      } else {
+        const newDigits = [...otpDigits];
+        newDigits[index] = "";
+        setOtpDigits(newDigits);
+        setOtpCode(newDigits.join(""));
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      otpInputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < OTP_LENGTH - 1) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    if (!pasted) return;
+    const newDigits = Array(OTP_LENGTH).fill("");
+    for (let i = 0; i < pasted.length; i++) {
+      newDigits[i] = pasted[i];
+    }
+    setOtpDigits(newDigits);
+    setOtpCode(newDigits.join(""));
+    const focusIndex = Math.min(pasted.length, OTP_LENGTH - 1);
+    otpInputRefs.current[focusIndex]?.focus();
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -137,7 +217,10 @@ export default function VendorLogin() {
       const result = loginMethod === "mobile"
         ? await sendVendorOtp(phoneNumber.trim())
         : await loginCustom(username.trim(), password, { vendorOnly: true });
-      setOtpChallenge(result.challenge); setOtpCode(""); setOtpSent(true);
+      setOtpChallenge(result.challenge);
+      setOtpCode("");
+      setOtpDigits(Array(OTP_LENGTH).fill(""));
+      setOtpSent(true);
       setResendAfter(result.retry_after || 60);
       setForgotPasswordMsg(result.message);
     } catch (error) {
@@ -163,13 +246,18 @@ export default function VendorLogin() {
       await requestOtp();
       return;
     }
-    if (!/^\d{4,10}$/.test(otpCode.trim())) {
-      setErrorMessage("Enter the OTP sent to your registered mobile number.");
+    const fullOtp = otpDigits.join("");
+    if (fullOtp.length !== OTP_LENGTH) {
+      setErrorMessage(`Enter the complete ${OTP_LENGTH}-digit OTP code.`);
+      const firstEmpty = otpDigits.findIndex(d => !d);
+      if (firstEmpty !== -1) {
+        otpInputRefs.current[firstEmpty]?.focus();
+      }
       return;
     }
     setIsSubmitting(true);
     try {
-      const user = await loginVendorOtp(otpChallenge, otpCode.trim());
+      const user = await loginVendorOtp(otpChallenge, fullOtp);
       setPassword("");
       navigate(user.landingPath, { replace: true });
     } catch (error) {
@@ -191,7 +279,7 @@ export default function VendorLogin() {
               {[["credentials", "user", "User Name & Password"], ["mobile", "phone", "Mobile OTP"]].map(([method, icon, label]) => (
                 <button key={method} type="button" role="tab" aria-selected={loginMethod === method}
                   className={`vl-tab-btn ${loginMethod === method ? "active" : ""}`} disabled={isSubmitting}
-                  onClick={() => { setLoginMethod(method); setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setErrorMessage(""); setForgotPasswordMsg(""); }}>
+                  onClick={() => { setLoginMethod(method); setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setOtpDigits(Array(OTP_LENGTH).fill("")); setErrorMessage(""); setForgotPasswordMsg(""); }}>
                   <Icon name={icon} /><span>{label}</span>
                 </button>
               ))}
@@ -201,7 +289,7 @@ export default function VendorLogin() {
               {!otpSent && loginMethod === "mobile" && (
                 <div className="vl-field">
                   <label className="vl-label" htmlFor="vl-phone">Registered mobile number</label>
-                  <div className="vl-input-box">
+                  <div className={`vl-input-box ${errorMessage ? "has-error" : ""}`}>
                     <Icon name="phone" className="vl-input-icon" />
                     <input id="vl-phone" name="phone" type="tel" autoComplete="tel" required
                       value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)}
@@ -216,7 +304,7 @@ export default function VendorLogin() {
                     <label className="vl-label" htmlFor="vl-username">
                       User Name
                     </label>
-                    <div className="vl-input-box">
+                    <div className={`vl-input-box ${errorMessage ? "has-error" : ""}`}>
                       <Icon name="user" className="vl-input-icon" />
                       <input
                         id="vl-username"
@@ -240,7 +328,7 @@ export default function VendorLogin() {
                     <label className="vl-label" htmlFor="vl-password">
                       Password
                     </label>
-                    <div className="vl-input-box">
+                    <div className={`vl-input-box ${errorMessage ? "has-error" : ""}`}>
                       <Icon name="lock" className="vl-input-icon" />
                       <input
                         id="vl-password"
@@ -267,33 +355,59 @@ export default function VendorLogin() {
                 </>
               ) : (
                 <>
-                  {otpSent && <p>Enter the OTP sent to your registered mobile number.</p>}
                   {otpSent && (
                     <div className="vl-field">
-                      <label className="vl-label" htmlFor="vl-otp">
-                        One Time Password (OTP)
-                      </label>
-                      <div className="vl-input-box">
-                        <Icon name="lock" className="vl-input-icon" />
-                        <input
-                          id="vl-otp"
-                          name="otp"
-                          type="text"
-                          pattern="[0-9]*"
-                          inputMode="numeric"
-                          maxLength={10}
-                          required
-                          value={otpCode}
-                          onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                          placeholder="Enter OTP code"
-                          className="vl-input"
-                          disabled={isSubmitting}
-                          autoFocus
-                        />
+                      <div className="vl-otp-header">
+                        <label className="vl-label" htmlFor="vl-otp-0">
+                          Enter 6-Digit OTP Code
+                        </label>
+                        <span className="vl-otp-subtitle">
+                          Sent to {phoneNumber ? `+${phoneNumber.replace(/\D/g, "").replace(/^91/, "+91 ")}` : "your registered number"}
+                        </span>
                       </div>
+
+                      <div className="vl-otp-container" role="group" aria-label="One Time Password boxes">
+                        {otpDigits.map((digit, index) => (
+                          <input
+                            key={index}
+                            id={`vl-otp-${index}`}
+                            ref={(el) => (otpInputRefs.current[index] = el)}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength={1}
+                            autoComplete={index === 0 ? "one-time-code" : "off"}
+                            value={digit}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                            onPaste={handleOtpPaste}
+                            onFocus={(e) => e.target.select()}
+                            className={`vl-otp-box ${digit ? "is-filled" : ""} ${errorMessage ? "has-error" : ""}`}
+                            disabled={isSubmitting}
+                            aria-label={`Digit ${index + 1} of 6`}
+                          />
+                        ))}
+                      </div>
+
                       <div className="vl-otp-actions">
-                        <button type="button" disabled={isSubmitting || resendAfter > 0} onClick={requestOtp}>{resendAfter ? `Resend OTP in ${resendAfter}s` : "Resend OTP"}</button>
-                        <button type="button" disabled={isSubmitting} onClick={() => { setOtpSent(false); setOtpChallenge(""); setOtpCode(""); setResendAfter(0); setErrorMessage(""); setForgotPasswordMsg(""); }}>{loginMethod === "mobile" ? "Change number" : "Change credentials"}</button>
+                        <button type="button" disabled={isSubmitting || resendAfter > 0} onClick={requestOtp}>
+                          {resendAfter ? `Resend OTP in ${resendAfter}s` : "Resend OTP"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isSubmitting}
+                          onClick={() => {
+                            setOtpSent(false);
+                            setOtpChallenge("");
+                            setOtpCode("");
+                            setOtpDigits(Array(OTP_LENGTH).fill(""));
+                            setResendAfter(0);
+                            setErrorMessage("");
+                            setForgotPasswordMsg("");
+                          }}
+                        >
+                          {loginMethod === "mobile" ? "Change number" : "Change credentials"}
+                        </button>
                       </div>
                     </div>
                   )}
@@ -303,12 +417,14 @@ export default function VendorLogin() {
               {/* Feedback messages */}
               {errorMessage && (
                 <div className="vl-error-alert" role="alert">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                   <span>{errorMessage}</span>
                 </div>
               )}
 
               {forgotPasswordMsg && (
                 <div className="vl-info-alert" role="status">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                   <span>{forgotPasswordMsg}</span>
                 </div>
               )}
@@ -319,8 +435,8 @@ export default function VendorLogin() {
                   {isSubmitting
                     ? "Signing in…"
                     : !otpSent
-                    ? "Send OTP"
-                    : "Verify OTP & login"}
+                    ? (loginMethod === "mobile" ? "Send OTP Code" : "Sign In to Vendor Portal")
+                    : "Verify OTP & Continue"}
                 </span>
                 {!isSubmitting && <Icon name="arrowRight" />}
               </button>

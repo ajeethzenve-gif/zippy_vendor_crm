@@ -49,7 +49,11 @@ export default function LoginLanding({ audience = "vendor", children }) {
           <header className="zl-card-heading"><h2 id="zl-login-title">{vendor ? "Vendor Login" : "Staff Login"}</h2><p>{vendor ? "Choose your preferred method to sign in" : "Sign in to your assigned workspace"}</p></header>
           {children}
           <footer className="zl-security"><FeatureIcon type="shield" /><span>Your information is secure with us</span></footer>
-          {vendor && <Link className="zl-switch" to="/login">Staff login →</Link>}
+          {vendor ? (
+            <Link className="zl-switch" to="/login">Staff login →</Link>
+          ) : (
+            <Link className="zl-switch" to="/vendor-login">← Vendor login</Link>
+          )}
         </section>
       </div>
     </div>

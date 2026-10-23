@@ -138,14 +138,16 @@
 }
 
 .crm-theme .workspace-brand-logo {
-  width: 38px;
-  height: 38px;
-  object-fit: cover;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: #ffffff;
   display: block;
   border-radius: 9px;
   box-shadow: 0 2px 8px rgba(22, 119, 255, 0.15);
   border: 1px solid rgba(22, 119, 255, 0.12);
   flex-shrink: 0;
+  padding: 2px;
 }
 
 .crm-theme .workspace-brand-copy {
@@ -181,12 +183,14 @@
 }
 
 .crm-theme .workspace-mobile-logo {
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  background: #ffffff;
   display: block;
   border-radius: 8px;
   border: 1px solid rgba(22, 119, 255, 0.15);
+  padding: 2px;
 }
 
 .crm-theme .workspace-mobile-title {
