@@ -2,7 +2,7 @@
 body { background:#f6f5f1; }
 .dashboard-header,.login-topbar { background:#fff; border-bottom:1px solid #e4dfd4; }
 .brand-title,.login-brand-title { font-family:var(--sans); font-weight:750; letter-spacing:-.04em; }
-img[src*="zippy_logo"],.brand-logo img { object-fit:contain!important; background:#fff; }
+img[src*="zenve_logo"],img[src*="zippy_logo"],.brand-logo img { object-fit:contain!important; background:#fff; }
 .login-brand-logo,.brand-logo img { width:64px!important; height:80px!important; border-radius:10px; }
 .ZENVE-portal-logo img { width:58px!important; height:76px!important; }
 .login-showcase,.login-card { border-radius:20px; }

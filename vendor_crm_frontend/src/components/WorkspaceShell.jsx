@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { layers } from "../data/layers";
 import { useAuth } from "../context/AuthContext";
-import zippyLogo from "../assest/logo/zippy_logo.jpeg";
+import zenveLogo from "../assest/logo/zenve_logo.png";
 import "../styles/Workspace.css";
 import Swal from "sweetalert2";
 import { getDesignerAccountDetails } from "../services/api";
@@ -33,8 +33,8 @@ export default function WorkspaceShell({ children }) {
   return <div className={`crm-theme ${standalone ? "crm-standalone" : "crm-workspace"}`}>
     {!standalone && <>
       <div className="workspace-mobile-bar">
-        <Link to="/" className="workspace-mobile-brand" aria-label="Zippy Vendor CRM">
-          <img src={zippyLogo} alt="Zippy Logo" className="workspace-mobile-logo" />
+        <Link to="/" className="workspace-mobile-brand" aria-label="Zenve Vendor CRM">
+          <img src={zenveLogo} alt="Zenve Logo" className="workspace-mobile-logo" />
           <div className="workspace-mobile-brand-copy">
             <span className="workspace-mobile-title">Vendor CRM</span>
           </div>
@@ -55,8 +55,8 @@ export default function WorkspaceShell({ children }) {
       </div>
       <aside className={`workspace-sidebar ${expanded ? "is-expanded" : ""}`}>
         <div className="workspace-brand">
-          <Link to="/" className="workspace-brand-link" aria-label="Zippy Vendor CRM">
-            <img src={zippyLogo} alt="Zippy Logo" className="workspace-brand-logo" />
+          <Link to="/" className="workspace-brand-link" aria-label="Zenve Vendor CRM">
+            <img src={zenveLogo} alt="Zenve Logo" className="workspace-brand-logo" />
             <div className="workspace-brand-copy">
               <span className="workspace-brand-title">Vendor CRM</span>
               <span className="workspace-brand-subtitle">Connect · Collaborate · Grow</span>

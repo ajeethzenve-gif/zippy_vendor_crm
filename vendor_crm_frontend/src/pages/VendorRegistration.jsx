@@ -1,7 +1,7 @@
 import { VENDOR_CATEGORIES } from "../utils/vendorCategories";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assest/logo/zippy_logo.jpeg";
+import logo from "../assest/logo/zenve_logo.png";
 import { API_BASE_URL } from "../services/api";
 
 const fields = [

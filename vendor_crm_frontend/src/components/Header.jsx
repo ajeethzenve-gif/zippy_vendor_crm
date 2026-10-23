@@ -1,4 +1,4 @@
-import zippyLogo from "../assest/logo/zippy_logo.jpeg";
+import zenveLogo from "../assest/logo/zenve_logo.png";
 import React from "react";
 import "../styles/Header.css";
 
@@ -67,8 +67,8 @@ function Header() {
 
           <div className="brand-logo">
             <img
-              src={zippyLogo}
-              alt="Zippy Vendor CRM"
+              src={zenveLogo}
+              alt="Zenve Vendor CRM"
             />
           </div>
 
