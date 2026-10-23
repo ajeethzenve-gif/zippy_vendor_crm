@@ -1,0 +1,1334 @@
+/* =========================================================
+   LAYER 15: VENDOR KYC VERIFICATION COMMAND HUB
+   Enterprise Compliance & Risk Governance UI
+   ========================================================= */
+
+.vkyc-page {
+  max-width: 1620px;
+  margin: 0 auto;
+  padding: 32px clamp(20px, 3.5vw, 48px);
+  color: #0f172a;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+.vkyc-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER & TITLE BLOCK
+   ========================================================= */
+
+.vkyc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.vkyc-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 820px;
+}
+
+.vkyc-layer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.vkyc-layer-badge svg {
+  width: 14px;
+  height: 14px;
+  color: #16a34a;
+}
+
+.vkyc-title {
+  font-size: clamp(26px, 2.5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.vkyc-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.vkyc-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vkyc-btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  color: #334155;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.18s ease;
+}
+
+.vkyc-btn-refresh:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.vkyc-btn-refresh svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.4s ease;
+}
+
+.vkyc-btn-refresh.is-spinning svg {
+  animation: vkycSpin 0.7s linear infinite;
+}
+
+@keyframes vkycSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   STATISTICS & KPI CARDS
+   ========================================================= */
+
+.vkyc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.vkyc-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.vkyc-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+  border-color: #cbd5e1;
+}
+
+.vkyc-stat-card.active {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2), 0 8px 24px rgba(2, 132, 199, 0.08);
+  background: #f8fbff;
+}
+
+.vkyc-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vkyc-stat-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.vkyc-stat-icon.blue { background: #eff6ff; color: #0284c7; }
+.vkyc-stat-icon.amber { background: #fffbeb; color: #d97706; }
+.vkyc-stat-icon.emerald { background: #ecfdf5; color: #059669; }
+.vkyc-stat-icon.indigo { background: #eef2ff; color: #4f46e5; }
+.vkyc-stat-icon.slate { background: #f1f5f9; color: #64748b; }
+.vkyc-stat-icon.rose { background: #fff1f2; color: #e11d48; }
+
+.vkyc-stat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.vkyc-stat-val {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.vkyc-stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vkyc-stat-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   COMPLIANCE GUIDELINE BANNER (Collapsible)
+   ========================================================= */
+
+.vkyc-guide-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.vkyc-guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.vkyc-guide-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.vkyc-guide-title svg {
+  width: 18px;
+  height: 18px;
+  color: #0284c7;
+}
+
+.vkyc-guide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.vkyc-guide-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.vkyc-guide-toggle.is-open svg {
+  transform: rotate(180deg);
+}
+
+.vkyc-guide-content {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.vkyc-guide-item strong {
+  display: block;
+  color: #0f172a;
+  margin-bottom: 3px;
+  font-weight: 650;
+}
+
+/* =========================================================
+   COMMAND BAR & FILTERS
+   ========================================================= */
+
+.vkyc-controls-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
+}
+
+.vkyc-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vkyc-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.vkyc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.vkyc-tab:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.vkyc-tab.active {
+  background: #eff6ff;
+  color: #0284c7;
+  border-color: #bfdbfe;
+  font-weight: 700;
+}
+
+.vkyc-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.vkyc-tab.active .vkyc-tab-count {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.vkyc-tab-count.urgent {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.vkyc-view-toggle {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 10px;
+  gap: 2px;
+}
+
+.vkyc-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.vkyc-view-btn:hover {
+  color: #0f172a;
+}
+
+.vkyc-view-btn.active {
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.vkyc-view-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.vkyc-filter-inputs {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.vkyc-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.vkyc-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.vkyc-search-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.vkyc-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 38px 0 40px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: #f8fafc;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #0f172a;
+  transition: all 0.18s ease;
+}
+
+.vkyc-search-input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.vkyc-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.vkyc-search-clear:hover {
+  color: #0f172a;
+}
+
+.vkyc-search-clear svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vkyc-select {
+  height: 42px;
+  padding: 0 32px 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: #f8fafc;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.vkyc-select:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+/* =========================================================
+   VERIFICATION CARDS GRID
+   ========================================================= */
+
+.vkyc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  gap: 22px;
+}
+
+.vkyc-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  transition: all 0.22s ease;
+  position: relative;
+}
+
+.vkyc-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+.vkyc-card.status-submitted {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);
+}
+
+.vkyc-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.vkyc-vendor-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.vkyc-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  font-weight: 750;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+.vkyc-avatar.verified {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+.vkyc-vendor-names {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vkyc-vendor-brand {
+  font-size: 17px;
+  font-weight: 750;
+  color: #0f172a;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.vkyc-vendor-sub {
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vkyc-stage-pill {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.vkyc-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.vkyc-status-pill.verified {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.vkyc-status-pill.pending {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.vkyc-status-pill.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.vkyc-status-pill svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* =========================================================
+   WORKFLOW NOTIFICATION & REQUEST BANNER
+   ========================================================= */
+
+.vkyc-flow-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 13px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  transition: all 0.2s ease;
+}
+
+.vkyc-flow-banner.submitted {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.vkyc-flow-banner.requested {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.vkyc-flow-banner.uninitiated {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.vkyc-flow-banner.verified {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.vkyc-flow-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vkyc-flow-text strong {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vkyc-flow-text strong svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.vkyc-flow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.vkyc-flow-banner.submitted .vkyc-flow-btn {
+  background: #ffffff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.vkyc-flow-banner.requested .vkyc-flow-btn {
+  background: #ffffff;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.vkyc-flow-banner.uninitiated .vkyc-flow-btn {
+  background: #0284c7;
+  color: #ffffff;
+  border: 0;
+}
+
+.vkyc-flow-banner.uninitiated .vkyc-flow-btn:hover {
+  background: #0369a1;
+}
+
+/* =========================================================
+   FORM FIELDS & INPUTS
+   ========================================================= */
+
+.vkyc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.vkyc-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vkyc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vkyc-field.full {
+  grid-column: 1 / -1;
+}
+
+.vkyc-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vkyc-label {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vkyc-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.vkyc-tag.req { background: #fee2e2; color: #b91c1c; }
+.vkyc-tag.opt { background: #f1f5f9; color: #64748b; }
+
+.vkyc-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 0 12px;
+  transition: all 0.18s ease;
+}
+
+.vkyc-input-wrap:focus-within {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.vkyc-input-wrap.verified {
+  border-color: #a7f3d0;
+  background: #f0fdf4;
+}
+
+.vkyc-input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: #0f172a;
+}
+
+.vkyc-input.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.5px;
+}
+
+.vkyc-provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.vkyc-provider-badge.verified {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.vkyc-provider-badge.pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.vkyc-provider-badge.rejected {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* =========================================================
+   CARD FOOTER & ACTIONS
+   ========================================================= */
+
+.vkyc-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.vkyc-btn-verify {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+}
+
+.vkyc-btn-verify:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 5px 16px rgba(2, 132, 199, 0.35);
+  transform: translateY(-1px);
+}
+
+.vkyc-btn-verify svg {
+  width: 16px;
+  height: 16px;
+}
+
+.vkyc-btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 16px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  color: #334155;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.vkyc-btn-save:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.vkyc-audit-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.vkyc-ref-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: #0284c7;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.vkyc-ref-copy:hover {
+  text-decoration: underline;
+}
+
+.vkyc-msg-alert {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vkyc-msg-alert.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.vkyc-msg-alert.success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+/* =========================================================
+   COMPACT TABLE VIEW
+   ========================================================= */
+
+.vkyc-table-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.03);
+  overflow-x: auto;
+}
+
+.vkyc-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.vkyc-table th {
+  background: #f8fafc;
+  padding: 14px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.vkyc-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.vkyc-table tr:hover td {
+  background: #f8fbff;
+}
+
+.vkyc-table-vendor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vkyc-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vkyc-table-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.vkyc-table-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.vkyc-table-btn.primary {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.vkyc-table-btn.primary:hover {
+  background: #0369a1;
+}
+
+/* =========================================================
+   EMPTY & LOADING SKELETON
+   ========================================================= */
+
+.vkyc-empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 20px;
+  color: #64748b;
+}
+
+.vkyc-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.vkyc-empty-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.vkyc-empty-state h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 6px;
+}
+
+.vkyc-empty-state p {
+  font-size: 13.5px;
+  margin: 0 0 16px;
+}
+
+/* =========================================================
+   MODAL & INSPECT DIALOG
+   ========================================================= */
+
+.vkyc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: vkycFadeIn 0.2s ease-out;
+}
+
+.vkyc-modal-dialog {
+  max-width: 600px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  border-radius: 24px;
+  box-shadow: 0 24px 64px -12px rgba(15, 23, 42, 0.28);
+  animation: vkycScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vkyc-modal-dialog .vkyc-card {
+  box-shadow: none;
+}
+
+.vkyc-modal-close-round {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 10;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  color: #64748b;
+  transition: all 0.15s ease;
+}
+
+.vkyc-modal-close-round:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.vkyc-modal-close-round svg {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes vkycFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vkycScaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Character Count & Inline Warnings */
+.vkyc-char-count {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-family: ui-monospace, monospace;
+}
+
+.vkyc-inline-warn {
+  font-size: 11px;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vkyc-inline-warn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.vkyc-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  color: #334155;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.18s ease;
+}
+
+.vkyc-btn-export:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.vkyc-btn-export svg {
+  width: 16px;
+  height: 16px;
+  color: #0284c7;
+}
+
+.vkyc-alert-dismiss {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.vkyc-alert-dismiss:hover {
+  opacity: 1;
+}
+
+.vkyc-alert-dismiss svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vkyc-valid-check {
+  font-size: 10px;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.vkyc-valid-check svg {
+  width: 10px;
+  height: 10px;
+}
+
+.vkyc-filter-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  color: #64748b;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.vkyc-filter-summary strong {
+  color: #0f172a;
+}
+
+.vkyc-btn-reset-filters {
+  background: transparent;
+  border: 1px dashed #cbd5e1;
+  color: #0284c7;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vkyc-btn-reset-filters:hover {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  color: #0369a1;
+}
+
+/* =========================================================
+   RESPONSIVENESS
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .vkyc-page {
+    padding: 24px 16px;
+  }
+  .vkyc-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .vkyc-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .vkyc-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .vkyc-flow-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .vkyc-flow-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
