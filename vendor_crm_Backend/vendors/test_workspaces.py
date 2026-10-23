@@ -34,6 +34,23 @@ class VendorWorkspaceTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertFalse(VendorVerification.objects.exists())
 
+    @patch("vendors.workspace_api.verify_identifiers")
+    def test_without_gstin_kyc_uses_pan_result(self, verify):
+        for pan_status in ["VERIFIED", "REJECTED", "PENDING"]:
+            with self.subTest(pan_status=pan_status):
+                response = self.client.patch(self.kyc_url, {**self.ids, "gst_number": ""}, format="json")
+                self.assertEqual(response.status_code, 200, response.data)
+                verify.return_value = {"gst_status": "PENDING", "pan_status": pan_status, "reference": "pan-check"}
+                response = self.client.post(self.kyc_url)
+                self.assertEqual(response.status_code, 200, response.data)
+                self.assertEqual(response.data["kyc_status"], pan_status)
+                self.assertEqual(response.data["verification"]["gst_status"], "PENDING")
+                self.assertEqual(verify.call_args.args, ("", self.ids["pan_number"]))
+
+    def test_optional_gstin_still_rejects_invalid_value(self):
+        response = self.client.patch(self.kyc_url, {**self.ids, "gst_number": "INVALID"}, format="json")
+        self.assertEqual(response.status_code, 400)
+
     def test_cannot_submit_verification_status(self):
         response = self.client.patch(self.kyc_url, {**self.ids, "gst_status": "VERIFIED"}, format="json")
         self.assertEqual(response.status_code, 400)

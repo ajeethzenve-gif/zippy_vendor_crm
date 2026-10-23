@@ -24,6 +24,18 @@ class ApiTxtKYCTests(SimpleTestCase):
     def run_check(self):
         return verify_identifiers("27ABCDE1234F1Z5", "ABCDE1234F", pan_name="Example Owner", pan_dob=date(1990, 1, 2))
 
+    def test_without_gstin_verifies_pan_without_gst_lookup(self):
+        result = verify_identifiers("", "ABCDE1234F", pan_name="Example Owner", pan_dob=date(1990, 1, 2))
+        self.assertEqual(result, {"pan_status": "VERIFIED", "gst_status": "PENDING", "reference": "PAN-VER-test"})
+        self.http.assert_called_once()
+        self.assertTrue(self.http.call_args.args[0].endswith("/panVerify"))
+
+    def test_without_gstin_pan_mismatch_is_rejected(self):
+        self.pan["data"]["name_match"] = False
+        result = verify_identifiers("", "ABCDE1234F", pan_name="Example Owner", pan_dob=date(1990, 1, 2))
+        self.assertEqual(result["pan_status"], "REJECTED")
+        self.http.assert_called_once()
+
     def test_documented_requests_and_success(self):
         result = self.run_check()
         self.assertEqual(result["pan_status"], "VERIFIED")

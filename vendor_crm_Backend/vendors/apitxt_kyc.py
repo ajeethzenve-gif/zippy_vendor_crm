@@ -44,6 +44,8 @@ def verify(gst_number, pan_number, pan_name="", pan_dob=None):
         return {"pan_status": "REJECTED", "gst_status": "PENDING", "reference": reference}
     if str(pan_data.get("status", "")).lower() != "valid" or pan_data.get("name_match") is not True or pan_data.get("dob_match") is not True:
         raise VerificationUnavailable("ApiTxt did not confirm the PAN, name and date of birth. No KYC approval was recorded.")
+    if not gst_number:
+        return {"pan_status": "VERIFIED", "gst_status": "PENDING", "reference": reference}
     gst = _request("panGstinVerify", authkey, {"pan": pan_number})
     data = gst["data"]
     if str(data.get("pan", "")).strip().upper() != pan_number or not isinstance(data.get("gstin_list"), list):

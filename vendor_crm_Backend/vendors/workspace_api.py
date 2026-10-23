@@ -75,6 +75,8 @@ class WorkspaceVendors(APIView):
 
 
 class VerificationSerializer(serializers.ModelSerializer):
+    gst_number = serializers.CharField(max_length=15, required=False, allow_blank=True)
+
     class Meta:
         model = VendorVerification
         fields = ["gst_number", "pan_number", "pan_name", "pan_dob", "gst_status", "pan_status", "provider_reference", "checked_at"]
@@ -86,11 +88,11 @@ class VerificationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Only GSTIN and PAN identity details can be submitted; verification results come from the provider.")
         gst = attrs.get("gst_number", getattr(self.instance, "gst_number", "")).strip().upper()
         pan = attrs.get("pan_number", getattr(self.instance, "pan_number", "")).strip().upper()
-        if not re.fullmatch(r"[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]", gst):
+        if gst and not re.fullmatch(r"[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]", gst):
             raise serializers.ValidationError({"gst_number": "Enter a valid 15-character GSTIN."})
         if not re.fullmatch(r"[A-Z]{5}[0-9]{4}[A-Z]", pan):
             raise serializers.ValidationError({"pan_number": "Enter a valid PAN."})
-        if gst[2:12] != pan:
+        if gst and gst[2:12] != pan:
             raise serializers.ValidationError({"pan_number": "PAN must match the PAN embedded in this GSTIN."})
         if attrs.get("pan_dob") and attrs["pan_dob"] > timezone.localdate():
             raise serializers.ValidationError({"pan_dob": "Date of birth cannot be in the future."})
@@ -135,8 +137,8 @@ class VendorKYCDetail(APIView):
         vendor = get_object_or_404(Vendor, pk=pk)
         record = get_object_or_404(VendorVerification, vendor=vendor)
         gst, pan, name, dob = record.gst_number, record.pan_number, record.pan_name, record.pan_dob
-        if not gst or not name or not dob:
-            return Response({"detail": "Save the GSTIN, PAN holder name and date of birth before verifying."}, status=400)
+        if not pan or not name or not dob:
+            return Response({"detail": "Save the PAN, PAN holder name and date of birth before verifying. GSTIN is optional."}, status=400)
         try:
             result = verify_identifiers(gst, pan, pan_name=name, pan_dob=dob)
         except VerificationUnavailable as error:
@@ -147,13 +149,13 @@ class VendorKYCDetail(APIView):
                 record = VendorVerification.objects.select_for_update().get(vendor=vendor)
                 if (record.gst_number, record.pan_number, record.pan_name, record.pan_dob) != (gst, pan, name, dob) or vendor.gst_number != gst:
                     return Response({"detail": "Vendor details changed during verification. Save and verify the latest details."}, status=409)
-                record.gst_status = result["gst_status"]
+                record.gst_status = result["gst_status"] if gst else "PENDING"
                 record.pan_status = result["pan_status"]
                 record.provider_reference = str(result["reference"])[:255]
                 record.checked_by = request.user
                 record.checked_at = timezone.now()
                 record.save()
-                statuses = {record.gst_status, record.pan_status}
+                statuses = {record.gst_status, record.pan_status} if gst else {record.pan_status}
                 vendor.kyc_status = "VERIFIED" if statuses == {"VERIFIED"} else "REJECTED" if "REJECTED" in statuses else "PENDING"
                 vendor.save(update_fields=["kyc_status"])
         except DjangoValidationError as error:
