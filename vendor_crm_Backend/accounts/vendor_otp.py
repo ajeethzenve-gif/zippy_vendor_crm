@@ -31,13 +31,13 @@ def normalize_phone(value):
 
 def matching_vendor(phone):
     # LIVE remains eligible after the first successful approved login.
-    vendors = Vendor.objects.filter(kyc_status="VERIFIED", stage__in=["APPROVED", "LIVE"]).exclude(phone__isnull=True)
+    vendors = Vendor.objects.filter(stage__in=["APPROVED", "LIVE"]).exclude(phone__isnull=True)
     matches = [vendor for vendor in vendors if normalize_phone(vendor.phone) == phone]
     if len(matches) != 1:
         return None
     with transaction.atomic():
         vendor = Vendor.objects.select_for_update().get(pk=matches[0].pk)
-        if vendor.kyc_status != "VERIFIED" or vendor.stage not in {"APPROVED", "LIVE"}:
+        if vendor.stage not in {"APPROVED", "LIVE"}:
             return None
         # Repair records approved before automatic account provisioning existed.
         if vendor.stage == "APPROVED":
@@ -72,7 +72,7 @@ class VendorOTPSendView(APIView):
                 return Response({"message": "Enter a valid registered mobile number."}, status=400)
             vendor = matching_vendor(phone)
             if not vendor:
-                return Response({"message": "Mobile login requires verified KYC and an approved vendor account."}, status=400)
+                return Response({"message": "Mobile login requires an approved vendor account."}, status=400)
             return start_vendor_otp(vendor)
         from .views import LoginAPIView
         data = request.data.copy()
@@ -144,7 +144,7 @@ class VendorOTPVerifyView(APIView):
             with transaction.atomic():
                 vendor = Vendor.objects.select_for_update().select_related("user", "user__user_role__role").get(pk=vendor.pk)
                 user = vendor.user
-                if (vendor.kyc_status != "VERIFIED" or vendor.stage not in {"APPROVED", "LIVE"}
+                if (vendor.stage not in {"APPROVED", "LIVE"}
                         or not user or user.pk != pending["user"]
                         or pending.get("credentials") != hashlib.sha256(user.password.encode()).hexdigest() or not user.is_active or user.is_staff or user.is_superuser
                         or not hasattr(user, "user_role") or user.user_role.role.name != "Vendor"):

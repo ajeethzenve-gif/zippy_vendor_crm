@@ -199,7 +199,7 @@ class LoginAPIView(APIView):
                 return Response({"message": "Vendor account is unavailable."}, status=403)
             vendor = matching_vendor(normalize_phone(user.vendor.phone))
             if not vendor or vendor.user_id != user.pk:
-                return Response({"message": "Login requires verified KYC and an approved vendor account."}, status=403)
+                return Response({"message": "Login requires an approved vendor account."}, status=403)
             return start_vendor_otp(vendor)
 
         refresh = RefreshToken.for_user(user)

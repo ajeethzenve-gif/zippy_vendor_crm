@@ -98,6 +98,8 @@ export const layers = [
 
   },
   { n: "13", group: "Media", name: "Media Studio", blurb: "Vendor originals, Figma creatives, image delivery and review", path: "/media" },
+  { n: "14", group: "Marketing", name: "Social Media", blurb: "Vendor campaigns, creative review, scheduling and post tracking", path: "/social-media" },
+  { n: "15", group: "Compliance", name: "Vendor KYC Verification", blurb: "GST and PAN provider checks and verification status", path: "/vendor-kyc" },
 ];
 
 /**

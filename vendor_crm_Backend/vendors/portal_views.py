@@ -50,6 +50,13 @@ class VendorPortalView(APIView):
             if product.status in ["APPROVED", "LIVE", "REJECTED", "CORRECTION"]:
                 changed = product.updated_at
                 notifications.append({"id": f"product-{product.pk}", "message": f"{product.product_name}: {product.get_status_display()}", "kind": "CATALOGUE", "read": bool(vendor.notifications_read_at and changed <= vendor.notifications_read_at), "created_at": changed})
+        from .workspace_api import kyc_request_data
+        kyc_request = kyc_request_data(vendor)
+        if kyc_request and kyc_request["status"] == "REQUESTED":
+            changed = kyc_request["requested_at"]
+            notifications.insert(0, {"id": "kyc-request", "message": "Your KYC verification has started. Please submit your PAN details.",
+                "kind": "KYC", "action_url": "/vendor-kyc-details", "action_label": "Submit PAN details",
+                "read": bool(vendor.notifications_read_at and changed <= vendor.notifications_read_at), "created_at": changed, "at": changed})
         details = VendorSerializer(vendor, context={"request": request}).data
         details.update(brand=vendor.brand_name, name=vendor.vendor_name, gst=vendor.gst_number)
         now = timezone.now()
@@ -75,7 +82,7 @@ class VendorPortalView(APIView):
                 "liveSkus": sum(p.is_live for p in products), "totalSkus": len(products),
                 "inventoryAlerts": sum(p.available_quantity <= p.low_stock_threshold for p in products),
             },
-            "pendingActions": pending, "notifications": notifications,
+            "pendingActions": pending, "notifications": notifications, "kyc_request": kyc_request,
             "skus": ProductSerializer(products, many=True, context={"request": request}).data,
             "orders": list(order_rows.values()),
             "settlements": SettlementSerializer(settlements, many=True).data,

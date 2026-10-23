@@ -72,3 +72,20 @@ Sign in as a CRM administrator and open `/employees` (also linked beside the use
 Creation is atomic across `auth_user`, `accounts_employee`, `accounts_role` and `accounts_userrole`. Employee IDs are generated automatically. Passwords use Django hashing and are never returned by the API or listed in the directory. Username, email and employee phone duplicates are rejected. Employees can log in using username or email and receive their assigned role's workspace access.
 
 The employee endpoints (`GET/POST /api/employees/` and `GET /api/employee-roles/`) require an authenticated CRM administrator. A CRM Admin role does not grant Django `is_staff` or `is_superuser` privileges. A Django superuser can bootstrap employee administration; ordinary staff with an assigned non-admin role cannot create employees.
+
+
+### Social Media and Vendor KYC layers
+
+Layer 14 (`/social-media`) stores vendor-linked campaign posts, captions, creative links, planned publication times and live post URLs. Access: Admin, Merchandiser and Media. Scheduling is a planning record; it does not send posts to external platforms.
+
+Layer 15 (`/vendor-kyc`) stores GSTIN/PAN identifiers and tracks separate provider results. Access: Admin, Merchandiser and Finance. Both results must be `VERIFIED` before the vendor's KYC status becomes `VERIFIED`. Changing a GSTIN invalidates prior KYC results. Approval creates the linked vendor login account independently of KYC. APPROVED and LIVE vendors can sign in using OTP even when KYC is pending or rejected; successful login sets the stage to LIVE.
+
+Apply the new tables with `python manage.py migrate` from the backend directory. ApiTxt is the default verification provider. Configure `APITXT_KYC_AUTH_KEY` in the backend environment, restart the backend, and apply migrations before using verification. Requests use POST JSON over HTTPS with redirects disabled. Until credentials are configured, verification returns an explicit unavailable response and never marks identifiers verified. No live provider calls are made by the automated tests.
+
+Provider adapter boundary: set `VENDOR_KYC_ADAPTER` to the dotted path of the provider-specific callable after implementing it against the provider documentation. It accepts keyword arguments `gst_number`, `pan_number`, `pan_name` and `pan_dob` (a Python date), and returns a dictionary with `gst_status`, `pan_status` (each `VERIFIED`, `PENDING` or `REJECTED`) and a nonempty provider `reference`. Keep provider credentials in backend environment variables; never return credentials or raw provider payloads to the browser.
+
+
+ApiTxt documentation: [PAN verification](https://apitxt.com/developer/pan-verify-api) and [PAN-to-GSTIN lookup](https://apitxt.com/developer/pan-gstin-verify-api). The KYC form collects the PAN holder name and date of birth required by `panVerify`; the backend sends DOB in `DD/MM/YYYY` format. PAN must be valid, with positive name and DOB match flags. `panGstinVerify` must return the submitted GSTIN under that PAN with `ACTIVE` status. Cancelled/suspended or missing GSTINs cannot complete KYC. Infrastructure/authentication/balance errors never count as identity rejections or successful verification. Provider request references are saved; provider keys and raw identity responses are not returned to the frontend. Each provider call may consume credits; the Social Media and KYC layers do not make provider calls automatically.
+
+
+KYC detail collection: staff can use **Send KYC notification** in Layer 15 to create an in-app request for a vendor with an active linked login. The vendor sees a notification and portal banner linking to `/vendor-kyc-details`, where they submit PAN number, PAN holder name and DOB (GSTIN is optional at submission). Only the linked vendor can access this form. Submission does not run paid provider calls or approve KYC. Staff see the submitted details and timestamp in Layer 15, fill GSTIN if needed, then use **Verify with provider**. Requests are idempotent while pending; staff can request updated details after a submission. Apply migration `0012_vendor_kyc_requests` before deploying this flow.

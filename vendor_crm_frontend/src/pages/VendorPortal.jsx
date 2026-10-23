@@ -1,3 +1,5 @@
+import PortalLoader from "../components/PortalLoader.jsx";
+import VendorKYCNotice from "../components/VendorKYCNotice";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useLocation } from "react-router-dom";
@@ -326,6 +328,8 @@ export default function VendorPortal() {
 
   const [portalData, setPortalData] = useState(null);
   const [loadingPortal, setLoadingPortal] = useState(false);
+  const [dashboardReadyId, setDashboardReadyId] = useState("");
+  const [accountReadyId, setAccountReadyId] = useState("");
   const [portalError, setPortalError] = useState("");
 
   /* =======================================================
@@ -633,7 +637,7 @@ export default function VendorPortal() {
   );
 
   const [savingAccount, setSavingAccount] = useState(false);
-  const [loadingAccount, setLoadingAccount] = useState(true);
+  const [loadingAccount, setLoadingAccount] = useState(false);
   const [hasAccountDetails, setHasAccountDetails] = useState(false);
   const [isAccountMasked, setIsAccountMasked] = useState(true);
 
@@ -737,6 +741,7 @@ export default function VendorPortal() {
 
     try {
       setLoadingPortal(true);
+      setDashboardReadyId("");
       setPortalError("");
       setCreditsOverride(null);
 
@@ -745,6 +750,7 @@ export default function VendorPortal() {
 
       const data = unwrapApiResponse(response);
       setPortalData(data || null);
+      if (data) setDashboardReadyId(String(designerId));
 
       if (!data?.credits) {
         try {
@@ -925,6 +931,7 @@ export default function VendorPortal() {
 
     try {
       setLoadingAccount(true);
+      setAccountReadyId("");
 
       const response =
         await getDesignerAccountDetails(designerId);
@@ -977,6 +984,7 @@ export default function VendorPortal() {
         setHasAccountDetails(false);
         setIsAccountMasked(true);
       }
+      setAccountReadyId(String(designerId));
     } catch (err) {
       console.error(
         "Failed to load account details:",
@@ -997,10 +1005,10 @@ export default function VendorPortal() {
     setSavedAccountForm(EMPTY_ACCOUNT_FORM);
     setHasAccountDetails(false);
     setIsEditingAccount(false);
-    if (selectedDesignerId && showProfileAndAccount && canManageAccount) {
+    if (selectedDesignerId && canManageAccount) {
       loadAccountDetails(selectedDesignerId);
     }
-  }, [selectedDesignerId, showProfileAndAccount, canManageAccount]);
+  }, [selectedDesignerId, canManageAccount]);
 
   /* =======================================================
      SKU SUBMIT
@@ -2003,8 +2011,15 @@ export default function VendorPortal() {
      RENDER
   ======================================================= */
 
+  const waitingForDashboard = selectedDesignerId && dashboardReadyId !== String(selectedDesignerId);
+  const waitingForAccount = canManageAccount && accountReadyId !== String(selectedDesignerId);
+  if (loadingDesigners || loadingPortal || loadingAccount || waitingForDashboard || waitingForAccount || (!designers.length && portalError)) {
+    return <PortalLoader label={portalError || "Loading vendor portal…"} />;
+  }
+
   return (
     <div className="ZENVE-portal-layout">
+
       {/* =====================================================
           HEADER
       ===================================================== */}
@@ -2121,6 +2136,7 @@ export default function VendorPortal() {
           </div>
         </div>
       </header>
+      {isVendor && <VendorKYCNotice vendorId={selectedDesignerId} request={portalData?.kyc_request} />}
 
       {!isVendor && <section className="ZENVE-brand-selection-body ZENVE-portal-card" aria-label="Vendor brand selection">
             <div className="ZENVE-signed-in-box">
@@ -4085,6 +4101,7 @@ export default function VendorPortal() {
                         </div>
 
                         <div className="ZENVE-notif-right">
+                          {n.kind === "KYC" && <Link className="ZENVE-btn-outline-sm" to="/vendor-kyc-details" onClick={() => setNotifSidebarOpen(false)}>Submit PAN details</Link>}
                           <span className="ZENVE-tone-badge info">
                             {String(
                               n.kind || ""
@@ -4096,7 +4113,7 @@ export default function VendorPortal() {
 
                           <span className="ZENVE-notif-date">
                             {new Date(
-                              n.at
+                              n.at || n.created_at
                             ).toLocaleDateString(
                               "en-IN",
                               {

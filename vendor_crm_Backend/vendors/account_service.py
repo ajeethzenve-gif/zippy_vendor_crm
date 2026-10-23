@@ -7,7 +7,7 @@ from accounts.models import Role, UserRole
 def ensure_approved_vendor_account(vendor):
     # The caller holds an atomic transaction; lock the persisted approval row.
     locked = type(vendor).objects.select_for_update().get(pk=vendor.pk)
-    if locked.stage != "APPROVED" or locked.kyc_status != "VERIFIED":
+    if locked.stage != "APPROVED":
         return
     users = get_user_model().objects
 

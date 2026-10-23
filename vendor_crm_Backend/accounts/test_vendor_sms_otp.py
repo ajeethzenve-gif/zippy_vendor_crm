@@ -94,8 +94,8 @@ class GeneratedVendorOTPTests(TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertNotIn("challenge", response.data)
 
-    def test_unapproved_or_unverified_vendor_cannot_request_otp(self):
-        for stage, kyc in [("LEAD", "VERIFIED"), ("APPROVED", "PENDING"), ("LIVE", "REJECTED"), ("INACTIVE", "VERIFIED")]:
+    def test_unapproved_vendor_cannot_request_otp(self):
+        for stage, kyc in [("LEAD", "VERIFIED"), ("REJECTED", "PENDING"), ("INACTIVE", "VERIFIED")]:
             Vendor.objects.filter(pk=self.vendor.pk).update(stage=stage, kyc_status=kyc)
             self.assertEqual(self.client.post("/api/vendor-otp/send/", {"username": self.user.username, "password": "Owner!Test52"}).status_code, 403)
         self.sender.assert_not_called()
@@ -107,11 +107,22 @@ class GeneratedVendorOTPTests(TestCase):
         code = self.sender.call_args.kwargs["json"]["otp"]
         self.assertEqual(self.verify(response.data["challenge"], code).status_code, 200)
 
-    def test_mobile_login_rejects_unverified_vendor(self):
-        Vendor.objects.filter(pk=self.vendor.pk).update(kyc_status="PENDING")
-        response = self.client.post("/api/vendor-otp/send/", {"phone": self.vendor.phone})
-        self.assertEqual(response.status_code, 400)
-        self.sender.assert_not_called()
+    def test_approved_vendor_can_login_without_kyc_using_both_methods(self):
+        for kyc in ["PENDING", "REJECTED"]:
+            for credentials in [False, True]:
+                with self.subTest(kyc=kyc, credentials=credentials):
+                    cache.clear()
+                    Vendor.objects.filter(pk=self.vendor.pk).update(stage="APPROVED", kyc_status=kyc)
+                    payload = {"username": self.user.username, "password": "Owner!Test52", "audience": "vendor"} if credentials else {"phone": self.vendor.phone}
+                    url = "/api/login/" if credentials else "/api/vendor-otp/send/"
+                    response = self.client.post(url, payload)
+                    self.assertEqual(response.status_code, 200, response.data)
+                    self.assertNotIn("access", response.data)
+                    code = self.sender.call_args.kwargs["json"]["otp"]
+                    self.assertEqual(self.verify(response.data["challenge"], code).status_code, 200)
+                    self.vendor.refresh_from_db()
+                    self.assertEqual(self.vendor.stage, "LIVE")
+                    self.assertEqual(self.vendor.kyc_status, kyc)
 
     def test_wrong_password_does_not_send_otp_or_tokens(self):
         response = self.client.post("/api/login/", {"username": self.user.username, "password": "wrong", "audience": "vendor"})
@@ -124,12 +135,12 @@ class GeneratedVendorOTPTests(TestCase):
         self.user.save()
         self.assertEqual(self.verify(challenge, code).status_code, 403)
 
-    def test_kyc_revoked_after_send_blocks_verification(self):
+    def test_approval_revoked_after_send_blocks_verification(self):
         challenge, code = self.send()
-        Vendor.objects.filter(pk=self.vendor.pk).update(kyc_status="REJECTED")
+        Vendor.objects.filter(pk=self.vendor.pk).update(stage="INACTIVE")
         self.assertEqual(self.verify(challenge, code).status_code, 403)
         self.vendor.refresh_from_db()
-        self.assertEqual(self.vendor.stage, "APPROVED")
+        self.assertEqual(self.vendor.stage, "INACTIVE")
 
     def test_live_vendor_can_login_again(self):
         Vendor.objects.filter(pk=self.vendor.pk).update(stage="LIVE")

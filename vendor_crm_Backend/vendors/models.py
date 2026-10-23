@@ -102,3 +102,50 @@ class VendorAccountDetails(models.Model):
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class VendorVerification(models.Model):
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name="verification")
+    gst_number = models.CharField(max_length=15)
+    pan_number = models.CharField(max_length=10)
+    pan_name = models.CharField(max_length=255, blank=True)
+    pan_dob = models.DateField(null=True, blank=True)
+    gst_status = models.CharField(max_length=10, default="PENDING", choices=Vendor.KYCStatus.choices)
+    pan_status = models.CharField(max_length=10, default="PENDING", choices=Vendor.KYCStatus.choices)
+    provider_reference = models.CharField(max_length=255, blank=True)
+    checked_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="vendor_kyc_checks")
+    checked_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class SocialMediaPost(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "DRAFT", "Draft"
+        REVIEW = "REVIEW", "In review"
+        APPROVED = "APPROVED", "Approved"
+        SCHEDULED = "SCHEDULED", "Scheduled"
+        PUBLISHED = "PUBLISHED", "Published"
+        CANCELLED = "CANCELLED", "Cancelled"
+
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="social_posts")
+    title = models.CharField(max_length=180)
+    platform = models.CharField(max_length=20, choices=[(v, v.title()) for v in ["INSTAGRAM", "FACEBOOK", "LINKEDIN", "YOUTUBE", "X"]])
+    caption = models.TextField(blank=True)
+    creative_url = models.URLField(max_length=1000, blank=True)
+    scheduled_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.DRAFT)
+    published_url = models.URLField(max_length=1000, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="social_posts_created")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class VendorKYCRequest(models.Model):
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name="kyc_request")
+    status = models.CharField(max_length=12, default="REQUESTED", choices=[("REQUESTED", "Requested"), ("SUBMITTED", "Submitted")])
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="vendor_kyc_requests")
+    requested_at = models.DateTimeField(auto_now_add=True)
+    submitted_at = models.DateTimeField(null=True, blank=True)

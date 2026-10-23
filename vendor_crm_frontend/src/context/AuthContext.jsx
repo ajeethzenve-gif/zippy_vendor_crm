@@ -14,9 +14,9 @@ export const ROLES = [
     email: "priya.raghavan@zenve.in",
     department: "Executive & Governance",
     landingPath: "/",
-    description: "Full clearance across all 13 operational layers, approvals, and system controls.",
+    description: "Full clearance across all 15 operational layers, approvals, and system controls.",
     badgeClass: "admin",
-    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"],
+    clearance: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15"],
   },
   {
     id: "designer",
@@ -41,7 +41,7 @@ export const ROLES = [
     landingPath: "/",
     description: "Brand lead pipeline, vendor onboarding, KYC review, and contracts.",
     badgeClass: "merchandiser",
-    clearance: ["01", "03", "10"],
+    clearance: ["01", "03", "10", "14", "15"],
   },
   {
     id: "qa",
@@ -77,9 +77,9 @@ export const ROLES = [
     landingPath: "/",
     description: "Take-rate calculation, vendor payout reconciliation, and escrow management.",
     badgeClass: "finance",
-    clearance: ["07", "10", "11"],
+    clearance: ["07", "10", "11", "15"],
   },
-  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/", description: "Product originals, Figma creative work, and vendor image delivery.", badgeClass: "qa", clearance: ["13"] },
+  { id: "media", name: "Media Team", shortRole: "Media", user: "Media Team", email: "media@zenve.in", department: "Creative Operations", landingPath: "/", description: "Product originals, Figma creative work, and vendor image delivery.", badgeClass: "qa", clearance: ["13", "14"] },
 ];
 
 const AuthContext = createContext(null);
@@ -234,6 +234,9 @@ export function AuthProvider({ children }) {
       "/analytics": "11",
       "/command-centre": "12",
       "/media": "13",
+      "/social-media": "14",
+      "/vendor-kyc": "15",
+      "/vendor-kyc-details": "02",
     };
     const layerNum = layerPathMap[path];
     if (!layerNum) return true; // public / unspecified
@@ -243,7 +246,7 @@ export function AuthProvider({ children }) {
   const getLayerDisplayNum = (layerN) => {
     if (currentUser?.id !== "designer") return layerN;
     // For vendors, find the index of this layer among their accessible layers
-    const visibleLayers = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13"].filter(hasAccess);
+    const visibleLayers = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15"].filter(hasAccess);
     const index = visibleLayers.indexOf(layerN);
     return index !== -1 ? String(index + 1).padStart(2, '0') : layerN;
   };

@@ -418,3 +418,7 @@ PRIVATE_MEDIA_ROOT = BASE_DIR / "private_uploads"
 # Isolated local/test databases; the configured MySQL database remains the default.
 if os.getenv("DB_ENGINE") == "sqlite":
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": os.getenv("SQLITE_NAME", str(BASE_DIR / "local.sqlite3"))}}
+
+# Provider-specific adapter is configured after GST/PAN API integration.
+VENDOR_KYC_ADAPTER = os.getenv("VENDOR_KYC_ADAPTER", "vendors.apitxt_kyc.verify")
+APITXT_KYC_AUTH_KEY = os.getenv("APITXT_KYC_AUTH_KEY", "")

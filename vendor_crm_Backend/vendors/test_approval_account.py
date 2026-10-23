@@ -63,15 +63,15 @@ class VendorApprovalAccountTests(TestCase):
         self.assertIsNone(self.vendor.user_id)
         self.assertFalse(get_user_model().objects.exists())
 
-    def test_approval_waits_for_verified_kyc(self):
+    def test_approval_creates_credentials_without_kyc(self):
         self.vendor.kyc_status = "PENDING"
         self.vendor.stage = "APPROVED"
         self.vendor.save()
-        self.assertIsNone(self.vendor.user_id)
-        self.assertFalse(UserRole.objects.exists())
-        self.vendor.kyc_status = "VERIFIED"
-        self.vendor.save(update_fields=["kyc_status"])
         self.assertIsNotNone(self.vendor.user_id)
+        self.assertEqual(self.vendor.user.username, "approvedowner@zenvefashion")
+        self.assertTrue(self.vendor.user.check_password("approvedowner@zf543210"))
+        self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
+        self.assertEqual(self.vendor.kyc_status, "PENDING")
 
     def test_existing_otp_only_account_gains_generated_credentials(self):
         user = get_user_model().objects.create_user(username="old-otp-only", password=None)

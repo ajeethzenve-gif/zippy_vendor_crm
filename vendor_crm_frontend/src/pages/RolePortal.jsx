@@ -1,3 +1,4 @@
+import PortalLoader from "../components/PortalLoader.jsx";
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -63,9 +64,11 @@ function StaffPortal() {
   }, [portal, revision]);
   if (role === "designer") return <Navigate to="/vendor-dashboard" replace />;
   if (!portal) return <Navigate to="/login" replace />;
+  if (loading || errors.length || portal.sources.some(source => !data[source])) return <PortalLoader label={errors.length ? `Unable to load ${errors.join(", ")}. Refresh to retry.` : "Loading staff portal…"} />;
   return <main className={`role-portal role-portal-${role}`}>
     <header className="role-portal-header"><div><span className="role-portal-eyebrow">ZIPPY · {currentUser.shortRole.toUpperCase()}</span><h1>{portal.title}</h1><p>Welcome, {currentUser.user}. {portal.description}</p></div><Link className="role-portal-primary" to={portal.action[1]}>{portal.action[0]} →</Link></header>
     <div className="role-portal-toolbar"><span>Workspace snapshot · Current records</span><button onClick={() => setRevision(v => v + 1)} disabled={loading}>{loading ? "Loading…" : "Refresh"}</button></div>
+
     {errors.length > 0 && <p className="role-portal-error" role="alert">Unable to load {errors.join(", ")}. Refresh to retry. Unavailable counts appear as —.</p>}
     <section className="role-portal-metrics" aria-label="Workspace metrics" aria-busy={loading}>{metrics(role, data).map(([label, value, path]) => <Link key={label} to={path}><span>{label}</span><strong>{loading || value === null ? "—" : value.toLocaleString("en-IN")}</strong><small>View details →</small></Link>)}</section>
     <section className="role-portal-section"><h2>Your next actions</h2><div className="role-portal-actions">{portal.tasks.filter(task => canAccessPath(task[2])).map(([title, description, path]) => <Link key={title} to={path}><h3>{title} <span aria-hidden="true">↗</span></h3><p>{description}</p></Link>)}</div></section>

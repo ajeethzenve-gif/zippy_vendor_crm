@@ -1,4 +1,8 @@
 import { lazy, Suspense } from "react";
+import PortalLoader from "./components/PortalLoader.jsx";
+const SocialMedia = lazy(() => import("./pages/SocialMedia.jsx"));
+const VendorKYCDetails = lazy(() => import("./pages/VendorKYCDetails.jsx"));
+const VendorKYC = lazy(() => import("./pages/VendorKYC.jsx"));
 const VendorRegistration = lazy(() => import("./pages/VendorRegistration.jsx"));
 import "./styles/Zippy.css";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -30,7 +34,7 @@ export default function App() {
   return (
     <AuthProvider>
       <WorkspaceShell>
-      <Suspense fallback={<p role="status">Loading…</p>}>
+      <Suspense fallback={<PortalLoader />}>
       <Routes>
         <Route path="/designer-crm" element={<Navigate to="/vendor-crm" replace />} />
         <Route path="/designer-portal" element={<Navigate to="/vendor-portal" replace />} />
@@ -44,6 +48,10 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/vendor-login" element={<VendorLogin />} />
         <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
+
+        <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
+        <Route path="/vendor-kyc-details" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><VendorKYCDetails /></ProtectedRoute>} />
+        <Route path="/vendor-kyc" element={<ProtectedRoute layer="15"><VendorKYC /></ProtectedRoute>} />
 
         {/* Operational Layers (Role Clearance Protected) */}
         <Route path="/vendor-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />

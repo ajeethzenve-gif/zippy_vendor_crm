@@ -77,7 +77,17 @@ class VendorSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         try:
-            return super().update(instance, validated_data)
+            with transaction.atomic():
+                # A changed tax identifier must never retain an earlier KYC approval.
+                changed_gst = "gst_number" in validated_data and validated_data["gst_number"] != instance.gst_number
+                if changed_gst:
+                    validated_data["kyc_status"] = "PENDING"
+                updated = super().update(instance, validated_data)
+                if changed_gst:
+                    from .models import VendorVerification
+                    VendorVerification.objects.filter(vendor=updated).update(
+                        gst_status="PENDING", pan_status="PENDING", provider_reference="", checked_at=None, checked_by=None)
+                return updated
         except ValidationError as error:
             raise serializers.ValidationError(error.message_dict if hasattr(error, "message_dict") else error.messages)
 

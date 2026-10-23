@@ -1,3 +1,4 @@
+import PortalLoader from "../components/PortalLoader.jsx";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { layers } from "../data/layers";
@@ -461,8 +462,11 @@ function Home() {
      RETURN
      ========================================================= */
 
+  if (loading || error) return <PortalLoader label={error || "Loading staff portal…"} />;
+
   return (
     <main className="home-page">
+
 
       {/* =====================================================
           HEADER
