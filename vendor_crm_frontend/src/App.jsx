@@ -7,6 +7,8 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 const Employees = lazy(() => import("./pages/Employees.jsx"));
 const Home = lazy(() => import("./pages/RolePortal.jsx"));
 const MediaStudio = lazy(() => import("./pages/MediaStudio.jsx"));
+const SocialMedia = lazy(() => import("./pages/SocialMedia.jsx"));
+const VendorKYC = lazy(() => import("./pages/VendorKYC.jsx"));
 const LayerPage = lazy(() => import("./pages/LayerPage.jsx"));
 const DesignerCRM = lazy(() => import("./pages/VendorCrm.jsx"));
 const DesignerPortal = lazy(() => import("./pages/VendorPortal.jsx"));
@@ -45,6 +47,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/vendor-login" element={<VendorLogin />} />
         <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
+        <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
+        <Route path="/vendor-kyc" element={<ProtectedRoute layer="15"><VendorKYC /></ProtectedRoute>} />
 
         {/* Operational Layers (Role Clearance Protected) */}
         <Route path="/vendor-crm" element={<ProtectedRoute layer="01"><DesignerCRM /></ProtectedRoute>} />
