@@ -58,12 +58,12 @@ class SocialPostList(generics.ListCreateAPIView):
         serializer.save(created_by=self.request.user)
 
 
-class SocialPostDetail(generics.RetrieveUpdateAPIView):
+class SocialPostDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [WorkspacePermission]
     allowed_roles = SocialPostList.allowed_roles
     serializer_class = SocialPostSerializer
     queryset = SocialMediaPost.objects.select_related("vendor")
-    http_method_names = ["get", "patch", "head", "options"]
+    http_method_names = ["get", "patch", "delete", "head", "options"]
 
 
 class WorkspaceVendors(APIView):

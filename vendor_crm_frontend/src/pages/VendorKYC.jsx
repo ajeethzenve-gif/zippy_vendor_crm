@@ -581,7 +581,7 @@ function VerificationCard({ vendor, onSaved }) {
         <div className="vkyc-msg-alert error" role="alert">
           <Icon name="alert" />
           <span>{error}</span>
-          <button type="button" className="vkyc-alert-dismiss" onClick={() => setError("")} aria-label="Dismiss error">
+          <button type="button" className="vkyc-alert-dismiss" onClick={() => setError("")} aria-label="Dismiss error" title="Dismiss error">
             <Icon name="close" />
           </button>
         </div>
@@ -590,7 +590,7 @@ function VerificationCard({ vendor, onSaved }) {
         <div className="vkyc-msg-alert success" role="status">
           <Icon name="check" />
           <span>{message}</span>
-          <button type="button" className="vkyc-alert-dismiss" onClick={() => setMessage("")} aria-label="Dismiss message">
+          <button type="button" className="vkyc-alert-dismiss" onClick={() => setMessage("")} aria-label="Dismiss message" title="Dismiss message">
             <Icon name="close" />
           </button>
         </div>
@@ -810,6 +810,32 @@ export default function VendorKYC() {
           </button>
         </div>
       </header>
+
+      {/* Global Error Banner */}
+      {error && vendors.length > 0 && (
+        <div className="vkyc-msg-alert error" role="alert">
+          <Icon name="alert" />
+          <span>{error}</span>
+          <button
+            type="button"
+            className="vkyc-alert-retry-btn"
+            onClick={loadData}
+            title="Retry connecting to server"
+          >
+            <Icon name="refresh" />
+            <span>Retry Connection</span>
+          </button>
+          <button
+            type="button"
+            className="vkyc-alert-dismiss"
+            onClick={() => setError("")}
+            aria-label="Dismiss error"
+            title="Dismiss error"
+          >
+            <Icon name="close" />
+          </button>
+        </div>
+      )}
 
       {/* KPI Metrics Grid */}
       <section className="vkyc-stats-grid" aria-label="KYC summary metrics">
@@ -1055,11 +1081,13 @@ export default function VendorKYC() {
               <Icon name="search" />
             </span>
             <input
-              type="search"
+              type="text"
               className="vkyc-search-input"
               placeholder="Search by vendor, brand, PAN, or GSTIN…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              autoComplete="off"
+              spellCheck="false"
             />
             {search && (
               <button
@@ -1067,6 +1095,7 @@ export default function VendorKYC() {
                 className="vkyc-search-clear"
                 onClick={() => setSearch("")}
                 title="Clear search"
+                aria-label="Clear search"
               >
                 <Icon name="close" />
               </button>
@@ -1109,16 +1138,6 @@ export default function VendorKYC() {
       </section>
 
       {/* Main Content Area */}
-      {error && (
-        <div className="vkyc-msg-alert error" style={{ marginBottom: "20px" }} role="alert">
-          <Icon name="alert" />
-          <span>{error}</span>
-          <button type="button" className="vkyc-alert-dismiss" onClick={() => setError("")} aria-label="Dismiss error">
-            <Icon name="close" />
-          </button>
-        </div>
-      )}
-
       {loading ? (
         <div className="vkyc-empty-state">
           <div className="vkyc-btn-refresh is-spinning" style={{ display: "inline-flex", border: 0, padding: 0 }}>
@@ -1126,6 +1145,26 @@ export default function VendorKYC() {
           </div>
           <h3 style={{ marginTop: "16px" }}>Loading Vendor Compliance Records…</h3>
           <p>Connecting to secure compliance registry.</p>
+        </div>
+      ) : error && vendors.length === 0 ? (
+        <div className="vkyc-empty-state error-state">
+          <div className="vkyc-empty-icon error">
+            <Icon name="alert" />
+          </div>
+          <h3>Failed to Connect to Verification Service</h3>
+          <p>{error}</p>
+          <button
+            type="button"
+            className={`vkyc-btn-refresh ${isRefreshing ? "is-spinning" : ""}`}
+            onClick={() => {
+              setLoading(true);
+              loadData();
+            }}
+            disabled={isRefreshing}
+          >
+            <Icon name="refresh" />
+            <span>{isRefreshing ? "Connecting…" : "Retry Connection"}</span>
+          </button>
         </div>
       ) : filteredVendors.length === 0 ? (
         <div className="vkyc-empty-state">

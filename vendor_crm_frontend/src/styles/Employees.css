@@ -1,8 +1,40 @@
 .employees-page { max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; color: #28251f; }
-.employees-header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 24px; }
-.employees-header h1 { margin: 14px 0 8px; font-size: 32px; }
-.employees-header a { color: #554333; }
-.employees-header > span { padding: 8px 14px; border-radius: 20px; background: #eee8df; }
+.employees-header {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  padding: 22px 28px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+.employees-header h1 {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  margin: 6px 0 2px;
+  line-height: 1.25;
+}
+.employees-header a { color: #1677ff; font-size: 13px; font-weight: 600; text-decoration: none; }
+.employees-header a:hover { text-decoration: underline; }
+.employees-header p { font-size: 13.5px; color: #64748b; line-height: 1.5; margin: 0; }
+.employees-header > span {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1677ff;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 .employees-card { background: #fffdfa; border: 1px solid #e4ddd3; border-radius: 12px; padding: 24px; margin: 24px 0; }
 .employees-card h2 { margin-top: 0; font-size: 21px; }
 .employees-card h2 span { color: #726a60; font-weight: normal; }
