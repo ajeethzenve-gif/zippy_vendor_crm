@@ -789,6 +789,16 @@ export default function VendorKYC() {
         <div className="vkyc-header-actions">
           <button
             type="button"
+            className="vkyc-btn-secondary"
+            onClick={() => setIsGuideOpen(!isGuideOpen)}
+            title="Toggle statutory verification guidelines"
+          >
+            <Icon name="info" />
+            <span>{isGuideOpen ? "Hide Specs" : "Compliance Specs"}</span>
+          </button>
+
+          <button
+            type="button"
             className="vkyc-btn-export"
             onClick={handleExportCSV}
             title="Download active compliance list as CSV"
