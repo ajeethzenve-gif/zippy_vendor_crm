@@ -111,10 +111,29 @@ class VerificationSerializer(serializers.ModelSerializer):
 
 def kyc_row(vendor):
     record = getattr(vendor, "verification", None)
-    return {"id": vendor.pk, "vendor_name": vendor.vendor_name, "brand_name": vendor.brand_name,
-            "stage": vendor.stage, "kyc_status": vendor.kyc_status,
-            "verification": VerificationSerializer(record).data if record else None,
-            "gst_number": vendor.gst_number, "kyc_request": kyc_request_data(vendor)}
+    logo_url = None
+    try:
+        if vendor.logo:
+            logo_url = vendor.logo.url
+    except Exception:
+        logo_url = None
+    profile_url = None
+    try:
+        if vendor.profile_image:
+            profile_url = vendor.profile_image.url
+    except Exception:
+        profile_url = None
+    return {
+        "id": vendor.pk,
+        "vendor_name": vendor.vendor_name,
+        "brand_name": vendor.brand_name,
+        "stage": vendor.stage,
+        "kyc_status": vendor.kyc_status,
+        "verification": VerificationSerializer(record).data if record else None,
+        "gst_number": vendor.gst_number,
+        "kyc_request": kyc_request_data(vendor),
+        "logo": logo_url or profile_url,
+    }
 
 
 class VendorKYCList(APIView):

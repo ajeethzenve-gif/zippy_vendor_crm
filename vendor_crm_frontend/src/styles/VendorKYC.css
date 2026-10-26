@@ -10,6 +10,8 @@
   color: #0f172a;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .vkyc-page * {
@@ -658,6 +660,14 @@
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
+.vkyc-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
 .vkyc-vendor-names {
   display: flex;
   flex-direction: column;
@@ -805,6 +815,12 @@
   white-space: nowrap;
   flex-shrink: 0;
   transition: all 0.18s ease;
+}
+
+.vkyc-flow-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .vkyc-flow-banner.submitted .vkyc-flow-btn {
@@ -1043,6 +1059,12 @@
   text-decoration: underline;
 }
 
+.vkyc-ref-copy svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
 .vkyc-msg-alert {
   padding: 12px 16px;
   border-radius: 12px;
@@ -1229,6 +1251,12 @@
 
 .vkyc-table-btn.primary:hover {
   background: #0369a1;
+}
+
+.vkyc-table-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 /* =========================================================
@@ -1486,31 +1514,108 @@
   color: #0369a1;
 }
 
+.vkyc-btn-reset-filters svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
 /* =========================================================
    RESPONSIVENESS
    ========================================================= */
 
 @media (max-width: 900px) {
-  .vkyc-page {
-    padding: 24px 16px;
-  }
-  .vkyc-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 20px 18px;
-  }
-  .vkyc-header-actions {
-    justify-content: flex-start;
-    width: 100%;
-    margin-left: 0;
-    margin-top: 4px;
-  }
   .vkyc-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
+  .vkyc-page {
+    padding: 12px 10px;
+  }
+  .vkyc-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .vkyc-header-copy {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .vkyc-header-actions {
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 4px;
+    gap: 6px;
+  }
+  .vkyc-title {
+    font-size: 19px;
+  }
+  .vkyc-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .vkyc-stat-card {
+    padding: 12px 10px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+  .vkyc-stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .vkyc-stat-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .vkyc-stat-val {
+    font-size: 20px;
+  }
+  .vkyc-stat-label {
+    font-size: 11.5px;
+  }
+  .vkyc-stat-sub {
+    font-size: 10px;
+  }
+  .vkyc-guide-card {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .vkyc-guide-content {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .vkyc-controls-wrap {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+  .vkyc-tabs-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .vkyc-tabs {
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .vkyc-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .vkyc-tab {
+    padding: 0 10px;
+    height: 34px;
+    font-size: 12px;
+  }
+  .vkyc-view-toggle {
+    align-self: flex-start;
+  }
   .vkyc-filter-inputs {
     flex-direction: column;
     align-items: stretch;
@@ -1519,25 +1624,159 @@
   .vkyc-search-wrap,
   .vkyc-select {
     width: 100%;
-    min-width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
   }
   .vkyc-filter-summary {
-    margin-left: 0;
     width: 100%;
+    margin-left: 0;
     justify-content: space-between;
+    font-size: 11.5px;
   }
-}
-
-@media (max-width: 600px) {
+  .vkyc-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .vkyc-card {
+    padding: 14px;
+    border-radius: 16px;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+  }
+  .vkyc-card-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .vkyc-vendor-profile {
+    flex: 1 1 180px;
+    min-width: 0;
+    gap: 10px;
+  }
+  .vkyc-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .vkyc-vendor-brand {
+    font-size: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .vkyc-status-pill {
+    margin-left: auto;
+  }
+  .vkyc-field-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .vkyc-input[type="date"] {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    -webkit-appearance: none;
+  }
   .vkyc-form-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
   .vkyc-flow-banner {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px 12px;
   }
   .vkyc-flow-btn {
     width: 100%;
     justify-content: center;
+  }
+  .vkyc-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .vkyc-btn-verify,
+  .vkyc-btn-save {
+    width: 100%;
+  }
+  .vkyc-audit-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .vkyc-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 14px;
+  }
+  .vkyc-table {
+    min-width: 760px;
+  }
+  .vkyc-table th,
+  .vkyc-table td {
+    white-space: nowrap;
+  }
+  .vkyc-modal-overlay {
+    padding: 8px;
+  }
+  .vkyc-modal-dialog {
+    max-height: 94vh;
+    border-radius: 16px;
+    width: 100%;
+  }
+  .vkyc-modal-close-round {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vkyc-header-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .vkyc-header-actions .vkyc-btn-refresh {
+    grid-column: 1 / -1;
+  }
+  .vkyc-header-actions .vkyc-btn-refresh,
+  .vkyc-header-actions .vkyc-btn-export,
+  .vkyc-header-actions .vkyc-btn-secondary {
+    width: 100%;
+    justify-content: center;
+    font-size: 11.5px;
+    padding: 0 10px;
+    height: 34px;
+  }
+  .vkyc-stat-card {
+    padding: 10px 12px;
+  }
+  .vkyc-stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .vkyc-stat-val {
+    font-size: 18px;
+  }
+  .vkyc-empty-state {
+    padding: 40px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .vkyc-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .vkyc-header-actions {
+    grid-template-columns: 1fr;
+  }
+  .vkyc-header-actions .vkyc-btn-refresh {
+    grid-column: auto;
   }
 }

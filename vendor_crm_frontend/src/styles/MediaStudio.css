@@ -11,6 +11,8 @@
   padding: 16px clamp(14px, 2vw, 32px);
   color: #29251f;
   box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .media-page * {
@@ -379,44 +381,113 @@
 
 @media (max-width: 768px) {
   .media-page {
-    padding: 14px 12px;
+    padding: 12px 10px;
   }
   .media-header,
   .media-page header {
     flex-direction: column;
     align-items: stretch;
-    padding: 14px 16px;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .media-header-copy {
+    flex: 1 1 100%;
+    max-width: 100%;
   }
   .media-header-actions {
     justify-content: flex-start;
     width: 100%;
     margin-left: 0;
     margin-top: 4px;
+    gap: 6px;
   }
-}
-
-@media (max-width: 700px) {
+  .media-btn-refresh {
+    height: 32px;
+    font-size: 11.5px;
+  }
+  .media-card-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .media-card-heading > div {
+    width: 100%;
+  }
+  .media-card-heading button,
+  .media-card-heading .media-status {
+    align-self: flex-start;
+  }
   .media-stats {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
   .media-gallery {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .media-gallery img {
-    height: 160px;
-  }
-  .media-card-heading {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    gap: 10px;
   }
   .media-card {
     padding: 14px;
   }
   .media-toolbar {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .media-toolbar input,
+  .media-toolbar select {
+    width: 100%;
+    min-width: 0;
   }
   .media-title,
   .media-page h1 {
-    font-size: 20px;
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 520px) {
+  .media-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .media-stats button {
+    padding: 8px 10px;
+  }
+  .media-stats strong {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  .media-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .media-gallery img {
+    height: 130px;
+  }
+  .media-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+  }
+  .media-actions button {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .media-card {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .media-stats {
+    grid-template-columns: 1fr;
+  }
+  .media-gallery {
+    grid-template-columns: 1fr;
+  }
+  .media-gallery img {
+    height: 180px;
   }
 }

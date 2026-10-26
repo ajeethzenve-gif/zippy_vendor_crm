@@ -2,65 +2,72 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { workspaceRequest } from "../services/vendorWorkspaces";
 import "../styles/VendorKYC.css";
 
-function Icon({ name, ...props }) {
+function Icon({ name, width = 16, height = 16, style = {}, className = "", ...props }) {
+  const mergedProps = {
+    width,
+    height,
+    className,
+    style: { width: `${width}px`, height: `${height}px`, flexShrink: 0, ...style },
+    ...props,
+  };
   const icons = {
     shield: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
     ),
     shieldCheck: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         <polyline points="9 12 11 14 15 10" />
       </svg>
     ),
     check: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <polyline points="20 6 9 17 4 12" />
       </svg>
     ),
     alert: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="8" x2="12" y2="12"></line>
         <line x1="12" y1="16" x2="12.01" y2="16"></line>
       </svg>
     ),
     clock: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
     ),
     send: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <line x1="22" y1="2" x2="11" y2="13" />
         <polygon points="22 2 15 22 11 13 2 9 22 2" />
       </svg>
     ),
     refresh: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <polyline points="23 4 23 10 17 10" />
         <polyline points="1 20 1 14 7 14" />
         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
       </svg>
     ),
     download: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
         <polyline points="7 10 12 15 17 10" />
         <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
     ),
     search: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <circle cx="11" cy="11" r="8" />
         <line x1="21" y1="21" x2="16.65" y2="16.65" />
       </svg>
     ),
     grid: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <rect x="3" y="3" width="7" height="7" />
         <rect x="14" y="3" width="7" height="7" />
         <rect x="14" y="14" width="7" height="7" />
@@ -68,7 +75,7 @@ function Icon({ name, ...props }) {
       </svg>
     ),
     list: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <line x1="8" y1="6" x2="21" y2="6" />
         <line x1="8" y1="12" x2="21" y2="12" />
         <line x1="8" y1="18" x2="21" y2="18" />
@@ -78,36 +85,36 @@ function Icon({ name, ...props }) {
       </svg>
     ),
     copy: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
       </svg>
     ),
     info: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="16" x2="12" y2="12" />
         <line x1="12" y1="8" x2="12.01" y2="8" />
       </svg>
     ),
     chevronDown: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <polyline points="6 9 12 15 18 9" />
       </svg>
     ),
     sparkles: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
       </svg>
     ),
     close: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <line x1="18" y1="6" x2="6" y2="18" />
         <line x1="6" y1="6" x2="18" y2="18" />
       </svg>
     ),
     user: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...mergedProps}>
         <circle cx="12" cy="8" r="4" />
         <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
       </svg>
@@ -290,11 +297,36 @@ function VerificationCard({ vendor, onSaved }) {
     }
   }
 
+  const fallbackCopy = (text) => {
+    try {
+      const el = document.createElement("textarea");
+      el.value = text;
+      el.style.position = "fixed";
+      el.style.opacity = "0";
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopiedRef(true);
+      setTimeout(() => setCopiedRef(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
   const handleCopyRef = (ref) => {
     if (!ref) return;
-    navigator.clipboard?.writeText(ref);
-    setCopiedRef(true);
-    setTimeout(() => setCopiedRef(false), 2000);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ref)
+        .then(() => {
+          setCopiedRef(true);
+          setTimeout(() => setCopiedRef(false), 2000);
+        })
+        .catch(() => fallbackCopy(ref));
+    } else {
+      fallbackCopy(ref);
+    }
   };
 
   const isVerified = vendor.kyc_status === "VERIFIED";
@@ -320,7 +352,15 @@ function VerificationCard({ vendor, onSaved }) {
       <div className="vkyc-card-header">
         <div className="vkyc-vendor-profile">
           <div className={`vkyc-avatar ${isVerified ? "verified" : ""}`}>
-            {brandInitial}
+            {vendor.logo ? (
+              <img
+                src={vendor.logo}
+                alt={vendor.brand_name || vendor.vendor_name || "Vendor logo"}
+                className="vkyc-avatar-img"
+              />
+            ) : (
+              brandInitial
+            )}
           </div>
           <div className="vkyc-vendor-names">
             <h3 className="vkyc-vendor-brand">{vendor.brand_name || vendor.vendor_name}</h3>
@@ -751,12 +791,11 @@ export default function VendorKYC() {
       v.verification?.checked_at ? new Date(v.verification.checked_at).toISOString() : "",
     ]);
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute(
       "download",
       `zenve_compliance_kyc_report_${new Date().toISOString().slice(0, 10)}.csv`
@@ -764,6 +803,7 @@ export default function VendorKYC() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const stages = useMemo(() => {
@@ -852,11 +892,13 @@ export default function VendorKYC() {
         <div
           className={`vkyc-stat-card ${activeTab === "all" ? "active" : ""}`}
           onClick={() => setActiveTab("all")}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("all"); } }}
           role="button"
           tabIndex={0}
+          aria-pressed={activeTab === "all"}
         >
           <div className="vkyc-stat-icon blue">
-            <Icon name="user" />
+            <Icon name="user" width={22} height={22} />
           </div>
           <div className="vkyc-stat-body">
             <span className="vkyc-stat-val">{stats.total}</span>
@@ -868,11 +910,13 @@ export default function VendorKYC() {
         <div
           className={`vkyc-stat-card ${activeTab === "submitted" ? "active" : ""}`}
           onClick={() => setActiveTab("submitted")}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("submitted"); } }}
           role="button"
           tabIndex={0}
+          aria-pressed={activeTab === "submitted"}
         >
           <div className="vkyc-stat-icon indigo">
-            <Icon name="sparkles" />
+            <Icon name="sparkles" width={22} height={22} />
           </div>
           <div className="vkyc-stat-body">
             <span className="vkyc-stat-val" style={{ color: "#4f46e5" }}>
@@ -886,11 +930,13 @@ export default function VendorKYC() {
         <div
           className={`vkyc-stat-card ${activeTab === "requested" ? "active" : ""}`}
           onClick={() => setActiveTab("requested")}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("requested"); } }}
           role="button"
           tabIndex={0}
+          aria-pressed={activeTab === "requested"}
         >
           <div className="vkyc-stat-icon amber">
-            <Icon name="clock" />
+            <Icon name="clock" width={22} height={22} />
           </div>
           <div className="vkyc-stat-body">
             <span className="vkyc-stat-val" style={{ color: "#d97706" }}>
@@ -904,11 +950,13 @@ export default function VendorKYC() {
         <div
           className={`vkyc-stat-card ${activeTab === "verified" ? "active" : ""}`}
           onClick={() => setActiveTab("verified")}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("verified"); } }}
           role="button"
           tabIndex={0}
+          aria-pressed={activeTab === "verified"}
         >
           <div className="vkyc-stat-icon emerald">
-            <Icon name="shieldCheck" />
+            <Icon name="shieldCheck" width={22} height={22} />
           </div>
           <div className="vkyc-stat-body">
             <span className="vkyc-stat-val" style={{ color: "#059669" }}>
@@ -922,11 +970,13 @@ export default function VendorKYC() {
         <div
           className={`vkyc-stat-card ${activeTab === "uninitiated" ? "active" : ""}`}
           onClick={() => setActiveTab("uninitiated")}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("uninitiated"); } }}
           role="button"
           tabIndex={0}
+          aria-pressed={activeTab === "uninitiated"}
         >
           <div className="vkyc-stat-icon slate">
-            <Icon name="send" />
+            <Icon name="send" width={22} height={22} />
           </div>
           <div className="vkyc-stat-body">
             <span className="vkyc-stat-val" style={{ color: "#64748b" }}>
@@ -941,11 +991,13 @@ export default function VendorKYC() {
           <div
             className={`vkyc-stat-card ${activeTab === "rejected" ? "active" : ""}`}
             onClick={() => setActiveTab("rejected")}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("rejected"); } }}
             role="button"
             tabIndex={0}
+            aria-pressed={activeTab === "rejected"}
           >
             <div className="vkyc-stat-icon rose">
-              <Icon name="alert" />
+              <Icon name="alert" width={22} height={22} />
             </div>
             <div className="vkyc-stat-body">
               <span className="vkyc-stat-val" style={{ color: "#e11d48" }}>
@@ -1140,7 +1192,8 @@ export default function VendorKYC() {
                 }}
                 title="Reset active search and filters"
               >
-                Reset Filters
+                <Icon name="close" width={12} height={12} />
+                <span>Reset Filters</span>
               </button>
             )}
           </div>
@@ -1236,7 +1289,15 @@ export default function VendorKYC() {
                           className={`vkyc-avatar ${isV ? "verified" : ""}`}
                           style={{ width: "36px", height: "36px", fontSize: "14px" }}
                         >
-                          {(vendor.brand_name || vendor.vendor_name || "V").charAt(0).toUpperCase()}
+                          {vendor.logo ? (
+                            <img
+                              src={vendor.logo}
+                              alt={vendor.brand_name || vendor.vendor_name || "Vendor logo"}
+                              className="vkyc-avatar-img"
+                            />
+                          ) : (
+                            (vendor.brand_name || vendor.vendor_name || "V").charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div>
                           <strong>{vendor.brand_name || vendor.vendor_name}</strong>
