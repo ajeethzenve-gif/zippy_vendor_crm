@@ -141,14 +141,17 @@ export default function VendorKYCDetails({ secureLink = false }) {
 
   const change = (field) => (event) => {
     let value = event.target.value;
-    if (field === "pan_number" || field === "gst_number") {
-      value = value.toUpperCase();
+    if (field === "pan_number") {
+      value = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+    } else if (field === "gst_number") {
+      value = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 15);
     }
     setForm((previous) => ({ ...previous, [field]: value }));
   };
 
   const isPanValid = /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(form.pan_number.trim());
   const isGstEntered = !!form.gst_number.trim();
+  const isGstValid = !isGstEntered || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(form.gst_number.trim());
   const isGstMatching =
     !isGstEntered ||
     !form.pan_number.trim() ||
@@ -161,6 +164,21 @@ export default function VendorKYCDetails({ secureLink = false }) {
 
     if (!isPanValid) {
       setError("Please enter a valid 10-character PAN number (e.g. ABCDE1234F).");
+      return;
+    }
+
+    if (!form.pan_name.trim()) {
+      setError("Please enter the name exactly as printed on your PAN card.");
+      return;
+    }
+
+    if (!form.pan_dob) {
+      setError("Please enter your date of birth or date of incorporation.");
+      return;
+    }
+
+    if (isGstEntered && !isGstValid) {
+      setError("Please enter a valid 15-character GSTIN format (e.g. 29ABCDE1234F1Z5) or leave blank if exempt.");
       return;
     }
 
@@ -392,20 +410,8 @@ export default function VendorKYCDetails({ secureLink = false }) {
               Return to Vendor Dashboard →
             </Link>
           </div>
-        ) : data?.kyc_request?.status !== "REQUESTED" ? (
-          /* No Open Request Card */
-          <div className="vkd-submitted-card">
-            <h2>No Pending KYC Request</h2>
-            <p>
-              There is currently no open request for PAN submission on your vendor account.
-              Your account manager will notify you in your dashboard if further documentation is needed.
-            </p>
-            <Link to="/vendor-dashboard" className="vkd-return-btn">
-              Go to Vendor Dashboard →
-            </Link>
-          </div>
         ) : (
-          /* Active Request: Form + Guidance Layout */
+          /* Active Form + Guidance Layout */
           <div className="vkd-grid">
             {/* Main Form Column */}
             <section className="vkd-card">
@@ -416,8 +422,8 @@ export default function VendorKYCDetails({ secureLink = false }) {
                     Legal Name: {data.vendor_name} · Stage: {data.stage || "Onboarding"}
                   </span>
                 </div>
-                <span className="vkd-status-pill action-req">
-                  ● Action Required
+                <span className={`vkd-status-pill ${data?.kyc_request?.status === "REQUESTED" ? "action-req" : ""}`}>
+                  {data?.kyc_request?.status === "REQUESTED" ? "● Action Required" : "● KYC Onboarding"}
                 </span>
               </div>
 
@@ -510,6 +516,7 @@ export default function VendorKYCDetails({ secureLink = false }) {
                       type="date"
                       className="vkd-input"
                       required
+                      max={new Date().toISOString().split("T")[0]}
                       value={form.pan_dob}
                       onChange={change("pan_dob")}
                       disabled={busy}

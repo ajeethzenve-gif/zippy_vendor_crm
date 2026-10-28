@@ -88,9 +88,21 @@ class VendorKYCRequestTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertFalse(VendorVerification.objects.exists())
 
-    def test_no_open_request_cannot_submit(self):
+    @patch("vendors.workspace_api.verify_identifiers")
+    def test_vendor_can_submit_initial_pan_without_staff_request(self, verify):
         self.as_vendor()
+        response = self.client.post(self.submit_url, self.pan, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["kyc_request"]["status"], "SUBMITTED")
+        self.assertEqual(response.data["kyc_status"], "PENDING")
         self.assertEqual(self.client.post(self.submit_url, self.pan, format="json").status_code, 400)
+        verify.assert_not_called()
+
+    def test_invalid_initial_submission_does_not_create_request(self):
+        self.as_vendor()
+        response = self.client.post(self.submit_url, {**self.pan, "pan_number": "invalid"}, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(VendorKYCRequest.objects.filter(vendor=self.vendor).exists())
 
     def test_invalid_pan_and_future_dob_are_rejected(self):
         self.request_details()

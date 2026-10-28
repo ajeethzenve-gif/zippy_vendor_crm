@@ -61,7 +61,7 @@
   backdrop-filter: blur(26px) saturate(190%);
   -webkit-backdrop-filter: blur(26px) saturate(190%);
   border: 1.5px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 
+  box-shadow:
     0 24px 64px -12px rgba(15, 30, 65, 0.18),
     0 10px 24px -6px rgba(15, 30, 65, 0.08),
     inset 0 1px 1.5px rgba(255, 255, 255, 1);
@@ -79,7 +79,7 @@
   z-index: 0;
 }
 
-.zl-card > * {
+.zl-card>* {
   position: relative;
   z-index: 1;
 }
@@ -203,7 +203,7 @@
   background: #ffffff;
   color: #0284c7;
   font-weight: 650;
-  box-shadow: 
+  box-shadow:
     0 3px 10px rgba(15, 23, 42, 0.08),
     0 1px 2px rgba(15, 23, 42, 0.04);
 }
@@ -248,7 +248,7 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   padding: 0 14px;
-  box-shadow: 
+  box-shadow:
     0 1px 3px rgba(15, 23, 42, 0.02),
     inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -264,7 +264,7 @@
 .zl-page .crm-login-input-wrap:focus-within {
   background: #ffffff;
   border-color: #0284c7;
-  box-shadow: 
+  box-shadow:
     0 0 0 3.5px rgba(2, 132, 199, 0.16),
     0 4px 16px rgba(2, 132, 199, 0.08);
   transform: translateY(-1px);
@@ -278,8 +278,8 @@
 }
 
 /* Prefix Icons */
-.zl-page .vl-input-box > .vl-input-icon,
-.zl-page .crm-login-input-wrap > svg {
+.zl-page .vl-input-box>.vl-input-icon,
+.zl-page .crm-login-input-wrap>svg {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -287,8 +287,8 @@
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.zl-page .vl-input-box:focus-within > .vl-input-icon,
-.zl-page .crm-login-input-wrap:focus-within > svg {
+.zl-page .vl-input-box:focus-within>.vl-input-icon,
+.zl-page .crm-login-input-wrap:focus-within>svg {
   color: #0284c7;
   transform: scale(1.05);
 }
@@ -360,7 +360,7 @@
   border: 0;
   border-radius: 12px;
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  box-shadow: 
+  box-shadow:
     0 4px 14px rgba(2, 132, 199, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
   color: #ffffff;
@@ -463,7 +463,7 @@
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid rgba(203, 213, 225, 0.85);
   border-radius: 13px;
-  box-shadow: 
+  box-shadow:
     0 1px 3px rgba(15, 23, 42, 0.03),
     inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -481,7 +481,7 @@
 .vl-otp-box:focus {
   background: #ffffff;
   border-color: #0284c7;
-  box-shadow: 
+  box-shadow:
     0 0 0 3.5px rgba(2, 132, 199, 0.18),
     0 6px 16px rgba(2, 132, 199, 0.12);
   transform: translateY(-2px);
@@ -503,6 +503,7 @@
   .vl-otp-container {
     gap: 6px;
   }
+
   .vl-otp-box {
     height: 48px;
     font-size: 20px;
@@ -623,14 +624,17 @@
   .zl-page {
     background-position: left center;
   }
+
   .zl-layout {
     justify-content: center;
     padding: 24px 16px;
   }
+
   .zl-card-column {
     width: 100%;
     max-width: 460px;
   }
+
   .zl-card {
     padding: 28px 22px 24px;
     border-radius: 22px;
@@ -641,12 +645,15 @@
   .zl-card {
     padding: 24px 18px 20px;
   }
+
   .zl-card-heading h2 {
     font-size: 23px;
   }
+
   .zl-page .vl-tabs-container {
     grid-template-columns: 1fr 1fr;
   }
+
   .zl-page .vl-tab-btn {
     font-size: 12px;
     padding: 8px 6px;

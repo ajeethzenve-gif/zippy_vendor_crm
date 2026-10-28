@@ -61,12 +61,12 @@ class SocialPostList(generics.ListCreateAPIView):
         serializer.save(created_by=self.request.user)
 
 
-class SocialPostDetail(generics.RetrieveUpdateAPIView):
+class SocialPostDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [WorkspacePermission]
     allowed_roles = SocialPostList.allowed_roles
     serializer_class = SocialPostSerializer
     queryset = SocialMediaPost.objects.select_related("vendor")
-    http_method_names = ["get", "patch", "head", "options"]
+    http_method_names = ["get", "patch", "delete", "head", "options"]
 
 
 class WorkspaceVendors(APIView):
@@ -84,6 +84,16 @@ class VerificationSerializer(serializers.ModelSerializer):
         model = VendorVerification
         fields = ["gst_number", "pan_number", "pan_name", "pan_dob", "gst_status", "pan_status", "provider_reference", "checked_at"]
         read_only_fields = ["gst_status", "pan_status", "provider_reference", "checked_at"]
+
+    def to_internal_value(self, data):
+        data = data.copy()
+        if "pan_dob" in data and (data["pan_dob"] is None or str(data["pan_dob"]).strip() == ""):
+            data["pan_dob"] = None
+        if "gst_number" in data:
+            data["gst_number"] = str(data["gst_number"] or "").strip().upper()
+        if "pan_number" in data:
+            data["pan_number"] = str(data["pan_number"] or "").strip().upper()
+        return super().to_internal_value(data)
 
     def validate(self, attrs):
         unsupported = set(self.initial_data) - {"gst_number", "pan_number", "pan_name", "pan_dob"}
@@ -104,10 +114,29 @@ class VerificationSerializer(serializers.ModelSerializer):
 
 def kyc_row(vendor):
     record = getattr(vendor, "verification", None)
-    return {"id": vendor.pk, "vendor_name": vendor.vendor_name, "brand_name": vendor.brand_name,
-            "stage": vendor.stage, "kyc_status": vendor.kyc_status,
-            "verification": VerificationSerializer(record).data if record else None,
-            "gst_number": vendor.gst_number, "kyc_request": kyc_request_data(vendor)}
+    logo_url = None
+    try:
+        if vendor.logo:
+            logo_url = vendor.logo.url
+    except Exception:
+        logo_url = None
+    profile_url = None
+    try:
+        if vendor.profile_image:
+            profile_url = vendor.profile_image.url
+    except Exception:
+        profile_url = None
+    return {
+        "id": vendor.pk,
+        "vendor_name": vendor.vendor_name,
+        "brand_name": vendor.brand_name,
+        "stage": vendor.stage,
+        "kyc_status": vendor.kyc_status,
+        "verification": VerificationSerializer(record).data if record else None,
+        "gst_number": vendor.gst_number,
+        "kyc_request": kyc_request_data(vendor),
+        "logo": logo_url or profile_url,
+    }
 
 
 class VendorKYCList(APIView):
@@ -138,7 +167,9 @@ class VendorKYCDetail(APIView):
 
     def post(self, request, pk):
         vendor = get_object_or_404(Vendor, pk=pk)
-        record = get_object_or_404(VendorVerification, vendor=vendor)
+        record = VendorVerification.objects.filter(vendor=vendor).first()
+        if not record:
+            return Response({"detail": "Save the PAN, PAN holder name and date of birth before verifying. GSTIN is optional."}, status=400)
         gst, pan, name, dob = record.gst_number, record.pan_number, record.pan_name, record.pan_dob
         if not pan or not name or not dob:
             return Response({"detail": "Save the PAN, PAN holder name and date of birth before verifying. GSTIN is optional."}, status=400)
@@ -236,8 +267,10 @@ class VendorKYCSubmissionView(APIView):
     def post(self, request, pk):
         vendor = self.get_vendor(request, pk, lock=True)
         row = VendorKYCRequest.objects.filter(vendor=vendor).first()
-        if not row or row.status != "REQUESTED":
-            return Response({"detail": "There is no open KYC details request for your account."}, status=400)
+        if not row:
+            row = VendorKYCRequest.objects.create(vendor=vendor, status="REQUESTED", requested_at=timezone.now())
+        elif row.status != "REQUESTED":
+            return Response({"detail": "Your KYC details have already been submitted or are not currently pending update."}, status=400)
         save_pan_submission(vendor, row, request.data)
         return Response(kyc_row(vendor))
 
