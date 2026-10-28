@@ -11,5 +11,5 @@ export function tokenExpiresAt(token) {
 }
 
 export function loginPathForRole(role) {
-  return role === "designer" ? "/vendor-login" : "/login";
+  return role === "designer" ? "/" : "/crm";
 }

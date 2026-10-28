@@ -4,12 +4,15 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, serializers
-from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Vendor, VendorVerification, SocialMediaPost, VendorKYCRequest
 from .kyc_provider import verify_identifiers, VerificationUnavailable
+from .kyc_links import LINK_LIFETIME, read_token, validate_request
+from .notifications import kyc_started
 
 
 class WorkspacePermission(BasePermission):
@@ -165,7 +168,9 @@ class VendorKYCDetail(APIView):
 
 def kyc_request_data(vendor):
     request = getattr(vendor, "kyc_request", None)
-    return {"status": request.status, "requested_at": request.requested_at, "submitted_at": request.submitted_at} if request else None
+    return {"status": request.status, "requested_at": request.requested_at, "submitted_at": request.submitted_at,
+            "expires_at": request.requested_at + LINK_LIFETIME,
+            "expired": timezone.now() >= request.requested_at + LINK_LIFETIME} if request else None
 
 
 class VendorKYCRequestView(APIView):
@@ -178,9 +183,10 @@ class VendorKYCRequestView(APIView):
         if not vendor.user_id or not vendor.user.is_active:
             return Response({"detail": "This vendor needs an active linked login account before a KYC notification can be sent."}, status=400)
         row = VendorKYCRequest.objects.filter(vendor=vendor).first()
-        if not row or row.status != "REQUESTED":
+        if not row or row.status != "REQUESTED" or timezone.now() >= row.requested_at + LINK_LIFETIME:
             row, _ = VendorKYCRequest.objects.update_or_create(vendor=vendor, defaults={
                 "status": "REQUESTED", "requested_by": request.user, "requested_at": timezone.now(), "submitted_at": None})
+            transaction.on_commit(lambda: kyc_started(vendor, row))
         return Response(kyc_row(vendor))
 
 
@@ -232,17 +238,57 @@ class VendorKYCSubmissionView(APIView):
         row = VendorKYCRequest.objects.filter(vendor=vendor).first()
         if not row or row.status != "REQUESTED":
             return Response({"detail": "There is no open KYC details request for your account."}, status=400)
-        serializer = VendorPANSubmissionSerializer(data=request.data, context={"vendor": vendor})
-        serializer.is_valid(raise_exception=True)
-        record = VendorVerification.objects.filter(vendor=vendor).first()
-        changed = not record or any(getattr(record, key) != value for key, value in serializer.validated_data.items())
-        if changed:
-            VendorVerification.objects.update_or_create(vendor=vendor, defaults={**serializer.validated_data,
-                "gst_status": "PENDING", "pan_status": "PENDING", "provider_reference": "", "checked_at": None, "checked_by": None})
-            vendor.gst_number = serializer.validated_data["gst_number"]
-            vendor.kyc_status = "PENDING"
-            vendor.save(update_fields=["gst_number", "kyc_status"])
-        row.status = "SUBMITTED"
-        row.submitted_at = timezone.now()
-        row.save(update_fields=["status", "submitted_at"])
+        save_pan_submission(vendor, row, request.data)
         return Response(kyc_row(vendor))
+
+
+def save_pan_submission(vendor, row, payload):
+    serializer = VendorPANSubmissionSerializer(data=payload, context={"vendor": vendor})
+    serializer.is_valid(raise_exception=True)
+    record = VendorVerification.objects.filter(vendor=vendor).first()
+    changed = not record or any(getattr(record, key) != value for key, value in serializer.validated_data.items())
+    if changed:
+        VendorVerification.objects.update_or_create(vendor=vendor, defaults={**serializer.validated_data,
+            "gst_status": "PENDING", "pan_status": "PENDING", "provider_reference": "", "checked_at": None, "checked_by": None})
+        vendor.gst_number = serializer.validated_data["gst_number"]
+        vendor.kyc_status = "PENDING"
+        vendor.save(update_fields=["gst_number", "kyc_status"])
+    row.status = "SUBMITTED"
+    row.submitted_at = timezone.now()
+    row.save(update_fields=["status", "submitted_at"])
+
+
+class KYCLinkThrottle(AnonRateThrottle):
+    rate = "30/hour"
+
+
+class VendorKYCLinkView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    throttle_classes = [KYCLinkThrottle]
+
+    def get_context(self, request, lock=False):
+        authorization = request.headers.get("Authorization", "")
+        data = read_token(authorization[4:] if authorization.startswith("KYC ") else "")
+        queryset = Vendor.objects.select_for_update() if lock else Vendor.objects.all()
+        vendor = get_object_or_404(queryset, pk=data["vendor"])
+        row = VendorKYCRequest.objects.filter(vendor=vendor).first()
+        validate_request(row, data)
+        return vendor, row
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response["Cache-Control"] = "no-store"
+        response["Referrer-Policy"] = "no-referrer"
+        return response
+
+    def get(self, request):
+        vendor, row = self.get_context(request)
+        # The link grants submission only, never access to saved PAN/bank/login data.
+        return Response({"brand_name": vendor.brand_name, "kyc_request": kyc_request_data(vendor)})
+
+    @transaction.atomic
+    def post(self, request):
+        vendor, row = self.get_context(request, lock=True)
+        save_pan_submission(vendor, row, request.data)
+        return Response({"kyc_request": {"status": "SUBMITTED", "submitted_at": row.submitted_at}})

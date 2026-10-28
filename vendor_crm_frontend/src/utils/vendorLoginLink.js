@@ -1,3 +1,3 @@
 export function getVendorLoginUrl() {
-  return "https://zvcrm.zenvevet.com/vendor-login";
+  return "https://zenvepartners.com/";
 }

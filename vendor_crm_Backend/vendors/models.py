@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from uuid import uuid4
+from copy import copy
+from functools import partial
 
 def vendor_code():
     return "VND-" + uuid4().hex[:20].upper()
@@ -12,10 +14,16 @@ class Vendor(models.Model):
     def save(self, *args, **kwargs):
         from django.db import transaction
         from .account_service import ensure_approved_vendor_account
+        from . import notifications
         with transaction.atomic():
+            previous = type(self).objects.select_for_update().filter(pk=self.pk).values("stage").first() if self.pk else None
             super().save(*args, **kwargs)
             if self.stage == "APPROVED":
-                ensure_approved_vendor_account(self)
+                user, password = ensure_approved_vendor_account(self)
+                if not previous or previous["stage"] != "APPROVED" or password:
+                    transaction.on_commit(partial(notifications.approved, copy(self), copy(user), password))
+            elif previous is None:
+                transaction.on_commit(partial(notifications.welcome, copy(self)))
 
     class Stage(models.TextChoices):
         SIGNED = "SIGNED", "Signed"

@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.db import transaction
 from rest_framework import serializers
 from .models import Order, OrderItem, ReturnRequest, Settlement
 from products.models import Product
@@ -122,6 +123,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "is_fast_delivery",
         ]
 
+    @transaction.atomic
     def create(self, validated_data):
         items_data = self.initial_data.get("items", [])
         if "items" in validated_data:
@@ -184,8 +186,8 @@ class OrderSerializer(serializers.ModelSerializer):
             )
             p_sku = item_data.get("sku") or (product.sku if product else f"SKU-{order.id}")
             brand = item_data.get("brand_name") or (getattr(product.vendor, "brand_name", "") if (product and product.vendor) else "")
-            color = item_data.get("color") or item_data.get("colour") or (product.colour if product else "")
-            size = item_data.get("size") or (product.size if product else "")
+            color = item_data.get("color") or item_data.get("colour") or (product.colour if product else "") or ""
+            size = item_data.get("size") or (product.size if product else "") or ""
             qty = int(item_data.get("quantity") or item_data.get("qty") or 1)
             unit_price = Decimal(str(item_data.get("price") or item_data.get("unit_price") or (product.selling_price if product else "0.00")))
             item_total = unit_price * qty
@@ -216,6 +218,8 @@ class OrderSerializer(serializers.ModelSerializer):
         order.subtotal = total_order_amount
         order.total = total_order_amount + order.shipping - order.discount
         order.save()
+        from vendors.notifications import order_placed
+        transaction.on_commit(lambda: order_placed(order.pk))
         return order
 
     def update(self, instance, validated_data):

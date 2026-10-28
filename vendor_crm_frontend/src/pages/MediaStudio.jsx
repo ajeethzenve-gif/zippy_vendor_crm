@@ -94,5 +94,5 @@ export function MediaWorkspace({ designerId }) {
 }
 
 export default function MediaStudio() {
-  return <main className="media-page"><nav><Link to="/">← All layers</Link><Link to="/login">Switch role</Link></nav><header><small>LAYER 13 · CREATIVE OPERATIONS</small><h1>Media Studio</h1><p>Turn vendor product photography into finished brand imagery.</p></header><MediaWorkspace /></main>;
+  return <main className="media-page"><nav><Link to="/crm">← All layers</Link><Link to="/login">Switch role</Link></nav><header><small>LAYER 13 · CREATIVE OPERATIONS</small><h1>Media Studio</h1><p>Turn vendor product photography into finished brand imagery.</p></header><MediaWorkspace /></main>;
 }

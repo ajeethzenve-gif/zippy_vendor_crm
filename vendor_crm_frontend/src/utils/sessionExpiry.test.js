@@ -16,8 +16,8 @@ test("missing or invalid expiry cannot leave a session open", () => {
 });
 
 test("vendor timeout returns to vendor login and staff to CRM login", () => {
-  assert.equal(loginPathForRole("designer"), "/vendor-login");
+  assert.equal(loginPathForRole("designer"), "/");
   for (const role of ["admin", "merchandiser", "qa", "inventory", "finance", "media"]) {
-    assert.equal(loginPathForRole(role), "/login");
+    assert.equal(loginPathForRole(role), "/crm");
   }
 });

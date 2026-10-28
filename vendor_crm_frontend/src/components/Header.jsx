@@ -76,7 +76,7 @@ function Header() {
           {/* Title */}
 
           <h1 className="brand-title">
-            Zippy Vendor CRM
+            Zenve Vendor CRM
           </h1>
 
         </div>

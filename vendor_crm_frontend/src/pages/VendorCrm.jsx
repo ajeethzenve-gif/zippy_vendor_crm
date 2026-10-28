@@ -26,7 +26,7 @@ import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/zen
 
 export const COMPANY_GST_INFO = {
   name: "Zenve Pets Healthcare Privated Ltd",
-  gstNumber: "29AABCZ1234F1Z8",
+  gstNumber: "29AACCZ7283R1Z5",
   state: "Karnataka (All-India E-Commerce Coverage)",
   type: "E-Commerce Marketplace Operator & Master Platform GSTIN",
   section: "Section 9(5) & Section 52 CGST Act",
@@ -625,14 +625,16 @@ Team Zippy`;
   // Actions
   const handleStageChange = async (designerId, nextStage) => {
     try {
-      await updateDesigner(designerId, { stage: nextStage });
+      const updated = await updateDesigner(designerId, { stage: nextStage });
       setDesigners((list) =>
-        list.map((d) => (d.id === designerId ? { ...d, stage: nextStage } : d))
+        list.map((d) => (d.id === designerId ? { ...d, ...updated } : d))
       );
-      showToast(`Updated stage to ${nextStage}.`);
+      showToast(`Updated stage to ${updated.stage || nextStage}.`);
+      return true;
     } catch (err) {
       console.error("Failed to update stage:", err);
-      showErrorToast("Failed to update stage.");
+      showErrorToast(err.message || "Failed to update stage. Please try again.");
+      return false;
     }
   };
 
@@ -644,7 +646,6 @@ Team Zippy`;
     }
     const nextStage = STAGES_SEQUENCE[currentIdx + 1];
     await handleStageChange(designer.id, nextStage);
-    showToast(`${designer.brand_name} advanced to ${nextStage}.`);
   };
 
   const handleToggleKyc = async (designer) => {

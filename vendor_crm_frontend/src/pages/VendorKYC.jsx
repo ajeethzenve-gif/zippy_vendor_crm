@@ -21,7 +21,7 @@ function VerificationCard({ vendor, onSaved }) {
     setBusy(true); setError(""); setMessage("");
     try {
       onSaved(await workspaceRequest(`${vendor.id}/kyc-request/`, "POST", {}));
-      setMessage("KYC notification sent to the vendor portal. The vendor can now submit their PAN details.");
+      setMessage("KYC notification sent to the vendor portal. The vendor can now submit their PAN details. When email delivery is configured, the vendor also receives a secure submission link valid for 48 hours.");
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
   }
@@ -44,8 +44,8 @@ function VerificationCard({ vendor, onSaved }) {
   }
   return <article className="vw-card"><div className="vw-section-heading"><div><h2>{vendor.brand_name || vendor.vendor_name}</h2><p>{vendor.vendor_name} · {vendor.stage}</p></div><span className={`vw-status ${vendor.kyc_status.toLowerCase()}`}>{label(vendor.kyc_status)}</span></div>
     <div className="vw-request-panel">
-      <div><strong>Collect PAN details from vendor</strong><p>{vendor.kyc_request?.status === "SUBMITTED" ? `Vendor submitted details on ${new Date(vendor.kyc_request.submitted_at).toLocaleString()}. Review them below.` : vendor.kyc_request?.status === "REQUESTED" ? "Waiting for the vendor to submit PAN details." : "Notify the vendor that KYC has started and ask them to submit PAN details securely in their portal."}</p></div>
-      <button type="button" className="secondary" disabled={busy || vendor.kyc_request?.status === "REQUESTED"} onClick={requestDetails}>{vendor.kyc_request?.status === "REQUESTED" ? "Notification sent" : vendor.kyc_request?.status === "SUBMITTED" ? "Request updated PAN details" : "Send KYC notification"}</button>
+      <div><strong>Collect PAN details from vendor</strong><p>{vendor.kyc_request?.status === "SUBMITTED" ? `Vendor submitted details on ${new Date(vendor.kyc_request.submitted_at).toLocaleString()}. Review them below.` : (vendor.kyc_request?.status === "REQUESTED" && !vendor.kyc_request?.expired) ? "Waiting for the vendor to submit PAN details." : "Notify the vendor that KYC has started and ask them to submit PAN details securely in their portal."}</p></div>
+      <button type="button" className="secondary" disabled={busy || (vendor.kyc_request?.status === "REQUESTED" && !vendor.kyc_request?.expired)} onClick={requestDetails}>{(vendor.kyc_request?.status === "REQUESTED" && !vendor.kyc_request?.expired) ? "Notification sent" : vendor.kyc_request?.status === "SUBMITTED" ? "Request updated PAN details" : "Send KYC notification"}</button>
     </div>
     <form className="vw-form" onSubmit={(event) => submit(event, event.nativeEvent.submitter?.value === "verify")}><fieldset disabled={busy}>
       <label>GSTIN (optional)<input maxLength={15} value={gst} onChange={(event) => setGst(event.target.value.toUpperCase())} spellCheck={false} placeholder="15-character GSTIN" /><small>{gst.trim() ? `Provider result: ${label(vendor.verification?.gst_status)}` : "No GSTIN supplied. KYC will verify PAN, name and date of birth only."}</small></label>

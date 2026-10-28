@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 const VendorRegistration = lazy(() => import("./pages/VendorRegistration.jsx"));
 import "./styles/Zippy.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.jsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 
 const Employees = lazy(() => import("./pages/Employees.jsx"));
 const Home = lazy(() => import("./pages/RolePortal.jsx"));
@@ -29,6 +29,13 @@ const VendorLogin = lazy(() => import("./pages/VendorLogin.jsx"));
 import WorkspaceShell from "./components/WorkspaceShell.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
+function PortalEntry({ staff = false }) {
+  const { currentUser } = useAuth();
+  const correctAudience = currentUser && (staff ? currentUser.id !== "designer" : currentUser.id === "designer");
+  if (correctAudience) return staff ? <Home /> : <VendorDashboard />;
+  return staff ? <Login /> : <VendorLogin />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -39,13 +46,14 @@ export default function App() {
         <Route path="/designer-portal" element={<Navigate to="/vendor-portal" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         {/* Home Page */}
-        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/" element={<PortalEntry />} />
+        <Route path="/crm" element={<PortalEntry staff />} />
 
         {/* Role-Based Login */}
         <Route path="/register" element={<VendorRegistration />} />
         <Route path="/employees" element={<Employees />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/vendor-login" element={<VendorLogin />} />
+        <Route path="/login" element={<Navigate to="/crm" replace />} />
+        <Route path="/vendor-login" element={<Navigate to="/" replace />} />
         <Route path="/media" element={<ProtectedRoute layer="13"><MediaStudio /></ProtectedRoute>} />
         <Route path="/social-media" element={<ProtectedRoute layer="14"><SocialMedia /></ProtectedRoute>} />
         <Route path="/vendor-kyc" element={<ProtectedRoute layer="15"><VendorKYC /></ProtectedRoute>} />
@@ -57,6 +65,7 @@ export default function App() {
         <Route path="/vendor-portal" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><DesignerPortal /></ProtectedRoute>} />
         <Route path="/vendor-dashboard" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><VendorDashboard /></ProtectedRoute>} />
         <Route path="/vendor-kyc-details" element={<ProtectedRoute layer="02" loginPath="/vendor-login"><VendorKYCDetails /></ProtectedRoute>} />
+        <Route path="/vendor-kyc-submit" element={<VendorKYCDetails secureLink />} />
         <Route path="/catalogue" element={<ProtectedRoute layer="03"><Catalogue /></ProtectedRoute>} />
         <Route path="/catalogueqa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />
         <Route path="/catalogue-qa" element={<ProtectedRoute layer="04"><CatalogueQA /></ProtectedRoute>} />

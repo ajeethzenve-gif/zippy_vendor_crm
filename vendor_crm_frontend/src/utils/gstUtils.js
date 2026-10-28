@@ -7,7 +7,7 @@ export const DEFAULT_COMPANY_GSTS = [
   {
     id: "zenve-gst-master",
     name: "ZENVE FASHION PRIVATE LIMITED",
-    gstNumber: "29AABCZ1234F1Z8",
+    gstNumber: "29AACCZ7283R1Z5",
     state: "Karnataka (All-India E-Commerce Coverage)",
     hub: "ZENVE Corporate Master Entity",
     type: "E-Commerce Marketplace Operator & Master Platform GSTIN",
@@ -27,7 +27,8 @@ export function getCompanyGstList() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return parsed.map((entry) => entry.gstNumber === "29AABCZ1234F1Z8"
+          ? { ...entry, gstNumber: "29AACCZ7283R1Z5" } : entry);
       }
     }
   } catch (e) {
@@ -71,6 +72,7 @@ export function isCompanyGst(gstNumber) {
   const clean = gstNumber.trim().toUpperCase();
   const list = getCompanyGstList();
   return (
+    clean === "29AACCZ7283R1Z5" ||
     clean === "29AABCZ1234F1Z8" ||
     clean === "COMPANY_GST_REQUESTED" ||
     list.some((g) => g.gstNumber.toUpperCase() === clean)
@@ -90,7 +92,7 @@ export function getCompanyGstDetails(gstNumber) {
 /**
  * Mask GST number for designers and privacy:
  * Hides the characters with 'X', showing only the LAST 4 digits.
- * e.g. "29AABCZ1234F1Z8" -> "XXXXXXXXXXXF1Z8"
+ * e.g. "29AACCZ7283R1Z5" -> "XXXXXXXXXXXF1Z8"
  */
 export function maskGstNumber(gstNumber) {
   if (!gstNumber || gstNumber === "—" || gstNumber === "-" || gstNumber.trim() === "") {

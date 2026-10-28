@@ -363,6 +363,18 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # =====================================================
 # EMAIL CONFIGURATION
 # =====================================================
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "localhost")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "false").lower() == "true"
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "webmaster@localhost")
+VENDOR_FROM_EMAIL = os.getenv("VENDOR_FROM_EMAIL") or DEFAULT_FROM_EMAIL
+VENDOR_PORTAL_URL = os.getenv("VENDOR_PORTAL_URL", "")
+COMPANY_GST_NUMBER = "29AACCZ7283R1Z5"
 SMS_PROVIDER = os.getenv("SMS_PROVIDER", "APITXT")
 
 SMS_API_KEY = os.getenv("SMS_API_KEY", "")
@@ -396,11 +408,13 @@ RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
+    "https://zenvepartners.com",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys([*CSRF_TRUSTED_ORIGINS, "https://zenvepartners.com"]))
 
 # =====================================================
 # LOGIN / LOGOUT

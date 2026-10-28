@@ -18,10 +18,10 @@ function FeatureIcon({ type }) {
   };
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[type]}</svg>;
 }
-function Brand({ compact = false }) {
+function Brand({ compact = false, vendor = false }) {
   return <div className={`zl-brand ${compact ? "zl-brand-card" : ""}`}>
     <img src={zenveLogo} alt="Zenve" />
-    <div><strong><span>Vendor CRM</span></strong><p>Connect · Collaborate · Grow</p></div>
+    <div><strong><span>{vendor ? "Zenve Vendor" : "Zenve Vendor CRM"}</span></strong><p>Connect · Collaborate · Grow</p></div>
   </div>;
 }
 export default function LoginLanding({ audience = "vendor", children }) {
@@ -45,14 +45,14 @@ export default function LoginLanding({ audience = "vendor", children }) {
       <div className="zl-card-column">
 
         <section className="zl-card" aria-labelledby="zl-login-title">
-          <Brand compact />
+          <Brand compact vendor={vendor} />
           <header className="zl-card-heading"><h2 id="zl-login-title">{vendor ? "Vendor Login" : "Staff Login"}</h2><p>{vendor ? "Choose your preferred method to sign in" : "Sign in to your assigned workspace"}</p></header>
           {children}
           <footer className="zl-security"><FeatureIcon type="shield" /><span>Your information is secure with us</span></footer>
           {vendor ? (
-            <Link className="zl-switch" to="/login">Staff login →</Link>
+            <Link className="zl-switch" to="/crm">Staff login →</Link>
           ) : (
-            <Link className="zl-switch" to="/vendor-login">← Vendor login</Link>
+            <Link className="zl-switch" to="/">← Vendor login</Link>
           )}
         </section>
       </div>

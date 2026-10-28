@@ -12,7 +12,7 @@ function LockIcon() {
   );
 }
 
-export default function ProtectedRoute({ layer, children, loginPath = "/login" }) {
+export default function ProtectedRoute({ layer, children, loginPath = "/crm" }) {
   const { currentUser, hasAccess } = useAuth();
 
   if (!currentUser) return <Navigate to={loginPath} replace />;
@@ -167,7 +167,7 @@ export default function ProtectedRoute({ layer, children, loginPath = "/login" }
             </Link>
 
             <Link
-              to="/"
+              to={currentUser?.landingPath || "/crm"}
               style={{
                 fontSize: "12.5px",
                 color: "#786d63",

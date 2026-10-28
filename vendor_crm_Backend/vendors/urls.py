@@ -1,11 +1,13 @@
 from django.urls import path
 from .views import VendorRegistrationAPIView, VendorListAPIView, VendorDetailAPIView
+from .workspace_api import VendorKYCLinkView
 
 from .portal_views import VendorPortalView, VendorNotificationsReadView, VendorAccountView, VendorProfileView
 
 from .workspace_api import WorkspaceVendors, SocialPostList, SocialPostDetail, VendorKYCList, VendorKYCDetail, VendorKYCRequestView, VendorKYCSubmissionView
 
 urlpatterns = [
+    path("kyc-link/", VendorKYCLinkView.as_view()),
     path("<int:pk>/kyc-request/", VendorKYCRequestView.as_view()),
     path("<int:pk>/kyc-submission/", VendorKYCSubmissionView.as_view()),
     path("workspace-vendors/", WorkspaceVendors.as_view()),

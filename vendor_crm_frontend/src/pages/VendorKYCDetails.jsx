@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { workspaceRequest } from "../services/vendorWorkspaces";
+import { API_BASE_URL } from "../services/api";
+import { isCompanyGst } from "../utils/gstUtils";
 import zenveLogo from "../assest/logo/zenve_logo.png";
 import "../styles/VendorKYCDetails.css";
 
@@ -80,8 +82,9 @@ function Icon({ name }) {
   return icons[name] || null;
 }
 
-export default function VendorKYCDetails() {
+export default function VendorKYCDetails({ secureLink = false }) {
   const { currentUser } = useAuth();
+  const [linkToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get("token") || "");
   const vendorId = currentUser?.vendorId;
   const [data, setData] = useState(null);
   const [form, setForm] = useState({ pan_number: "", pan_name: "", pan_dob: "", gst_number: "" });
@@ -90,18 +93,32 @@ export default function VendorKYCDetails() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  async function requestDetails(method = "GET", payload) {
+    if (!secureLink) return workspaceRequest(`${vendorId}/kyc-submission/`, method, payload);
+    const response = await fetch(`${API_BASE_URL}/vendors/kyc-link/`, {
+      method, credentials: "omit", cache: "no-store", referrerPolicy: "no-referrer",
+      headers: { Authorization: `KYC ${linkToken}`, "Content-Type": "application/json" },
+      ...(payload ? { body: JSON.stringify(payload) } : {}),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || Object.values(result).flat().join(" ") || "Unable to submit PAN details.");
+    return result;
+  }
+
   useEffect(() => {
-    if (!vendorId) {
+    if (!vendorId && !secureLink) {
       setLoading(false);
       return;
     }
     let active = true;
-    workspaceRequest(`${vendorId}/kyc-submission/`)
+    setLoading(true);
+    setError("");
+    requestDetails()
       .then((result) => {
         if (!active) return;
         setData(result);
         const savedGst = result.verification?.gst_number || "";
-        const isMasterOrDummyGst = result.gst_number === "29AABCZ1234F1Z8" || !result.gst_number;
+        const isMasterOrDummyGst = isCompanyGst(result.gst_number) || !result.gst_number;
         const initialGst = savedGst || (isMasterOrDummyGst ? "" : result.gst_number);
 
         setForm({
@@ -120,7 +137,7 @@ export default function VendorKYCDetails() {
     return () => {
       active = false;
     };
-  }, [vendorId]);
+  }, [vendorId, secureLink, linkToken]);
 
   const change = (field) => (event) => {
     let value = event.target.value;
@@ -157,7 +174,7 @@ export default function VendorKYCDetails() {
     setMessage("");
 
     try {
-      const result = await workspaceRequest(`${vendorId}/kyc-submission/`, "POST", {
+      const result = await requestDetails("POST", {
         ...form,
         pan_number: form.pan_number.trim().toUpperCase(),
         gst_number: form.gst_number.trim().toUpperCase(),
@@ -264,7 +281,9 @@ export default function VendorKYCDetails() {
             <div className="vkd-btn-spinner vkd-loading-spinner" />
             <p className="vkd-loading-text">Loading your KYC verification status…</p>
           </div>
-        ) : !vendorId ? (
+        ) : secureLink && !data ? (
+          <div className="vkd-card"><h2>KYC link unavailable</h2><p>Ask your account team to send a new link. Links expire after 48 hours and cannot be reused after submission.</p></div>
+        ) : !vendorId && !secureLink ? (
           <div className="vkd-card" style={{ textAlign: "center", padding: "40px" }}>
             <h2>Vendor Account Required</h2>
             <p style={{ color: "#64748b", margin: "10px 0 20px" }}>
@@ -346,7 +365,7 @@ export default function VendorKYCDetails() {
                   <span className="vkd-summary-label">GSTIN</span>
                   <span className="vkd-summary-val mono">
                     {form.gst_number ||
-                      (data.gst_number && data.gst_number !== "29AABCZ1234F1Z8"
+                      (data.gst_number && !isCompanyGst(data.gst_number)
                         ? data.gst_number
                         : "Not provided (Exempt)")}
                   </span>

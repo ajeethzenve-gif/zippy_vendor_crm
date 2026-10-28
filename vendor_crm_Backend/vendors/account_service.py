@@ -10,6 +10,7 @@ def ensure_approved_vendor_account(vendor):
     if locked.stage != "APPROVED":
         return
     users = get_user_model().objects
+    password = None
 
     def credentials():
         name = re.sub(r"[^\w.-]", "", (locked.vendor_name or "").strip().lower())
@@ -46,3 +47,4 @@ def ensure_approved_vendor_account(vendor):
     role, _ = Role.objects.get_or_create(name="Vendor")
     UserRole.objects.update_or_create(user=user, defaults={"role": role})
     vendor.user = user
+    return user, password
