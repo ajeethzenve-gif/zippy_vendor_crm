@@ -22,9 +22,9 @@ class VendorApprovalAccountTests(TestCase):
         self.assertEqual(self.vendor.user.email, "approved@example.com")
         self.assertEqual(self.vendor.user.first_name, "Approved Owner")
         self.assertTrue(self.vendor.user.is_active)
-        self.assertEqual(self.vendor.user.username, "approvedowner@zenvefashion")
-        self.assertTrue(self.vendor.user.check_password("approvedowner@zf543210"))
-        self.assertNotEqual(self.vendor.user.password, "approvedowner@zf543210")
+        self.assertEqual(self.vendor.user.username, "approvedowner@zv")
+        self.assertTrue(self.vendor.user.check_password("approvedowner@zv3210"))
+        self.assertNotEqual(self.vendor.user.password, "approvedowner@zv3210")
         self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
         self.assertEqual(self.approve().status_code, 200)
         self.assertEqual(get_user_model().objects.count(), 1)
@@ -68,8 +68,8 @@ class VendorApprovalAccountTests(TestCase):
         self.vendor.stage = "APPROVED"
         self.vendor.save()
         self.assertIsNotNone(self.vendor.user_id)
-        self.assertEqual(self.vendor.user.username, "approvedowner@zenvefashion")
-        self.assertTrue(self.vendor.user.check_password("approvedowner@zf543210"))
+        self.assertEqual(self.vendor.user.username, "approvedowner@zv")
+        self.assertTrue(self.vendor.user.check_password("approvedowner@zv3210"))
         self.assertEqual(self.vendor.user.user_role.role.name, "Vendor")
         self.assertEqual(self.vendor.kyc_status, "PENDING")
 
@@ -79,11 +79,11 @@ class VendorApprovalAccountTests(TestCase):
         self.vendor.save()
         self.assertEqual(self.approve().status_code, 200)
         user.refresh_from_db()
-        self.assertEqual(user.username, "approvedowner@zenvefashion")
-        self.assertTrue(user.check_password("approvedowner@zf543210"))
+        self.assertEqual(user.username, "approvedowner@zv")
+        self.assertTrue(user.check_password("approvedowner@zv3210"))
 
     def test_username_conflict_does_not_overwrite_existing_account(self):
-        user = get_user_model().objects.create_user(username="approvedowner@zenvefashion", password="Existing!52")
+        user = get_user_model().objects.create_user(username="approvedowner@zv", password="Existing!52")
         self.assertEqual(self.approve().status_code, 400)
         self.vendor.refresh_from_db()
         self.assertEqual(self.vendor.stage, "LEAD")
@@ -103,7 +103,7 @@ class VendorApprovalAccountTests(TestCase):
             from rest_framework.response import Response
             start_otp.return_value = Response({"otp_required": True}, status=200)
             response = self.client.post("/api/login/", {
-                "username": "approvedowner@zenvefashion", "password": "approvedowner@zf543210", "audience": "vendor",
+                "username": "approvedowner@zv", "password": "approvedowner@zv3210", "audience": "vendor",
             }, format="json")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertTrue(response.data["otp_required"])

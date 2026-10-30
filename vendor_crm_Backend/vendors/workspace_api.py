@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, serializers
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
-from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +13,7 @@ from .models import Vendor, VendorVerification, SocialMediaPost, VendorKYCReques
 from .kyc_provider import verify_identifiers, VerificationUnavailable
 from .kyc_links import LINK_LIFETIME, read_token, validate_request
 from .notifications import kyc_started
+from .account_service import initial_vendor_credentials
 
 
 class WorkspacePermission(BasePermission):
@@ -22,6 +23,42 @@ class WorkspacePermission(BasePermission):
             return False
         role = getattr(getattr(user, "user_role", None), "role", None)
         return bool(user.is_superuser or (role and role.name in view.allowed_roles) or (user.is_staff and role is None))
+
+
+class VendorLoginDetailsThrottle(UserRateThrottle):
+    rate = "20/hour"
+
+
+class VendorLoginDetailsView(APIView):
+    permission_classes = [WorkspacePermission]
+    allowed_roles = {"Admin", "Merchandiser"}
+    throttle_classes = [VendorLoginDetailsThrottle]
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response["Cache-Control"] = "no-store"
+        response["Referrer-Policy"] = "no-referrer"
+        return response
+
+    def get(self, request, pk):
+        vendor = get_object_or_404(Vendor.objects.select_related("user"), pk=pk)
+        user = vendor.user
+        role = getattr(getattr(user, "user_role", None), "role", None) if user else None
+        if (vendor.stage not in {"APPROVED", "CONTRACT", "SIGNED", "LIVE", "ACTIVE"}
+                or not user or not user.is_active or user.is_staff or user.is_superuser
+                or not role or role.name != "Vendor"):
+            return Response({"detail": "Approve this vendor and link an active vendor login before sharing login details."}, status=400)
+        name = re.sub(r"[^\w.-]", "", (vendor.vendor_name or "").strip().lower())
+        digits = re.sub(r"\D", "", vendor.phone or "")
+        initial_password = None
+        if name and len(digits) >= 10:
+            _, candidate = initial_vendor_credentials(vendor)
+            # Existing accounts may still use the previous initial password.
+            for value in [candidate, name + "@zf" + digits[-6:]]:
+                if user.check_password(value):
+                    initial_password = value
+                    break
+        return Response({"username": user.username, "initial_password": initial_password})
 
 
 class SocialPostSerializer(serializers.ModelSerializer):

@@ -4,6 +4,16 @@ from django.core.exceptions import ValidationError
 from accounts.models import Role, UserRole
 
 
+def initial_vendor_credentials(vendor):
+    name = re.sub(r"[^\w.-]", "", (vendor.vendor_name or "").strip().lower())
+    digits = re.sub(r"\D", "", vendor.phone or "")
+    if not name:
+        raise ValidationError({"vendor_name": "A vendor name is required to create login credentials."})
+    if len(digits) < 10:
+        raise ValidationError({"phone": "A valid mobile number is required to create login credentials."})
+    return name + "@zv", name + "@zv" + digits[-4:]
+
+
 def ensure_approved_vendor_account(vendor):
     # The caller holds an atomic transaction; lock the persisted approval row.
     locked = type(vendor).objects.select_for_update().get(pk=vendor.pk)
@@ -13,13 +23,7 @@ def ensure_approved_vendor_account(vendor):
     password = None
 
     def credentials():
-        name = re.sub(r"[^\w.-]", "", (locked.vendor_name or "").strip().lower())
-        digits = re.sub(r"\D", "", locked.phone or "")
-        if not name:
-            raise ValidationError({"vendor_name": "A vendor name is required to create login credentials."})
-        if len(digits) < 10:
-            raise ValidationError({"phone": "A valid mobile number is required to create login credentials."})
-        username = name + "@zenvefashion"
+        username, initial_password = initial_vendor_credentials(locked)
         if len(username) > users.model._meta.get_field("username").max_length:
             raise ValidationError({"vendor_name": "Vendor name is too long for a login username."})
         conflicts = users.filter(username__iexact=username)
@@ -27,7 +31,7 @@ def ensure_approved_vendor_account(vendor):
             conflicts = conflicts.exclude(pk=locked.user_id)
         if conflicts.exists():
             raise ValidationError({"vendor_name": "This vendor name already belongs to a login account. Use a unique name."})
-        return username, name + "@zf" + digits[-6:]
+        return username, initial_password
 
     if locked.user_id:
         user = users.select_for_update().get(pk=locked.user_id)

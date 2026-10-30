@@ -17,7 +17,8 @@ import {
 } from "../services/api";
 
 import { maskGstNumber } from "../utils/gstUtils.js";
-import { getVendorLoginUrl } from "../utils/vendorLoginLink.js";
+import { getVendorLoginUrl, buildVendorLoginMessage } from "../utils/vendorLoginLink.js";
+import { workspaceRequest } from "../services/vendorWorkspaces";
 import { showSuccessToast, showErrorToast, showWarningToast } from "../utils/zenveToast";
 
 /* =========================================================
@@ -167,6 +168,7 @@ export default function DesignerCRM({ mode = "list" }) {
   const { vendorId } = useParams();
   const [vendorPlans, setVendorPlans] = useState(DEFAULT_VENDOR_PLANS);
   const [designers, setDesigners] = useState([]);
+  const [sharingLoginVendorId, setSharingLoginVendorId] = useState(null);
   const [vendorSearch, setVendorSearch] = useState("");
   const editingVendorId = mode === "edit" ? Number(vendorId) : null;
   const showFreshVendor = mode === "new";
@@ -337,8 +339,8 @@ export default function DesignerCRM({ mode = "list" }) {
   };
 
   // Prepare a WhatsApp message for the team to review and send.
-  const handleSendWhatsAppPortalLink = (designer) => {
-    if (!designer) return;
+  const handleSendWhatsAppPortalLink = async (designer) => {
+    if (!designer || sharingLoginVendorId !== null) return;
     const phoneRaw = designer.phone || designer.contact || "";
     let cleanPhone = phoneRaw.replace(/[^0-9]/g, "");
     if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
@@ -354,29 +356,26 @@ export default function DesignerCRM({ mode = "list" }) {
 
     const designerName = designer.designer_name || designer.brand_name || "Vendor";
     const brandName = designer.brand_name || designer.designer_name || "Vendor Brand";
-    const portalUrl = getVendorLoginUrl();
-
-    const message = `*Zippy Vendor Login*
-
-Hello *${designerName}*,
-
-Sign in to your vendor account using this link:
-${portalUrl}
-
-Your initial login details follow this format:
-Username: vendorname@zenvefashion
-Password: vendorname@zf followed by the last six digits of your registered mobile number.
-Use your vendor name in lowercase without spaces. If your password was changed, use your current password.
-
-Enter your username and password, then verify the OTP sent to your registered mobile number to complete login.
-
-If you need help accessing your account, please contact our team.
-
-Team Zippy`;
-
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    showToast(`WhatsApp login message opened for ${brandName}. Review it and press Send in WhatsApp.`);
+    // Reserve the tab during the click so the later API response is not blocked as a popup.
+    const popup = window.open("about:blank", "_blank");
+    if (!popup) {
+      showWarningToast("Allow pop-ups to prepare the vendor login message, then try again.");
+      return;
+    }
+    popup.opener = null;
+    setSharingLoginVendorId(designer.id);
+    try {
+      const login = await workspaceRequest(`${designer.id}/login-details/`);
+      const message = buildVendorLoginMessage(designerName, login);
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
+      if (!popup.closed) popup.location.replace(whatsappUrl);
+      showToast(`WhatsApp login message opened for ${brandName}. Review it and press Send in WhatsApp.`);
+    } catch (err) {
+      popup.close();
+      showErrorToast(err.message || "Unable to prepare vendor login details.");
+    } finally {
+      setSharingLoginVendorId(null);
+    }
   };
 
   // Fetch all live records
@@ -1236,11 +1235,12 @@ Team Zippy`;
                         <button
                           type="button"
                           className="btn-send-whatsapp-portal"
+                          disabled={sharingLoginVendorId !== null}
                           onClick={() => handleSendWhatsAppPortalLink(designer)}
-                          title="Prepare a WhatsApp message with the vendor login link"
+                          title="Prepare a WhatsApp message with the vendor login link and saved login details"
                         >
                           <WhatsAppIcon size={16} />
-                          <span>Share Login on WhatsApp</span>
+                          <span>{sharingLoginVendorId === designer.id ? "Preparing login details…" : "Share Login on WhatsApp"}</span>
                         </button>
                         <button type="button" className="btn-secondary" onClick={handleCopyVendorLoginLink}>Copy vendor login link</button>
                       </div>
